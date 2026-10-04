@@ -1,0 +1,500 @@
+2026-10-04T21:18:28.9145349Z ✨ Read 41 files from the assets directory /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-frontend/dist
+2026-10-04T21:18:28.9454519Z Total Upload: 1.05 KiB / gzip: 0.48 KiB
+2026-10-04T21:18:28.9483014Z Your Worker has access to the following bindings:
+2026-10-04T21:18:28.9483740Z Binding                                                                       Resource      
+2026-10-04T21:18:28.9485463Z env.WORKSHOP_BACKEND (cloudflare-os-ci-workshop)                              Worker        
+2026-10-04T21:18:28.9486972Z env.GATEKEEPER_CONTEXT (cloudflare-os-ci-context)                             Worker        
+2026-10-04T21:18:28.9488257Z env.GATEKEEPER_SCHEDULER (cloudflare-os-ci-scheduler)                         Worker        
+2026-10-04T21:18:28.9494474Z env.GATEKEEPER_CUSTOM (cloudflare-os-ci-custom)                               Worker        
+2026-10-04T21:18:28.9495784Z env.GATEKEEPER_EMAIL (cloudflare-os-ci-gatekeeper-email)                      Worker        
+2026-10-04T21:18:28.9496972Z env.GATEKEEPER_GOOGLE (cloudflare-os-ci-gatekeeper-google)                    Worker        
+2026-10-04T21:18:28.9498211Z env.GATEKEEPER_HOMEASSISTANT (cloudflare-os-ci-gatekeeper-homeassistant)      Worker        
+2026-10-04T21:18:28.9499441Z env.GATEKEEPER_LINEAR (cloudflare-os-ci-gatekeeper-linear)                    Worker        
+2026-10-04T21:18:28.9500663Z env.GATEKEEPER_NOTION (cloudflare-os-ci-gatekeeper-notion)                    Worker        
+2026-10-04T21:18:28.9501823Z env.GATEKEEPER_SLACK (cloudflare-os-ci-gatekeeper-slack)                      Worker        
+2026-10-04T21:18:28.9503293Z env.GATEKEEPER_SPOTIFY (cloudflare-os-ci-gatekeeper-spotify)                  Worker        
+2026-10-04T21:18:28.9504568Z env.GATEKEEPER_SUPABASE (cloudflare-os-ci-gatekeeper-supabase)                Worker        
+2026-10-04T21:18:28.9505872Z env.GATEKEEPER_ZOOMINFO (cloudflare-os-ci-gatekeeper-zoominfo)                Worker        
+2026-10-04T21:18:28.9507138Z env.GATEKEEPER_GITHUB (cloudflare-os-ci-gatekeeper-github)                    Worker        
+2026-10-04T21:18:28.9508431Z env.GATEKEEPER_CONFLUENCE (cloudflare-os-ci-gatekeeper-confluence)            Worker        
+2026-10-04T21:18:28.9509730Z env.GATEKEEPER_CLOUDFLARE (cloudflare-os-ci-gatekeeper-cloudflare)            Worker        
+2026-10-04T21:18:28.9511016Z env.GATEKEEPER_MCP (cloudflare-os-ci-gatekeeper-mcp)                          Worker        
+2026-10-04T21:18:28.9512228Z env.GATEKEEPER_MCP_PORTAL (cloudflare-os-ci-gatekeeper-mcp-portal)            Worker        
+2026-10-04T21:18:28.9513750Z env.GATEKEEPER_SNOWFLAKE (cloudflare-os-ci-gatekeeper-snowflake)              Worker        
+2026-10-04T21:18:28.9515039Z env.GATEKEEPER_HUGGINGFACE (cloudflare-os-ci-gatekeeper-huggingface)          Worker        
+2026-10-04T21:18:28.9516145Z env.ASSETS                                                                    Assets        
+2026-10-04T21:18:28.9516614Z 
+2026-10-04T21:18:28.9516825Z --dry-run: exiting now.
+2026-10-04T21:18:29.0295205Z ##[group]Run deployment_summary() ***
+2026-10-04T21:18:29.0295630Z deployment_summary() ***
+2026-10-04T21:18:29.0295959Z   python - <<'PY'
+2026-10-04T21:18:29.0296252Z import json, os, re
+2026-10-04T21:18:29.0296549Z from pathlib import Path
+2026-10-04T21:18:29.0296941Z path = Path(os.environ['RUNNER_TEMP']) / 'cfos-deploy.log'
+2026-10-04T21:18:29.0297566Z output = path.read_text(errors='replace') if path.exists() else 'No deployment output.'
+2026-10-04T21:18:29.0298213Z for value in json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS']).values():
+2026-10-04T21:18:29.0298724Z     output = output.replace(value, '***')
+2026-10-04T21:18:29.0299111Z if os.environ.get('CLOUDFLARE_API_TOKEN'):
+2026-10-04T21:18:29.0299806Z     output = output.replace(os.environ['CLOUDFLARE_API_TOKEN'], '***')
+2026-10-04T21:18:29.0300349Z output = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', output)
+2026-10-04T21:18:29.0300969Z Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('```text\n' + '\n'.join(output.splitlines()[-200:]) + '\n```\n')
+2026-10-04T21:18:29.0301498Z PY
+2026-10-04T21:18:29.0301752Z ***
+2026-10-04T21:18:29.0302014Z trap deployment_summary EXIT
+2026-10-04T21:18:29.0302460Z node scripts/github-deploy.ts 2>&1 | tee "$RUNNER_TEMP/cfos-deploy.log"
+2026-10-04T21:18:29.0374748Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail ***0***
+2026-10-04T21:18:29.0375179Z env:
+2026-10-04T21:18:29.0376769Z   CFOS_DEPLOY_CREDENTIALS: ***
+2026-10-04T21:18:29.0377218Z   CLOUDFLARE_API_TOKEN: ***
+2026-10-04T21:18:29.0377513Z ##[endgroup]
+2026-10-04T21:18:30.3919390Z $ pnpm --dir cloudflare-os build && pnpm types:generate:custom && vp run --filter=custom-gatekeeper --filter=error-reporter --filter=gatekeeper-snowflake --filter=gatekeeper-huggingface --filter=gatekeeper-cloudflareaccount --filter=gatekeeper-alphaxiv --cache build
+2026-10-04T21:18:30.8165667Z $ node scripts/vp/run.ts --filter=!cloudflare-os --cache build
+2026-10-04T21:18:31.6613986Z 9:18:31 PM [vite+] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+2026-10-04T21:18:31.6617219Z 9:18:31 PM [vite+] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+2026-10-04T21:18:31.6621249Z The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead.
+2026-10-04T21:18:31.6625270Z You or a plugin you are using have set `optimizeDeps.esbuildOptions` but this option is now deprecated. Vite now uses Rolldown to optimize the dependencies. Please use `optimizeDeps.rolldownOptions` instead.
+2026-10-04T21:18:31.9507755Z ~/packages/bundled-blueprints$ tsc --project tsconfig.client.json ◉ cache hit, replaying
+2026-10-04T21:18:31.9508473Z 
+2026-10-04T21:18:31.9560271Z ~/packages/bundled-blueprints$ tsc --project tsconfig.server.json ◉ cache hit, replaying
+2026-10-04T21:18:31.9560749Z 
+2026-10-04T21:18:31.9629441Z ~/packages/bundled-blueprints$ tsc --project tsconfig.tests.json ◉ cache hit, replaying
+2026-10-04T21:18:31.9629895Z 
+2026-10-04T21:18:31.9709520Z ~/packages/bundled-blueprints$ tsc --project tsconfig.server-tests.json ◉ cache hit, replaying
+2026-10-04T21:18:31.9710249Z 
+2026-10-04T21:18:31.9788827Z ~/packages/bundled-blueprints$ tsc --project tsconfig.node.json ◉ cache hit, replaying
+2026-10-04T21:18:31.9789553Z 
+2026-10-04T21:18:31.9840149Z ~/packages/workshop-shared$ tsc ◉ cache hit, replaying
+2026-10-04T21:18:31.9840651Z 
+2026-10-04T21:18:31.9841284Z ~/packages/gatekeeper-email$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:31.9940013Z ~/packages/typed-storage$ tsc ◉ cache hit, replaying
+2026-10-04T21:18:31.9947741Z 
+2026-10-04T21:18:31.9948824Z ~/packages/gatekeeper-spotify$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.0684302Z 
+2026-10-04T21:18:32.0685952Z ~/packages/gatekeeper-slack$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.0888927Z 
+2026-10-04T21:18:32.0982385Z ~/packages/error-reporting$ tsc ◉ cache hit, replaying
+2026-10-04T21:18:32.0983266Z 
+2026-10-04T21:18:32.0984035Z ~/packages/gatekeeper-cloudflare$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.1533503Z 
+2026-10-04T21:18:32.1565020Z ~/packages/gatekeeper-github$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.1932100Z 
+2026-10-04T21:18:32.1934412Z ~/packages/gatekeeper-mcp-portal$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.2593556Z 
+2026-10-04T21:18:32.2645732Z ~/packages/workshop-frontend$ node --input-type=module -e "import *** rmSync *** from 'node:fs'; rmSync('dist', *** recursive: true, force: true ***)" ⊘ cache disabled
+2026-10-04T21:18:32.2927370Z 
+2026-10-04T21:18:32.2929475Z ~/packages/gatekeeper-zoominfo$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.3161857Z 
+2026-10-04T21:18:32.3624925Z ~/packages/ui$ tsc ◉ cache hit, replaying
+2026-10-04T21:18:32.3647044Z 
+2026-10-04T21:18:32.3648037Z ~/packages/gatekeeper-google$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.3902468Z 
+2026-10-04T21:18:32.3904989Z ~/packages/gatekeeper-confluence$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.4692325Z 
+2026-10-04T21:18:32.4694744Z ~/packages/gatekeeper-linear$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.4907517Z 
+2026-10-04T21:18:32.4912655Z ~/packages/router$ tsc ○ cache miss: '.wrangler' added in 'packages/router', executing
+2026-10-04T21:18:32.5816290Z 
+2026-10-04T21:18:32.5818389Z ~/packages/gatekeeper-notion$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.6323649Z 
+2026-10-04T21:18:32.6325120Z ~/packages/gatekeeper-supabase$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.6701022Z 
+2026-10-04T21:18:32.6702782Z ~/packages/workshop-backend$ node scripts/build-bundled-blueprints.ts ⊘ cache disabled
+2026-10-04T21:18:32.7270355Z 
+2026-10-04T21:18:32.7355389Z ~/packages/configurator-ui$ tsc ◉ cache hit, replaying
+2026-10-04T21:18:32.7359821Z 
+2026-10-04T21:18:32.7360955Z ~/packages/gatekeeper-homeassistant$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.8459717Z 
+2026-10-04T21:18:32.8476581Z ~/packages/gatekeeper-mcp$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:32.9436340Z 
+2026-10-04T21:18:32.9438724Z ~/packages/workshop-backend$ gadgets-with-timeout --idle 60 --max 600 -- node scripts/build-browser-runtime.ts ⊘ cache disabled
+2026-10-04T21:18:33.2151756Z 
+2026-10-04T21:18:33.2291933Z ~/packages/gatekeeper-email$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.2326532Z generated 1 configurator UI module: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-email
+2026-10-04T21:18:33.2347671Z 
+2026-10-04T21:18:33.2355776Z ~/packages/gatekeeper-spotify$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.2357950Z generated 2 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-spotify
+2026-10-04T21:18:33.2376015Z 
+2026-10-04T21:18:33.2436748Z ~/packages/observability$ tsc ◉ cache hit, replaying
+2026-10-04T21:18:33.2463992Z 
+2026-10-04T21:18:33.2493644Z ~/packages/gatekeeper-slack$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.2500612Z generated 3 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-slack
+2026-10-04T21:18:33.2503936Z 
+2026-10-04T21:18:33.2557978Z ~/packages/gatekeeper-cloudflare$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.2578021Z generated 2 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-cloudflare
+2026-10-04T21:18:33.2579020Z 
+2026-10-04T21:18:33.2629018Z ~/packages/gatekeeper-github$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.2630799Z generated 3 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github
+2026-10-04T21:18:33.2644159Z 
+2026-10-04T21:18:33.2696759Z ~/packages/gatekeeper-mcp-portal$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.2698660Z generated 1 configurator UI module: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-mcp-portal
+2026-10-04T21:18:33.2707975Z 
+2026-10-04T21:18:33.3396883Z ~/packages/workshop-frontend$ tsc ◉ cache hit, replaying
+2026-10-04T21:18:33.3401016Z 
+2026-10-04T21:18:33.3566280Z ~/packages/workshop-frontend$ tsc -p tsconfig.vite.json ◉ cache hit, replaying
+2026-10-04T21:18:33.3567742Z 
+2026-10-04T21:18:33.3679802Z ~/packages/workshop-frontend$ node --input-type=module -e "process.env.NODE_ENV='production'; await (await import('vite')).build()" ○ cache miss: '.wrangler' added in 'packages/gatekeeper-email', executing
+2026-10-04T21:18:33.7373289Z bundled blueprints up-to-date (3): /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/generated/bundled-blueprints.ts
+2026-10-04T21:18:33.7545935Z 
+2026-10-04T21:18:33.7589976Z ~/packages/gatekeeper-zoominfo$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.7591951Z generated 1 configurator UI module: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-zoominfo
+2026-10-04T21:18:33.7598401Z 
+2026-10-04T21:18:33.7633741Z ~/packages/gatekeeper-google$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.7636000Z generated 11 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-google
+2026-10-04T21:18:33.7750994Z 
+2026-10-04T21:18:33.7792459Z ~/packages/gatekeeper-confluence$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.7794585Z generated 3 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-confluence
+2026-10-04T21:18:33.7833563Z 
+2026-10-04T21:18:33.7852630Z ~/packages/gatekeeper-linear$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.7854501Z generated 3 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-linear
+2026-10-04T21:18:33.7863175Z 
+2026-10-04T21:18:33.7915270Z ~/packages/gatekeeper-notion$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.7917893Z generated 2 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-notion
+2026-10-04T21:18:33.7924959Z 
+2026-10-04T21:18:33.7965827Z ~/packages/gatekeeper-supabase$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.7967661Z generated 2 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-supabase
+2026-10-04T21:18:33.7972102Z 
+2026-10-04T21:18:33.8033811Z ~/packages/gatekeeper-homeassistant$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.8034979Z generated 5 configurator UI modules: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-homeassistant
+2026-10-04T21:18:33.8059617Z 
+2026-10-04T21:18:33.8104882Z ~/packages/gatekeeper-mcp$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:18:33.8106904Z generated 1 configurator UI module: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-mcp
+2026-10-04T21:18:33.8110997Z 
+2026-10-04T21:18:33.8216040Z ~/packages/gatekeeper-kit$ tsc ◉ cache hit, replaying
+2026-10-04T21:18:33.8216679Z 
+2026-10-04T21:18:33.8351991Z ~/packages/gatekeeper-context$ pnpm run typecheck:app ○ cache miss: '.wrangler' added in 'packages/router', executing
+2026-10-04T21:18:34.3617349Z $ tsc -p tsconfig.app.json && tsc -p tsconfig.vite.json
+2026-10-04T21:18:34.3801170Z vite v7.3.6 building client environment for production...
+2026-10-04T21:18:34.5203807Z transforming...
+2026-10-04T21:18:36.6426880Z 
+2026-10-04T21:18:36.6428436Z ~/packages/gatekeeper-context$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:36.7333450Z 
+2026-10-04T21:18:36.7469081Z ~/packages/gatekeeper-context$ node build-app.ts ○ cache miss: '.wrangler' added in 'packages/gatekeeper-supabase', executing
+2026-10-04T21:18:36.8492272Z building context library app single-file bundle…
+2026-10-04T21:18:37.1383245Z vite v7.3.6 building client environment for production...
+2026-10-04T21:18:37.2524842Z transforming...
+2026-10-04T21:18:46.1895470Z ✓ 5056 modules transformed.
+2026-10-04T21:18:46.8188659Z ✓ 5376 modules transformed.
+2026-10-04T21:18:47.4914341Z rendering chunks...
+2026-10-04T21:18:48.0064455Z [plugin vite:reporter] 
+2026-10-04T21:18:48.0098830Z (!) /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-frontend/src/passwordHash.ts is dynamically imported by /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-frontend/src/main.tsx but also statically imported by /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-frontend/src/LoginPage.tsx, /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-frontend/src/SettingsPage.tsx, /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-frontend/src/SignupPage.tsx, dynamic import will not move module into another chunk.
+2026-10-04T21:18:48.0103709Z 
+2026-10-04T21:18:48.1130142Z computing gzip size...
+2026-10-04T21:18:48.6593967Z 
+2026-10-04T21:18:48.6595048Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-10-04T21:18:48.6596015Z - Using dynamic import() to code-split the application
+2026-10-04T21:18:48.6597514Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-10-04T21:18:48.6599068Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2026-10-04T21:18:48.6600580Z dist/index.html                                             0.69 kB │ gzip:   0.43 kB
+2026-10-04T21:18:48.6601882Z dist/assets/ChatComposer-JRWl0Hxm.css                       0.29 kB │ gzip:   0.23 kB
+2026-10-04T21:18:48.6634454Z dist/assets/workspace-Br6JJwtp.css                          8.64 kB │ gzip:   2.08 kB
+2026-10-04T21:18:48.6636101Z dist/assets/index-B8_c0sbR.css                            234.31 kB │ gzip:  36.13 kB
+2026-10-04T21:18:48.6637367Z dist/assets/gadget._id-DtqBFgK5.js                          0.04 kB │ gzip:   0.06 kB
+2026-10-04T21:18:48.6638644Z dist/assets/signup-DBAuIhrp.js                              0.13 kB │ gzip:   0.14 kB
+2026-10-04T21:18:48.6639975Z dist/assets/ResetCountdown-C1sIfHm0.js                      0.78 kB │ gzip:   0.51 kB
+2026-10-04T21:18:48.6641322Z dist/assets/rateLimitedCapability-CmcCjMXJ.js               1.07 kB │ gzip:   0.62 kB
+2026-10-04T21:18:48.6642649Z dist/assets/connect.handoff-DO6Cg_Ot.js                     1.56 kB │ gzip:   0.84 kB
+2026-10-04T21:18:48.6644574Z dist/assets/DotsThreeVertical.es-ClwHUav4.js                1.66 kB │ gzip:   0.53 kB
+2026-10-04T21:18:48.6645813Z dist/assets/Clock.es-Xj9zReBq.js                            1.79 kB │ gzip:   0.62 kB
+2026-10-04T21:18:48.6647027Z dist/assets/User.es-BDTUMvP1.js                             2.10 kB │ gzip:   0.84 kB
+2026-10-04T21:18:48.6648306Z dist/assets/ArrowSquareOut.es-I8pBV7CT.js                   2.33 kB │ gzip:   0.82 kB
+2026-10-04T21:18:48.6650022Z dist/assets/Lightning.es-DuC6Xscs.js                        2.36 kB │ gzip:   0.88 kB
+2026-10-04T21:18:48.6651343Z dist/assets/ViewToggle-BMlqpcZ6.js                          2.65 kB │ gzip:   1.06 kB
+2026-10-04T21:18:48.6652599Z dist/assets/Cube.es-omMThRNQ.js                             2.68 kB │ gzip:   0.91 kB
+2026-10-04T21:18:48.6654043Z dist/assets/context-B6kvqHO0.js                             3.25 kB │ gzip:   1.23 kB
+2026-10-04T21:18:48.6655288Z dist/assets/Robot.es-6exIonY-.js                            3.37 kB │ gzip:   1.05 kB
+2026-10-04T21:18:48.6656574Z dist/assets/BlueprintPreviewImage-CQYEUtLZ.js               3.38 kB │ gzip:   1.44 kB
+2026-10-04T21:18:48.6657886Z dist/assets/EmptyState-B_QTFo85.js                          4.28 kB │ gzip:   1.64 kB
+2026-10-04T21:18:48.6659161Z dist/assets/gatekeepers_._appId-kQ56lgbO.js                 5.13 kB │ gzip:   2.31 kB
+2026-10-04T21:18:48.6660757Z dist/assets/fileTransfers-BUMSfbZv.js                       5.20 kB │ gzip:   1.75 kB
+2026-10-04T21:18:48.6662101Z dist/assets/switch-cqsvolm7h69z7vgg-BkBEgDs_.js             7.32 kB │ gzip:   2.60 kB
+2026-10-04T21:18:48.6663858Z dist/assets/explore-f0Q_INYM.js                             7.34 kB │ gzip:   2.40 kB
+2026-10-04T21:18:48.6665067Z dist/assets/providers-CGQnYH1I.js                           8.81 kB │ gzip:   3.14 kB
+2026-10-04T21:18:48.6666300Z dist/assets/index-B7kgO09l.js                               9.71 kB │ gzip:   4.33 kB
+2026-10-04T21:18:48.6667552Z dist/assets/blueprints-Cg3Of_FG.js                         10.08 kB │ gzip:   3.52 kB
+2026-10-04T21:18:48.6668812Z dist/assets/workspaces-DOb_gl0H.js                         13.29 kB │ gzip:   4.58 kB
+2026-10-04T21:18:48.6670058Z dist/assets/outputs-CHw3cKne.js                            15.38 kB │ gzip:   5.06 kB
+2026-10-04T21:18:48.6671394Z dist/assets/useDialogSelectPortalContainer-DDG1FrY6.js     15.61 kB │ gzip:   5.67 kB
+2026-10-04T21:18:48.6672747Z dist/assets/profile-BQ2r0xYi.js                            16.82 kB │ gzip:   5.46 kB
+2026-10-04T21:18:48.6674217Z dist/assets/gatekeepers-CZB2ztBq.js                        24.98 kB │ gzip:   7.29 kB
+2026-10-04T21:18:48.6675498Z dist/assets/index.esm-CgNExnv6.js                          28.16 kB │ gzip:  11.36 kB
+2026-10-04T21:18:48.6676656Z dist/assets/blueprint._id-NAiCb8R8.js                      31.93 kB │ gzip:   9.58 kB
+2026-10-04T21:18:48.6677889Z dist/assets/ChatComposer-3FjAAiZg.js                      109.08 kB │ gzip:  33.14 kB
+2026-10-04T21:18:48.6679079Z dist/assets/admin-BCsjx3wZ.js                             115.97 kB │ gzip:  36.56 kB
+2026-10-04T21:18:48.6680263Z dist/assets/server.browser-_lXZ_i6Z.js                    189.09 kB │ gzip:  58.07 kB
+2026-10-04T21:18:48.6681015Z dist/assets/index-29B3FoSA.js                           1,164.70 kB │ gzip: 354.84 kB
+2026-10-04T21:18:48.6681718Z dist/assets/workspace._id-CA7cUMBu.js                   1,403.88 kB │ gzip: 456.44 kB
+2026-10-04T21:18:48.6683461Z ✓ built in 14.25s
+2026-10-04T21:18:49.0528655Z 
+2026-10-04T21:18:49.0626341Z ~/packages/gatekeeper-scheduler$ pnpm run typecheck:app ○ cache miss: '.wrangler' added in 'packages/gatekeeper-email', executing
+2026-10-04T21:18:49.6424990Z $ tsc -p tsconfig.app.json && tsc -p tsconfig.vite.json
+2026-10-04T21:18:56.2927375Z 
+2026-10-04T21:18:56.2928499Z ~/packages/gatekeeper-scheduler$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:18:56.3837941Z 
+2026-10-04T21:18:56.3927398Z ~/packages/gatekeeper-scheduler$ node build-app.ts ○ cache miss: '.wrangler' added in 'packages/gatekeeper-google', executing
+2026-10-04T21:18:56.7051840Z vite v7.3.6 building client environment for production...
+2026-10-04T21:18:56.8046529Z transforming...
+2026-10-04T21:18:58.0554717Z rendering chunks...
+2026-10-04T21:18:58.0854580Z [plugin vite:singlefile] 
+2026-10-04T21:18:58.0855186Z 
+2026-10-04T21:18:58.0855987Z [plugin vite:singlefile] Inlining: gatekeeper-context.js
+2026-10-04T21:18:58.0886353Z [plugin vite:singlefile] Inlining: style-BR7ZQ_rn.css
+2026-10-04T21:18:58.1019338Z computing gzip size...
+2026-10-04T21:18:58.1638660Z dist-app/app/index.html  2,007.68 kB │ gzip: 558.08 kB
+2026-10-04T21:18:58.1639579Z ✓ built in 21.01s
+2026-10-04T21:18:58.1954487Z app.txt unchanged (1944 KiB), skipping write
+2026-10-04T21:18:58.9123254Z 
+2026-10-04T21:18:58.9148093Z ~/packages/gatekeeper-context$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-context', executing
+2026-10-04T21:18:59.3953810Z 
+2026-10-04T21:18:59.3955176Z ~/packages/workshop-backend$ tsc ⊘ cache disabled
+2026-10-04T21:19:01.9812597Z ✓ 4579 modules transformed.
+2026-10-04T21:19:05.1178510Z rendering chunks...
+2026-10-04T21:19:05.1441719Z [plugin vite:singlefile] 
+2026-10-04T21:19:05.1442315Z 
+2026-10-04T21:19:05.1443583Z [plugin vite:singlefile] Inlining: gatekeeper-scheduler.js
+2026-10-04T21:19:05.1447199Z [plugin vite:singlefile] Inlining: style-BP8TgRiP.css
+2026-10-04T21:19:05.1491233Z computing gzip size...
+2026-10-04T21:19:05.1664827Z dist-app/app/index.html  420.07 kB │ gzip: 105.86 kB
+2026-10-04T21:19:05.1665539Z ✓ built in 8.45s
+2026-10-04T21:19:05.4291655Z 
+2026-10-04T21:19:05.4347652Z ~/packages/gatekeeper-scheduler$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-scheduler', executing
+2026-10-04T21:19:05.7506112Z 
+2026-10-04T21:19:05.7615700Z ~/packages/integration-tests$ tsc --noEmit ○ cache miss: '.wrangler' added in 'packages/integration-tests/fixtures/gatekeeper-test', executing
+2026-10-04T21:19:09.9196758Z 
+2026-10-04T21:19:09.9198200Z ~/packages/workshop-backend$ tsc --project tsconfig.browser.json ⊘ cache disabled
+2026-10-04T21:19:10.0473205Z 
+2026-10-04T21:19:10.0542974Z ~/packages/gatekeeper-notion$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-notion', executing
+2026-10-04T21:19:10.3042042Z 
+2026-10-04T21:19:10.3106589Z ~/packages/gatekeeper-email$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-email', executing
+2026-10-04T21:19:10.5798176Z 
+2026-10-04T21:19:10.5878208Z ~/packages/gatekeeper-cloudflare$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-cloudflare', executing
+2026-10-04T21:19:10.9521543Z 
+2026-10-04T21:19:10.9579096Z ~/packages/gatekeeper-supabase$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-supabase', executing
+2026-10-04T21:19:11.3122298Z 
+2026-10-04T21:19:11.3196873Z ~/packages/mcp-shared$ tsc ◉ cache hit, replaying
+2026-10-04T21:19:11.3197383Z 
+2026-10-04T21:19:11.3309272Z ~/packages/mcp-shared$ tsc -p tsconfig.test.json ◉ cache hit, replaying
+2026-10-04T21:19:11.3310314Z 
+2026-10-04T21:19:11.3320968Z ~/packages/gatekeeper-github$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-github', executing
+2026-10-04T21:19:11.8270636Z 
+2026-10-04T21:19:11.8328657Z ~/packages/gatekeeper-homeassistant$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-homeassistant', executing
+2026-10-04T21:19:12.0488686Z 
+2026-10-04T21:19:12.0503207Z ~/packages/gatekeeper-slack$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-slack', executing
+2026-10-04T21:19:12.2193171Z 
+2026-10-04T21:19:12.2258336Z ~/packages/gatekeeper-linear$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-linear', executing
+2026-10-04T21:19:12.4810058Z 
+2026-10-04T21:19:12.4823289Z ~/packages/gatekeeper-confluence$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-confluence', executing
+2026-10-04T21:19:12.7447355Z 
+2026-10-04T21:19:12.7515143Z ~/packages/gatekeeper-zoominfo$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-zoominfo', executing
+2026-10-04T21:19:12.9638725Z 
+2026-10-04T21:19:12.9644465Z ~/packages/gatekeeper-spotify$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-spotify', executing
+2026-10-04T21:19:13.1579000Z 
+2026-10-04T21:19:13.1592400Z ~/packages/gatekeeper-google$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-google', executing
+2026-10-04T21:19:13.6571321Z 
+2026-10-04T21:19:13.6603975Z ~/packages/gatekeeper-google$ tsc -p tsconfig.test.json ○ cache miss: '.wrangler' added in 'packages/gatekeeper-google', executing
+2026-10-04T21:19:14.7083410Z 
+2026-10-04T21:19:14.7265539Z ~/packages/gatekeeper-mcp-portal$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-mcp-portal', executing
+2026-10-04T21:19:15.1193668Z 
+2026-10-04T21:19:15.1225328Z ~/packages/gatekeeper-mcp$ tsc ○ cache miss: '.wrangler' added in 'packages/gatekeeper-mcp', executing
+2026-10-04T21:19:15.2692416Z 
+2026-10-04T21:19:15.2820146Z ~/packages/workshop-evals$ tsc --noEmit ◉ cache hit, replaying
+2026-10-04T21:19:15.2820544Z 
+2026-10-04T21:19:15.4911581Z 
+2026-10-04T21:19:15.4915033Z ---
+2026-10-04T21:19:15.4915981Z vp run: 31/76 cache hit (40%), 31.87s saved. (Run `vp run --last-details` for full details)
+2026-10-04T21:19:15.9606622Z $ pnpm --filter=custom-gatekeeper --filter=error-reporter --filter=gatekeeper-snowflake --filter=gatekeeper-huggingface --filter=gatekeeper-cloudflareaccount --filter=gatekeeper-alphaxiv exec wrangler types --include-env false
+2026-10-04T21:19:17.9204436Z 
+2026-10-04T21:19:17.9234696Z  ⛅️ wrangler 4.147.0
+2026-10-04T21:19:17.9314210Z ────────────────────
+2026-10-04T21:19:17.9747769Z 
+2026-10-04T21:19:17.9794504Z  ⛅️ wrangler 4.147.0
+2026-10-04T21:19:17.9844201Z ────────────────────
+2026-10-04T21:19:17.9860102Z [custom build] Running: pnpm exec capnweb-validate build --out .wrangler/validate
+2026-10-04T21:19:18.0240328Z Generating runtime types...
+2026-10-04T21:19:18.0243164Z 
+2026-10-04T21:19:18.0515261Z Runtime types generated.
+2026-10-04T21:19:18.0543776Z 
+2026-10-04T21:19:18.0573524Z 
+2026-10-04T21:19:18.0604509Z ✨ Types written to worker-configuration.d.ts
+2026-10-04T21:19:18.0605319Z 
+2026-10-04T21:19:18.0690396Z Action required Migrate from @cloudflare/workers-types to generated runtime types
+2026-10-04T21:19:18.0692068Z `wrangler types` now generates runtime types and supersedes @cloudflare/workers-types.
+2026-10-04T21:19:18.0724250Z You should now uninstall @cloudflare/workers-types and remove it from your tsconfig.json.
+2026-10-04T21:19:18.0753293Z 
+2026-10-04T21:19:18.0784086Z 📖 Read about runtime types
+2026-10-04T21:19:18.0785239Z https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+2026-10-04T21:19:18.0817143Z 📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+2026-10-04T21:19:18.0843378Z 
+2026-10-04T21:19:18.0933494Z 
+2026-10-04T21:19:18.0964070Z  ⛅️ wrangler 4.147.0
+2026-10-04T21:19:18.0965046Z ────────────────────
+2026-10-04T21:19:18.1214685Z [custom build] Running: pnpm exec capnweb-validate build --out .wrangler/validate
+2026-10-04T21:19:18.2577346Z 
+2026-10-04T21:19:18.2604320Z  ⛅️ wrangler 4.147.0
+2026-10-04T21:19:18.2634573Z ────────────────────
+2026-10-04T21:19:18.2867651Z [custom build] Running: pnpm exec capnweb-validate build --out .wrangler/validate
+2026-10-04T21:19:20.0237588Z 
+2026-10-04T21:19:20.0253320Z  ⛅️ wrangler 4.147.0
+2026-10-04T21:19:20.0339428Z ────────────────────
+2026-10-04T21:19:20.0567186Z [custom build] Running: pnpm exec capnweb-validate build --out .wrangler/validate
+2026-10-04T21:19:20.2915164Z [custom build] capnweb-validate: skipped 1 file(s) outside the project directory (cwd=/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/packages/custom-gatekeeper); they cannot be written under --out, so they are not validated (e.g. /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-shared/src/gatekeeper.ts).
+2026-10-04T21:19:20.2953548Z [custom build] 
+2026-10-04T21:19:20.2989943Z [custom build] capnweb-validate: 1 transformed, 2 copied, 1 skipped (outside project) -> .wrangler/validate
+2026-10-04T21:19:20.2992071Z [custom build] 
+2026-10-04T21:19:20.3679640Z Generating runtime types...
+2026-10-04T21:19:20.3733337Z 
+2026-10-04T21:19:20.3804100Z Runtime types generated.
+2026-10-04T21:19:20.3833420Z 
+2026-10-04T21:19:20.3855070Z 
+2026-10-04T21:19:20.3894496Z ✨ Types written to worker-configuration.d.ts
+2026-10-04T21:19:20.3940103Z 
+2026-10-04T21:19:20.3964629Z 📖 Read about runtime types
+2026-10-04T21:19:20.3980298Z https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+2026-10-04T21:19:20.4024832Z 📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+2026-10-04T21:19:20.4026116Z 
+2026-10-04T21:19:20.8340891Z [custom build] /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/packages/gatekeeper-snowflake/src/snowflake.ts:49:1: capnweb-validate: `CursorImpl` is generic; unconstrained type parameters default to `any` and are not runtime-validated. Pass a concrete type argument (e.g. @validateRpc<CursorImpl<string>>()) or constrain the parameter (`<T extends ...>`) to validate those positions.
+2026-10-04T21:19:20.8376237Z [custom build] 
+2026-10-04T21:19:20.8647008Z [custom build] /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/packages/gatekeeper-huggingface/src/huggingface.ts:130:1: capnweb-validate: `HubCursor` is generic; unconstrained type parameters default to `any` and are not runtime-validated. Pass a concrete type argument (e.g. @validateRpc<HubCursor<string>>()) or constrain the parameter (`<T extends ...>`) to validate those positions.
+2026-10-04T21:19:20.8663863Z [custom build] 
+2026-10-04T21:19:20.9123347Z [custom build] capnweb-validate: skipped 22 file(s) outside the project directory (cwd=/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/packages/gatekeeper-snowflake); they cannot be written under --out, so they are not validated (e.g. /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-shared/src/gatekeeper.ts).
+2026-10-04T21:19:20.9152796Z [custom build] 
+2026-10-04T21:19:20.9154694Z [custom build] capnweb-validate: 2 transformed, 6 copied, 22 skipped (outside project) -> .wrangler/validate
+2026-10-04T21:19:20.9156061Z [custom build] 
+2026-10-04T21:19:20.9668283Z [custom build] capnweb-validate: skipped 23 file(s) outside the project directory (cwd=/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/packages/gatekeeper-huggingface); they cannot be written under --out, so they are not validated (e.g. /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-shared/src/gatekeeper.ts).
+2026-10-04T21:19:20.9701869Z [custom build] 
+2026-10-04T21:19:20.9706930Z [custom build] capnweb-validate: 2 transformed, 6 copied, 23 skipped (outside project) -> .wrangler/validate
+2026-10-04T21:19:20.9727706Z [custom build] 
+2026-10-04T21:19:21.0074299Z Generating runtime types...
+2026-10-04T21:19:21.0075238Z 
+2026-10-04T21:19:21.0150725Z Runtime types generated.
+2026-10-04T21:19:21.0151316Z 
+2026-10-04T21:19:21.0151591Z 
+2026-10-04T21:19:21.0188883Z ✨ Types written to worker-configuration.d.ts
+2026-10-04T21:19:21.0196683Z 
+2026-10-04T21:19:21.0228384Z 📖 Read about runtime types
+2026-10-04T21:19:21.0240014Z https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+2026-10-04T21:19:21.0274841Z 📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+2026-10-04T21:19:21.0303150Z 
+2026-10-04T21:19:21.0447658Z Generating runtime types...
+2026-10-04T21:19:21.0463141Z 
+2026-10-04T21:19:21.0521590Z Runtime types generated.
+2026-10-04T21:19:21.0535637Z 
+2026-10-04T21:19:21.0574005Z 
+2026-10-04T21:19:21.0584994Z ✨ Types written to worker-configuration.d.ts
+2026-10-04T21:19:21.0612715Z 
+2026-10-04T21:19:21.0632294Z 📖 Read about runtime types
+2026-10-04T21:19:21.0640906Z https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+2026-10-04T21:19:21.0642512Z 📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+2026-10-04T21:19:21.0645290Z 
+2026-10-04T21:19:21.8547543Z 
+2026-10-04T21:19:21.8548525Z  ⛅️ wrangler 4.147.0
+2026-10-04T21:19:21.8549447Z ────────────────────
+2026-10-04T21:19:21.8773622Z [custom build] Running: pnpm exec capnweb-validate build --out .wrangler/validate
+2026-10-04T21:19:21.9292193Z [custom build] capnweb-validate: skipped 17 file(s) outside the project directory (cwd=/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/packages/gatekeeper-cloudflareaccount); they cannot be written under --out, so they are not validated (e.g. /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/observability/src/logger-core.ts).
+2026-10-04T21:19:21.9295931Z [custom build] 
+2026-10-04T21:19:21.9297925Z [custom build] capnweb-validate: 1 transformed, 2 copied, 17 skipped (outside project) -> .wrangler/validate
+2026-10-04T21:19:21.9300061Z [custom build] 
+2026-10-04T21:19:21.9777587Z Generating runtime types...
+2026-10-04T21:19:21.9778757Z 
+2026-10-04T21:19:21.9861556Z Runtime types generated.
+2026-10-04T21:19:21.9862673Z 
+2026-10-04T21:19:21.9863384Z 
+2026-10-04T21:19:21.9902220Z ✨ Types written to worker-configuration.d.ts
+2026-10-04T21:19:21.9903017Z 
+2026-10-04T21:19:21.9911100Z 📖 Read about runtime types
+2026-10-04T21:19:21.9912091Z https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+2026-10-04T21:19:21.9924981Z 📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+2026-10-04T21:19:21.9925998Z 
+2026-10-04T21:19:22.9927952Z [custom build] capnweb-validate: skipped 10 file(s) outside the project directory (cwd=/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/packages/gatekeeper-alphaxiv); they cannot be written under --out, so they are not validated (e.g. /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-shared/src/gatekeeper.ts).
+2026-10-04T21:19:22.9929688Z [custom build] 
+2026-10-04T21:19:22.9930596Z [custom build] capnweb-validate: 1 transformed, 2 copied, 10 skipped (outside project) -> .wrangler/validate
+2026-10-04T21:19:22.9931810Z [custom build] 
+2026-10-04T21:19:23.0354006Z Generating runtime types...
+2026-10-04T21:19:23.0354391Z 
+2026-10-04T21:19:23.0405872Z Runtime types generated.
+2026-10-04T21:19:23.0406108Z 
+2026-10-04T21:19:23.0407613Z 
+2026-10-04T21:19:23.0431992Z ✨ Types written to worker-configuration.d.ts
+2026-10-04T21:19:23.0432421Z 
+2026-10-04T21:19:23.0440388Z 📖 Read about runtime types
+2026-10-04T21:19:23.0441258Z https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+2026-10-04T21:19:23.0444050Z 📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+2026-10-04T21:19:23.0444625Z 
+2026-10-04T21:19:23.3579987Z ~/packages/gatekeeper-huggingface$ gadgets-clean-error-reporting . ⊘ cache disabled
+2026-10-04T21:19:23.3655165Z ~/packages/gatekeeper-cloudflareaccount$ tsc ◉ cache hit, replaying
+2026-10-04T21:19:23.3655748Z 
+2026-10-04T21:19:23.3712512Z ~/packages/gatekeeper-alphaxiv$ tsc ◉ cache hit, replaying
+2026-10-04T21:19:23.3723853Z 
+2026-10-04T21:19:23.3782574Z ~/packages/gatekeeper-snowflake$ tsc ◉ cache hit, replaying
+2026-10-04T21:19:23.3783473Z 
+2026-10-04T21:19:23.3834263Z ~/packages/custom-gatekeeper$ tsc ◉ cache hit, replaying
+2026-10-04T21:19:23.3848999Z 
+2026-10-04T21:19:23.3899610Z ~/packages/error-reporter$ tsc ○ cache miss: '.wrangler' added in 'packages/error-reporter', executing
+2026-10-04T21:19:23.4494415Z 
+2026-10-04T21:19:23.4534739Z ~/packages/gatekeeper-huggingface$ gadgets-build-configurator . ◉ cache hit, replaying
+2026-10-04T21:19:23.4536507Z generated 1 configurator UI module: /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/packages/gatekeeper-huggingface
+2026-10-04T21:19:23.4555333Z 
+2026-10-04T21:19:23.4594172Z ~/packages/gatekeeper-huggingface$ tsc ◉ cache hit, replaying
+2026-10-04T21:19:23.4594761Z 
+2026-10-04T21:19:23.5119545Z 
+2026-10-04T21:19:23.5121154Z ---
+2026-10-04T21:19:23.5122082Z vp run: 6/8 cache hit (75%), 1.62s saved. (Run `vp run --last-details` for full details)
+2026-10-04T21:19:24.4348952Z 
+2026-10-04T21:19:24.4349845Z  ⛅️ wrangler 4.147.0
+2026-10-04T21:19:24.4350310Z ────────────────────
+2026-10-04T21:19:24.4511898Z 🌀 Processing the secrets for the Worker "hellgate-os-gatekeeper-cloudflareaccount"
+2026-10-04T21:19:24.6984028Z 
+2026-10-04T21:19:24.6985003Z 🚨 Secrets failed to upload
+2026-10-04T21:19:24.6991241Z 
+2026-10-04T21:19:24.7510544Z ✘ [ERROR] A request to the Cloudflare API (/accounts/9ae12807d5b18bf3d1bcbe38b9050e05/workers/scripts/hellgate-os-gatekeeper-cloudflareaccount/secrets-bulk) failed.
+2026-10-04T21:19:24.7511629Z 
+2026-10-04T21:19:24.7512093Z   No access to the specified resource.
+2026-10-04T21:19:24.7512446Z   
+2026-10-04T21:19:24.7513323Z   If you think this is a bug, please open an issue at: https://github.com/cloudflare/workers-sdk/issues/new/choose
+2026-10-04T21:19:24.7513830Z 
+2026-10-04T21:19:24.7513836Z 
+2026-10-04T21:19:24.7535444Z 🪵  Logs were written to "/home/runner/.config/.wrangler/logs/wrangler-2026-10-04_21-19-24_185.log"
+2026-10-04T21:19:24.7813899Z 
+2026-10-04T21:19:24.7815109Z Deploy failed. packages/gatekeeper-cloudflareaccount: wrangler secret bulk failed. Its output is above.
+2026-10-04T21:19:24.7895575Z file:///home/runner/work/cloudflare-os-starter/cloudflare-os-starter/scripts/github-deploy.ts:70
+2026-10-04T21:19:24.7896783Z   if (deploy.error || deploy.status !== 0) throw new Error("Cloudflare deployment did not finish; inspect the Worker deployment log.");
+2026-10-04T21:19:24.7898178Z                                                  ^
+2026-10-04T21:19:24.7898535Z 
+2026-10-04T21:19:24.7899250Z Error: Cloudflare deployment did not finish; inspect the Worker deployment log.
+2026-10-04T21:19:24.7900648Z     at file:///home/runner/work/cloudflare-os-starter/cloudflare-os-starter/scripts/github-deploy.ts:70:50
+2026-10-04T21:19:24.7901841Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-10-04T21:19:24.7902432Z 
+2026-10-04T21:19:24.7902602Z Node.js v24.19.0
+2026-10-04T21:19:24.8265367Z ##[error]Process completed with exit code 1.
+2026-10-04T21:19:24.8468923Z Post job cleanup.
+2026-10-04T21:19:24.9324364Z [command]/usr/bin/git version
+2026-10-04T21:19:24.9369180Z git version 2.55.0
+2026-10-04T21:19:24.9412472Z Temporarily overriding HOME='/home/runner/work/_temp/5d6b89d5-8fbe-4f89-800d-7e5bc86d7d55' before making global git config changes
+2026-10-04T21:19:24.9414257Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-04T21:19:24.9418049Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/cloudflare-os-starter/cloudflare-os-starter
+2026-10-04T21:19:24.9454832Z Removing SSH command configuration
+2026-10-04T21:19:24.9462137Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-04T21:19:24.9506407Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-04T21:19:24.9787068Z Removing HTTP extra header
+2026-10-04T21:19:24.9793652Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-04T21:19:24.9841766Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-04T21:19:25.0121199Z Removing includeIf entries pointing to credentials config files
+2026-10-04T21:19:25.0129912Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-04T21:19:25.0183665Z includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git.path
+2026-10-04T21:19:25.0189510Z includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path
+2026-10-04T21:19:25.0190565Z includeif.gitdir:/github/workspace/.git.path
+2026-10-04T21:19:25.0191384Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-04T21:19:25.0194036Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git.path
+2026-10-04T21:19:25.0227175Z /home/runner/work/_temp/git-credentials-b7f31e12-9e30-40c0-ab5a-1a566c55933a.config
+2026-10-04T21:19:25.0241798Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-b7f31e12\-9e30\-40c0\-ab5a\-1a566c55933a\.config
+2026-10-04T21:19:25.0294495Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path
+2026-10-04T21:19:25.0332176Z /home/runner/work/_temp/git-credentials-b7f31e12-9e30-40c0-ab5a-1a566c55933a.config
+2026-10-04T21:19:25.0343669Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-b7f31e12\-9e30\-40c0\-ab5a\-1a566c55933a\.config
+2026-10-04T21:19:25.0399308Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-04T21:19:25.0432496Z /github/runner_temp/git-credentials-b7f31e12-9e30-40c0-ab5a-1a566c55933a.config
+2026-10-04T21:19:25.0441255Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-b7f31e12\-9e30\-40c0\-ab5a\-1a566c55933a\.config
+2026-10-04T21:19:25.0483742Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-04T21:19:25.0514945Z /github/runner_temp/git-credentials-b7f31e12-9e30-40c0-ab5a-1a566c55933a.config
+2026-10-04T21:19:25.0525052Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-b7f31e12\-9e30\-40c0\-ab5a\-1a566c55933a\.config
+2026-10-04T21:19:25.0569519Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-04T21:19:25.0823319Z Removing credentials config '/home/runner/work/_temp/git-credentials-b7f31e12-9e30-40c0-ab5a-1a566c55933a.config'
+2026-10-04T21:19:25.0994617Z Cleaning up orphan processes
