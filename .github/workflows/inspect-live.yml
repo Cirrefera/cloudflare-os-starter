@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   inspect:
@@ -16,9 +17,10 @@ jobs:
       - name: Read deployed service configuration and public endpoint status
         env:
           CFOS_DEPLOY_CREDENTIALS: ${{ secrets.CFOS_DEPLOY_CREDENTIALS }}
+          GH_ACTION_TOKEN: ${{ github.token }}
         run: |
           python - <<'PY'
-          import json, os, urllib.request, urllib.error, urllib.parse
+          import json, os, urllib.request, urllib.error, urllib.parse, re, base64
           from pathlib import Path
           credentials = json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS'])
           token = credentials['CLOUDFLARE_API_TOKEN']
@@ -75,12 +77,36 @@ jobs:
           output = json.dumps(report, indent=2) + '\n'
           if any(value in output for value in credentials.values()):
               raise SystemExit('Credential match in status report; refusing to publish.')
-          Path('deployment-live-status.json').write_text(output)
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, request, file, code, message, headers, newurl):
+                  return None
+          request = urllib.request.Request('https://api.github.com/repos/Cirrefera/cloudflare-os-starter/actions/jobs/111514481819/logs',
+              headers={'Authorization': 'Bearer ' + os.environ['GH_ACTION_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              try:
+                  response = urllib.request.build_opener(NoRedirect).open(request, timeout=30)
+                  logs = response.read().decode(errors='replace')
+              except urllib.error.HTTPError as error:
+                  if error.code != 302:
+                      raise
+                  logs = urllib.request.urlopen(error.headers['Location'], timeout=30).read().decode(errors='replace')
+              for value in list(credentials.values()) + [os.environ['GH_ACTION_TOKEN']]:
+                  for form in [value, urllib.parse.quote(value, safe=''), base64.b64encode(value.encode()).decode()]:
+                      logs = logs.replace(form, '***')
+              logs = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', logs)
+              logs = '\n'.join(logs.splitlines()[-500:]) + '\n'
+              if any(value in logs for value in credentials.values()):
+                  raise RuntimeError('Credential match')
+              Path('deployment-command.log').write_text(logs)
+          except Exception:
+              report['deployment_log'] = 'Could not retrieve credential-safe job log.'
+          Path('deployment-live-status.json').write_text(json.dumps(report, indent=2) + '\n')
           PY
       - name: Publish credential-free deployment status
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add deployment-live-status.json
+          if [ -f deployment-command.log ]; then git add deployment-command.log; fi
           git commit -m 'Record live Worker wiring and public endpoint status'
           git push origin HEAD:refs/heads/codex/deployment-status-${{ github.run_id }}
