@@ -59,7 +59,6 @@ jobs:
           {
             pnpm check:boundary
             pnpm types:scripts
-            pnpm build
             pnpm check:full
           } 2>&1 | tee "$log"
 
@@ -67,6 +66,7 @@ jobs:
         if: steps.credentials.outputs.ready == 'true'
         env:
           CFOS_DEPLOY_CREDENTIALS: ${{ secrets.CFOS_DEPLOY_CREDENTIALS }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           deployment_summary() {
             python - <<'PY'
@@ -76,6 +76,8 @@ jobs:
           output = path.read_text(errors='replace') if path.exists() else 'No deployment output.'
           for value in json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS']).values():
               output = output.replace(value, '***')
+          if os.environ.get('CLOUDFLARE_API_TOKEN'):
+              output = output.replace(os.environ['CLOUDFLARE_API_TOKEN'], '***')
           output = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', output)
           Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('```text\n' + '\n'.join(output.splitlines()[-200:]) + '\n```\n')
           PY
@@ -86,13 +88,14 @@ jobs:
       - name: Inspect deployed Workers, bindings, secrets, and public endpoints
         env:
           CFOS_DEPLOY_CREDENTIALS: ${{ secrets.CFOS_DEPLOY_CREDENTIALS }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           python - <<'PY'
           import json, os, urllib.request, urllib.error
           from pathlib import Path
           try:
               credentials = json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS'])
-              token = credentials['CLOUDFLARE_API_TOKEN']
+              token = os.environ.get('CLOUDFLARE_API_TOKEN') or credentials['CLOUDFLARE_API_TOKEN']
           except Exception:
               raise SystemExit('The private deployment secret is missing or malformed; no values were printed.')
           for value in credentials.values():

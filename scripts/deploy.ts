@@ -909,11 +909,12 @@ async function main(): Promise<void> {
         JSON.stringify(generatedConfig, null, 2) + "\n");
     }
     const check = process.argv.includes("--check");
+    // Existing upstream suites import generated configurator assets from the full build.
+    build(config);
     // Verification runs only the existing upstream suites.
     if (check && !process.argv.includes("--skip-tests")) {
       run(["test"], root, { ...process.env, VITE_CF_ACCESS_MODE: "false" });
     }
-    build(config);
     // Optional first-deploy secret installation: per-Worker contract validation, one temporary
     // file per Worker outside the repository, the installed Wrangler's `secret bulk`. Draft
     // Workers receive their credentials BEFORE the deploy so the first deploy succeeds. A dry

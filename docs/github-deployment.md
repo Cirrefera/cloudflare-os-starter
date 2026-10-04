@@ -38,3 +38,10 @@ browser consent flow after deployment.
 GitHub Actions must be enabled for the repository. Runner access, secret configuration,
 Cloudflare token permissions, live deployment and browser consent are not established by
 local build checks or a successful Git push.
+# Replacing the deployment token
+
+Store a replacement operator token as the separate repository secret `CLOUDFLARE_API_TOKEN`.
+The workflow prefers that token over the deployment token inside `CFOS_DEPLOY_CREDENTIALS`;
+the existing Snowflake and Gatekeeper inputs stay in their original secret.
+Use Cloudflare's **Edit Cloudflare Workers** token template, scoped to the configured account
+`9ae12807d5b18bf3d1bcbe38b9050e05`.

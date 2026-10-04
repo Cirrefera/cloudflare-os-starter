@@ -27,6 +27,10 @@ try {
 } catch {
   throw new Error("CFOS_DEPLOY_CREDENTIALS must contain all six named deployment fields as nonempty strings. Values were not printed.");
 }
+// A separately stored operator token can be replaced without re-entering provider credentials.
+if (!validateOnly && process.env.CLOUDFLARE_API_TOKEN?.trim()) {
+  values.CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN.trim();
+}
 const config = validateConfig(parse(readFileSync(join(root, "deployment.jsonc"), "utf8")));
 const sources = secretContracts(config).map(contract => {
   let source: Record<string, string> = {};
