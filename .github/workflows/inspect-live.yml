@@ -1,0 +1,86 @@
+name: Inspect live Cloudflare OS
+
+on:
+  push:
+    branches: [codex/verify-20261004]
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Read deployed service configuration and public endpoint status
+        env:
+          CFOS_DEPLOY_CREDENTIALS: ${{ secrets.CFOS_DEPLOY_CREDENTIALS }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error, urllib.parse
+          from pathlib import Path
+          credentials = json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS'])
+          token = credentials['CLOUDFLARE_API_TOKEN']
+          account = '9ae12807d5b18bf3d1bcbe38b9050e05'
+          origin = 'https://hellgate-os-router.mchayes89.workers.dev'
+          report = {'configured_origin': origin, 'requests': {}}
+          def api(path):
+              req = urllib.request.Request('https://api.cloudflare.com/client/v4/accounts/' + account + path,
+                  headers={'Authorization': 'Bearer ' + token})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      data = json.load(response)
+                  report['requests'][path] = {'http_status': response.status, 'success': data.get('success', False)}
+                  return data.get('result') if data.get('success') else None
+              except urllib.error.HTTPError as error:
+                  report['requests'][path] = {'http_status': error.code}
+              except Exception:
+                  report['requests'][path] = {'error': 'request failed'}
+              return None
+          subdomain = api('/workers/subdomain')
+          if subdomain:
+              report['workers_subdomain'] = subdomain.get('subdomain')
+          workers = api('/workers/scripts')
+          if workers is not None:
+              report['os_workers'] = sorted(w['id'] for w in workers if w['id'].startswith('hellgate-os-'))
+          report['services'] = {}
+          for name in ['hellgate-os-router', 'hellgate-os-workshop']:
+              settings = api('/workers/scripts/' + name + '/settings')
+              if settings:
+                  report['services'][name] = {b['name']: b.get('service') for b in settings.get('bindings', []) if b.get('type') == 'service'}
+          report['secret_names'] = {}
+          for integration in ['snowflake', 'cloudflareaccount']:
+              secrets = api('/workers/scripts/hellgate-os-gatekeeper-' + integration + '/secrets')
+              if secrets is not None:
+                  report['secret_names'][integration] = sorted(s['name'] for s in secrets)
+          report['endpoints'] = {}
+          origins = {origin}
+          if report.get('workers_subdomain'):
+              origins.add('https://hellgate-os-router.' + report['workers_subdomain'] + '.workers.dev')
+          for host in sorted(origins):
+              for path in ['/', '/gatekeeper/huggingface/.well-known/oauth-cimd', '/gatekeeper/snowflake/oauth', '/gatekeeper/huggingface/oauth']:
+                  url = host + path
+                  try:
+                      with urllib.request.urlopen(url, timeout=20) as response:
+                          result = {'http_status': response.status, 'content_type': response.headers.get('Content-Type', ''), 'response_host': urllib.parse.urlparse(response.url).hostname}
+                          if path.endswith('oauth-cimd') and 'application/json' in result['content_type']:
+                              metadata = json.load(response)
+                              result['metadata'] = {k: metadata.get(k) for k in ['client_id', 'redirect_uris', 'token_endpoint_auth_method']}
+                      report['endpoints'][url] = result
+                  except urllib.error.HTTPError as error:
+                      report['endpoints'][url] = {'http_status': error.code}
+                  except Exception:
+                      report['endpoints'][url] = {'error': 'request failed'}
+          output = json.dumps(report, indent=2) + '\n'
+          if any(value in output for value in credentials.values()):
+              raise SystemExit('Credential match in status report; refusing to publish.')
+          Path('deployment-live-status.json').write_text(output)
+          PY
+      - name: Publish credential-free deployment status
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add deployment-live-status.json
+          git commit -m 'Record live Worker wiring and public endpoint status'
+          git push origin HEAD:refs/heads/codex/deployment-status-${{ github.run_id }}
