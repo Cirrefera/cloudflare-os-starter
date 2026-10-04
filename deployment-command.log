@@ -1,0 +1,500 @@
+2026-10-04T19:42:34.0638334Z   errorStack: 'Error: Workspace has been deleted.\n' +
+2026-10-04T19:42:34.0640337Z     '    at OverseerImpl.#ownerUserStub (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8085:30)\n' +
+2026-10-04T19:42:34.0642940Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8104:20\n' +
+2026-10-04T19:42:34.0646256Z     '    at retryOnDoReset (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/do-retry.ts:121:18)\n' +
+2026-10-04T19:42:34.0650110Z     '    at OverseerImpl.#listGatekeeperVendorsCached (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8103:19)\n' +
+2026-10-04T19:42:34.0653297Z     '    at OverseerImpl.listConnectableVendors (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8127:32)\n' +
+2026-10-04T19:42:34.0656217Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2658:42)\n' +
+2026-10-04T19:42:34.0659116Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.0662453Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.0666196Z     '    at runDescribeTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:114:18)\n' +
+2026-10-04T19:42:34.0669207Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:150:16',
+2026-10-04T19:42:34.0671349Z   message: 'failed to list connectable vendors'
+2026-10-04T19:42:34.0672222Z ***
+2026-10-04T19:42:34.0672656Z 
+2026-10-04T19:42:34.0674155Z stderr | __tests__/describe-binding.test.ts > describeBinding > replays recorded descriptions without describing again
+2026-10-04T19:42:34.0675688Z ***
+2026-10-04T19:42:34.0676552Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.0678235Z   gadgetId: 'b02a5e2c5d5d22e945408a6ab32001c7e1bc0a785a32dc758a8d28046dcdde7b',
+2026-10-04T19:42:34.0679601Z   event: 'instance.instructions.read.failed',
+2026-10-04T19:42:34.0680877Z   error: "TypeError: Cannot read properties of undefined (reading 'get')",
+2026-10-04T19:42:34.0682158Z   errorStack: "TypeError: Cannot read properties of undefined (reading 'get')\n" +
+2026-10-04T19:42:34.0692801Z     '    at readAdminConfig (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/admin-config.ts:354:48)\n' +
+2026-10-04T19:42:34.0695782Z     '    at OverseerImpl.getInstanceInstructions (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8116:21)\n' +
+2026-10-04T19:42:34.0698628Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2530:69)\n' +
+2026-10-04T19:42:34.0701168Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.0703682Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.0706180Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:162:20\n' +
+2026-10-04T19:42:34.0707894Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:35:5\n' +
+2026-10-04T19:42:34.0710139Z     '    at maybeHandleRunRequest (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:157:18)\n' +
+2026-10-04T19:42:34.0713051Z     '    at DurableObject.Wrapper.fetch (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:548:20)',
+2026-10-04T19:42:34.0714709Z   message: 'failed to read instance instructions'
+2026-10-04T19:42:34.0715106Z ***
+2026-10-04T19:42:34.0715246Z 
+2026-10-04T19:42:34.0715976Z stderr | __tests__/describe-binding.test.ts > describeBinding > replays recorded descriptions without describing again
+2026-10-04T19:42:34.0716652Z ***
+2026-10-04T19:42:34.0717007Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.0718245Z   gadgetId: 'b02a5e2c5d5d22e945408a6ab32001c7e1bc0a785a32dc758a8d28046dcdde7b',
+2026-10-04T19:42:34.0719232Z   event: 'formats.agent.list.failed',
+2026-10-04T19:42:34.0720933Z   error: "TypeError: Cannot read properties of undefined (reading 'get')",
+2026-10-04T19:42:34.0722479Z   errorStack: "TypeError: Cannot read properties of undefined (reading 'get')\n" +
+2026-10-04T19:42:34.0724708Z     '    at readAdminConfig (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/admin-config.ts:354:48)\n' +
+2026-10-04T19:42:34.0727488Z     '    at OverseerImpl.#listStandardFormats (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8324:53)\n' +
+2026-10-04T19:42:34.0730170Z     '    at OverseerImpl.describeStandardFormats (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8303:30)\n' +
+2026-10-04T19:42:34.0733152Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2654:39)\n' +
+2026-10-04T19:42:34.0735458Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.0739438Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.0742258Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:162:20\n' +
+2026-10-04T19:42:34.0744889Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:35:5\n' +
+2026-10-04T19:42:34.0748935Z     '    at maybeHandleRunRequest (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:157:18)\n' +
+2026-10-04T19:42:34.0753894Z     '    at DurableObject.Wrapper.fetch (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:548:20)',
+2026-10-04T19:42:34.0756617Z   message: 'failed to list standard formats for the agent'
+2026-10-04T19:42:34.0757500Z ***
+2026-10-04T19:42:34.0757708Z 
+2026-10-04T19:42:34.0758994Z stderr | __tests__/describe-binding.test.ts > describeBinding > replays recorded descriptions without describing again
+2026-10-04T19:42:34.0760175Z ***
+2026-10-04T19:42:34.0760736Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.0762357Z   gadgetId: 'b02a5e2c5d5d22e945408a6ab32001c7e1bc0a785a32dc758a8d28046dcdde7b',
+2026-10-04T19:42:34.0763386Z   event: 'connectable.vendors.list.failed',
+2026-10-04T19:42:34.0764186Z   error: 'Error: Workspace has been deleted.',
+2026-10-04T19:42:34.0765988Z   errorStack: 'Error: Workspace has been deleted.\n' +
+2026-10-04T19:42:34.0767992Z     '    at OverseerImpl.#ownerUserStub (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8085:30)\n' +
+2026-10-04T19:42:34.0770313Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8104:20\n' +
+2026-10-04T19:42:34.0772562Z     '    at retryOnDoReset (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/do-retry.ts:121:18)\n' +
+2026-10-04T19:42:34.0775113Z     '    at OverseerImpl.#listGatekeeperVendorsCached (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8103:19)\n' +
+2026-10-04T19:42:34.0778789Z     '    at OverseerImpl.listConnectableVendors (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8127:32)\n' +
+2026-10-04T19:42:34.0782362Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2658:42)\n' +
+2026-10-04T19:42:34.0784726Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.0787359Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.0790358Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:162:20\n' +
+2026-10-04T19:42:34.0793855Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:35:5',
+2026-10-04T19:42:34.0796269Z   message: 'failed to list connectable vendors'
+2026-10-04T19:42:34.0796860Z ***
+2026-10-04T19:42:34.0797057Z 
+2026-10-04T19:42:34.0869920Z stderr | __tests__/describe-binding.test.ts > describeBinding > elides descriptions from logs that predate recording them
+2026-10-04T19:42:34.0872994Z ***
+2026-10-04T19:42:34.0874629Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.0875792Z   gadgetId: '027cbff81696175358699095bbfd89cf4c1fb19cedac076969bb5ad18fc141cb',
+2026-10-04T19:42:34.0876868Z   event: 'instance.instructions.read.failed',
+2026-10-04T19:42:34.0878150Z   error: "TypeError: Cannot read properties of undefined (reading 'get')",
+2026-10-04T19:42:34.0879369Z   errorStack: "TypeError: Cannot read properties of undefined (reading 'get')\n" +
+2026-10-04T19:42:34.0881214Z     '    at readAdminConfig (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/admin-config.ts:354:48)\n' +
+2026-10-04T19:42:34.0883829Z     '    at OverseerImpl.getInstanceInstructions (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8116:21)\n' +
+2026-10-04T19:42:34.0886367Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2530:69)\n' +
+2026-10-04T19:42:34.0888984Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.0890576Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.0893053Z     '    at runDescribeTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:114:18)\n' +
+2026-10-04T19:42:34.0894886Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:169:5\n' +
+2026-10-04T19:42:34.0896443Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:35:5\n' +
+2026-10-04T19:42:34.0900142Z     '    at maybeHandleRunRequest (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:157:18)\n' +
+2026-10-04T19:42:34.0905125Z     '    at DurableObject.Wrapper.fetch (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:548:20)',
+2026-10-04T19:42:34.0908061Z   message: 'failed to read instance instructions'
+2026-10-04T19:42:34.0908694Z ***
+2026-10-04T19:42:34.0908895Z 
+2026-10-04T19:42:34.0910191Z stderr | __tests__/describe-binding.test.ts > describeBinding > elides descriptions from logs that predate recording them
+2026-10-04T19:42:34.0911424Z ***
+2026-10-04T19:42:34.0911991Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.0913050Z   gadgetId: '027cbff81696175358699095bbfd89cf4c1fb19cedac076969bb5ad18fc141cb',
+2026-10-04T19:42:34.0914078Z   event: 'formats.agent.list.failed',
+2026-10-04T19:42:34.0915032Z   error: "TypeError: Cannot read properties of undefined (reading 'get')",
+2026-10-04T19:42:34.0916592Z   errorStack: "TypeError: Cannot read properties of undefined (reading 'get')\n" +
+2026-10-04T19:42:34.0918554Z     '    at readAdminConfig (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/admin-config.ts:354:48)\n' +
+2026-10-04T19:42:34.0920904Z     '    at OverseerImpl.#listStandardFormats (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8324:53)\n' +
+2026-10-04T19:42:34.0922717Z     '    at OverseerImpl.describeStandardFormats (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8303:30)\n' +
+2026-10-04T19:42:34.0924129Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2654:39)\n' +
+2026-10-04T19:42:34.0925393Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.0926768Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.0928464Z     '    at runDescribeTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:114:18)\n' +
+2026-10-04T19:42:34.0930463Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:169:5\n' +
+2026-10-04T19:42:34.0932074Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:35:5\n' +
+2026-10-04T19:42:34.0934288Z     '    at maybeHandleRunRequest (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:157:18)',
+2026-10-04T19:42:34.0935828Z   message: 'failed to list standard formats for the agent'
+2026-10-04T19:42:34.0936249Z ***
+2026-10-04T19:42:34.0936382Z 
+2026-10-04T19:42:34.0937691Z stderr | __tests__/describe-binding.test.ts > describeBinding > elides descriptions from logs that predate recording them
+2026-10-04T19:42:34.0938677Z ***
+2026-10-04T19:42:34.0939211Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.0940204Z   gadgetId: '027cbff81696175358699095bbfd89cf4c1fb19cedac076969bb5ad18fc141cb',
+2026-10-04T19:42:34.0941227Z   event: 'connectable.vendors.list.failed',
+2026-10-04T19:42:34.0942015Z   error: 'Error: Workspace has been deleted.',
+2026-10-04T19:42:34.0942857Z   errorStack: 'Error: Workspace has been deleted.\n' +
+2026-10-04T19:42:34.0944689Z     '    at OverseerImpl.#ownerUserStub (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8085:30)\n' +
+2026-10-04T19:42:34.0946996Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8104:20\n' +
+2026-10-04T19:42:34.0949518Z     '    at retryOnDoReset (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/do-retry.ts:121:18)\n' +
+2026-10-04T19:42:34.0952159Z     '    at OverseerImpl.#listGatekeeperVendorsCached (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8103:19)\n' +
+2026-10-04T19:42:34.0955100Z     '    at OverseerImpl.listConnectableVendors (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8127:32)\n' +
+2026-10-04T19:42:34.0957719Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2658:42)\n' +
+2026-10-04T19:42:34.0960001Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.0962257Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.0964703Z     '    at runDescribeTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:114:18)\n' +
+2026-10-04T19:42:34.0966943Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:169:5',
+2026-10-04T19:42:34.0968419Z   message: 'failed to list connectable vendors'
+2026-10-04T19:42:34.0968950Z ***
+2026-10-04T19:42:34.0969127Z 
+2026-10-04T19:42:34.0970278Z stderr | __tests__/describe-binding.test.ts > describeBinding > elides descriptions from logs that predate recording them
+2026-10-04T19:42:34.0971330Z ***
+2026-10-04T19:42:34.0971846Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.0972835Z   gadgetId: '027cbff81696175358699095bbfd89cf4c1fb19cedac076969bb5ad18fc141cb',
+2026-10-04T19:42:34.0973814Z   event: 'instance.instructions.read.failed',
+2026-10-04T19:42:34.0974780Z   error: "TypeError: Cannot read properties of undefined (reading 'get')",
+2026-10-04T19:42:34.0975909Z   errorStack: "TypeError: Cannot read properties of undefined (reading 'get')\n" +
+2026-10-04T19:42:34.0978007Z     '    at readAdminConfig (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/admin-config.ts:354:48)\n' +
+2026-10-04T19:42:34.0980470Z     '    at OverseerImpl.getInstanceInstructions (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8116:21)\n' +
+2026-10-04T19:42:34.0982877Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2530:69)\n' +
+2026-10-04T19:42:34.0985059Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.0987611Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.0990088Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:181:20\n' +
+2026-10-04T19:42:34.0992433Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:35:5\n' +
+2026-10-04T19:42:34.0996291Z     '    at maybeHandleRunRequest (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:157:18)\n' +
+2026-10-04T19:42:34.1001650Z     '    at DurableObject.Wrapper.fetch (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:548:20)',
+2026-10-04T19:42:34.1004548Z   message: 'failed to read instance instructions'
+2026-10-04T19:42:34.1005155Z ***
+2026-10-04T19:42:34.1005356Z 
+2026-10-04T19:42:34.1006831Z stderr | __tests__/describe-binding.test.ts > describeBinding > elides descriptions from logs that predate recording them
+2026-10-04T19:42:34.1008192Z ***
+2026-10-04T19:42:34.1008739Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.1009751Z   gadgetId: '027cbff81696175358699095bbfd89cf4c1fb19cedac076969bb5ad18fc141cb',
+2026-10-04T19:42:34.1010713Z   event: 'formats.agent.list.failed',
+2026-10-04T19:42:34.1011676Z   error: "TypeError: Cannot read properties of undefined (reading 'get')",
+2026-10-04T19:42:34.1012872Z   errorStack: "TypeError: Cannot read properties of undefined (reading 'get')\n" +
+2026-10-04T19:42:34.1014787Z     '    at readAdminConfig (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/admin-config.ts:354:48)\n' +
+2026-10-04T19:42:34.1017538Z     '    at OverseerImpl.#listStandardFormats (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8324:53)\n' +
+2026-10-04T19:42:34.1019683Z     '    at OverseerImpl.describeStandardFormats (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8303:30)\n' +
+2026-10-04T19:42:34.1021084Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2654:39)\n' +
+2026-10-04T19:42:34.1022373Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.1023801Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.1025205Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:181:20\n' +
+2026-10-04T19:42:34.1026513Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:35:5\n' +
+2026-10-04T19:42:34.1029417Z     '    at maybeHandleRunRequest (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:157:18)\n' +
+2026-10-04T19:42:34.1032285Z     '    at DurableObject.Wrapper.fetch (home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:548:20)',
+2026-10-04T19:42:34.1033894Z   message: 'failed to list standard formats for the agent'
+2026-10-04T19:42:34.1034308Z ***
+2026-10-04T19:42:34.1034440Z 
+2026-10-04T19:42:34.1035189Z stderr | __tests__/describe-binding.test.ts > describeBinding > elides descriptions from logs that predate recording them
+2026-10-04T19:42:34.1035868Z ***
+2026-10-04T19:42:34.1036219Z   component: 'workshop.overseer',
+2026-10-04T19:42:34.1037029Z   gadgetId: '027cbff81696175358699095bbfd89cf4c1fb19cedac076969bb5ad18fc141cb',
+2026-10-04T19:42:34.1038117Z   event: 'connectable.vendors.list.failed',
+2026-10-04T19:42:34.1038612Z   error: 'Error: Workspace has been deleted.',
+2026-10-04T19:42:34.1039127Z   errorStack: 'Error: Workspace has been deleted.\n' +
+2026-10-04T19:42:34.1040331Z     '    at OverseerImpl.#ownerUserStub (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8085:30)\n' +
+2026-10-04T19:42:34.1041651Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8104:20\n' +
+2026-10-04T19:42:34.1042933Z     '    at retryOnDoReset (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/do-retry.ts:121:18)\n' +
+2026-10-04T19:42:34.1044381Z     '    at OverseerImpl.#listGatekeeperVendorsCached (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8103:19)\n' +
+2026-10-04T19:42:34.1045915Z     '    at OverseerImpl.listConnectableVendors (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/overseer.ts:8127:32)\n' +
+2026-10-04T19:42:34.1047605Z     '    at runAgentPass (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:2658:42)\n' +
+2026-10-04T19:42:34.1048919Z     '    at runAgent (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/agent.ts:1180:19)\n' +
+2026-10-04T19:42:34.1050329Z     '    at runScriptedTurn (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:74:3)\n' +
+2026-10-04T19:42:34.1051793Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:181:20\n' +
+2026-10-04T19:42:34.1053151Z     '    at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/describe-binding.test.ts:35:5',
+2026-10-04T19:42:34.1054071Z   message: 'failed to list connectable vendors'
+2026-10-04T19:42:34.1054469Z ***
+2026-10-04T19:42:34.1054600Z 
+2026-10-04T19:42:34.1055180Z  ✓ __tests__/describe-binding.test.ts (3 tests) 174ms
+2026-10-04T19:42:34.7312716Z  ✓ __tests__/workshop-restricted-web-fetch.test.ts (1 test) 2706ms
+2026-10-04T19:42:34.7316096Z    ✓ refuses a web fetch once the workspace has read restricted data  365ms
+2026-10-04T19:42:40.9260303Z  ✓ __tests__/authorize-observation-flags.test.ts (4 tests) 40ms
+2026-10-04T19:42:41.4307811Z  ✓ __tests__/chat-attachment-validation.test.ts (14 tests) 9ms
+2026-10-04T19:42:43.8409491Z uncaught exception; source = Uncaught (in promise); stack = Error: Search query must be at most 1000 characters with no line breaks.
+2026-10-04T19:42:43.8412040Z     at UserDirectoryDurableObject.searchUsers (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/user-directory.ts:49:13)
+2026-10-04T19:42:43.8414182Z     at home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:365:47
+2026-10-04T19:42:43.8431003Z uncaught exception; source = Uncaught (in promise); stack = Error: Search query must be at most 1000 characters with no line breaks.
+2026-10-04T19:42:43.8433902Z     at UserDirectoryDurableObject.searchUsers (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/user-directory.ts:49:13)
+2026-10-04T19:42:43.8437366Z     at home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:365:47
+2026-10-04T19:42:43.8533883Z uncaught exception; source = Uncaught (in promise); stack = Error: Search query must be at most 1000 characters with no line breaks.
+2026-10-04T19:42:43.8535152Z     at UserDirectoryDurableObject.searchUsers (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/user-directory.ts:49:13)
+2026-10-04T19:42:43.8537275Z     at home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:365:47
+2026-10-04T19:42:43.8628314Z uncaught exception; source = Uncaught (in promise); stack = Error: At most 1000 users can be excluded from a search.
+2026-10-04T19:42:43.8630262Z     at UserDirectoryDurableObject.searchUsers (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/user-directory.ts:54:13)
+2026-10-04T19:42:43.8633004Z     at home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/@cloudflare+vitest-pool-workers@0.22.0_@cloudflare+workers-types@5.20260924.1_@types+no_3201f8d0fd985cd0d7566e5c1ae0c246/node_modules/@cloudflare/vitest-pool-workers/dist/worker/lib/cloudflare/test-internal.mjs:365:47
+2026-10-04T19:42:43.8833257Z  ✓ __tests__/user-directory.test.ts (7 tests) 120ms
+2026-10-04T19:42:44.3666901Z stderr | __tests__/agent-catalog.test.ts > normalizeAgentCatalog > truncates to the maximum entry count
+2026-10-04T19:42:44.3668531Z ***
+2026-10-04T19:42:44.3669080Z   component: 'workshop.agent.catalog',
+2026-10-04T19:42:44.3669767Z   event: 'agent.catalog.truncated',
+2026-10-04T19:42:44.3670307Z   size: 1005,
+2026-10-04T19:42:44.3670958Z   message: 'agent catalog exceeded the entry cap'
+2026-10-04T19:42:44.3671486Z ***
+2026-10-04T19:42:44.3671656Z 
+2026-10-04T19:42:44.3672916Z stderr | __tests__/agent-catalog.test.ts > normalizeAgentCatalog > drops from the tail in provider order, then sorts the survivors
+2026-10-04T19:42:44.3673667Z ***
+2026-10-04T19:42:44.3674047Z   component: 'workshop.agent.catalog',
+2026-10-04T19:42:44.3674509Z   event: 'agent.catalog.truncated',
+2026-10-04T19:42:44.3674912Z   size: 1001,
+2026-10-04T19:42:44.3675333Z   message: 'agent catalog exceeded the entry cap'
+2026-10-04T19:42:44.3675706Z ***
+2026-10-04T19:42:44.3675834Z 
+2026-10-04T19:42:44.3696044Z  ✓ __tests__/agent-catalog.test.ts (8 tests) 25ms
+2026-10-04T19:42:46.1206053Z  ✓ __tests__/agent-tool-results.test.ts (8 tests) 13ms
+2026-10-04T19:42:47.1265159Z  ✓ __tests__/workshop-agent-session-loss.test.ts (2 tests) 33593ms
+2026-10-04T19:42:47.1266555Z    ✓ reconnects when the session breaks mid-turn and reports what the agent did  414ms
+2026-10-04T19:42:47.1268233Z    ✓ fails the active turn once the session cannot be re-established  30406ms
+2026-10-04T19:42:47.1297781Z 
+2026-10-04T19:42:47.1309367Z  Test Files  37 passed (37)
+2026-10-04T19:42:47.1311265Z       Tests  164 passed | 1 expected fail (165)
+2026-10-04T19:42:47.1312617Z    Start at  19:40:39
+2026-10-04T19:42:47.1314003Z    Duration  127.60s (transform 1.25s, setup 0ms, import 52.01s, tests 182.46s, environment 5ms)
+2026-10-04T19:42:47.1314907Z 
+2026-10-04T19:42:47.1820585Z 
+2026-10-04T19:42:47.1823153Z ~/packages/mcp-shared$ gadgets-with-timeout --idle 60 --max 600 -- vitest run ⊘ cache disabled
+2026-10-04T19:42:47.6567722Z 
+2026-10-04T19:42:47.6579537Z  RUN  v4.1.11 /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/mcp-shared
+2026-10-04T19:42:48.5145061Z 
+2026-10-04T19:42:48.5146579Z  ✓ __tests__/account-endpoint.test.ts (33 tests) 130ms
+2026-10-04T19:42:48.6335569Z  ✓ __tests__/client-pagination.test.ts (44 tests) 466ms
+2026-10-04T19:42:49.1866310Z  ✓ __tests__/action-store.test.ts (22 tests) 243ms
+2026-10-04T19:42:49.4803295Z  ✓ __tests__/tools.test.ts (30 tests) 28ms
+2026-10-04T19:42:49.7559209Z  ✓ __tests__/scope.test.ts (37 tests) 19ms
+2026-10-04T19:42:50.0319429Z  ✓ __tests__/portal.test.ts (19 tests) 26ms
+2026-10-04T19:42:50.4073344Z  ✓ __tests__/session.test.ts (13 tests) 29ms
+2026-10-04T19:42:50.6251370Z stderr | __tests__/chat-model-data.test.ts > rehydrateStoredAssistantMessage > returns undefined when a tool-call record is missing
+2026-10-04T19:42:50.6301470Z ***
+2026-10-04T19:42:50.6391368Z   component: 'workshop.agent',
+2026-10-04T19:42:50.6464438Z   event: 'agent.model.data.rehydrate.failed',
+2026-10-04T19:42:50.6476699Z   chatId: 1,
+2026-10-04T19:42:50.6500354Z   sequence: 2,
+2026-10-04T19:42:50.6501013Z   toolCallId: 'call_2',
+2026-10-04T19:42:50.6502054Z   message: 'stored assistant message references unknown tool call'
+2026-10-04T19:42:50.6503049Z ***
+2026-10-04T19:42:50.6503473Z 
+2026-10-04T19:42:50.6504995Z  ✓ __tests__/chat-model-data.test.ts (5 tests) 22ms
+2026-10-04T19:42:50.8359494Z  ✓ __tests__/fetch.test.ts (17 tests) 159ms
+2026-10-04T19:42:51.1740673Z  ✓ __tests__/connection.test.ts (10 tests) 75ms
+2026-10-04T19:42:51.4658301Z  ✓ __tests__/facet.test.ts (9 tests) 13ms
+2026-10-04T19:42:51.7289468Z  ✓ __tests__/session-methods.test.ts (11 tests) 12ms
+2026-10-04T19:42:52.2899400Z  ✓ __tests__/oauth-discovery.test.ts (4 tests) 78ms
+2026-10-04T19:42:52.7821086Z  ✓ __tests__/credential-rejection.test.ts (10 tests) 57ms
+2026-10-04T19:42:53.1299273Z  ✓ __tests__/http.test.ts (6 tests) 51ms
+2026-10-04T19:42:53.3827640Z  ✓ __tests__/hydrated-tools.test.ts (5 tests) 20ms
+2026-10-04T19:42:53.6346547Z  ✓ __tests__/session-methods-e2e.test.ts (1 test) 8ms
+2026-10-04T19:42:53.9026144Z  ✓ __tests__/endpoint.test.ts (7 tests) 14ms
+2026-10-04T19:42:54.1549337Z  ✓ __tests__/tool-search.test.ts (6 tests) 8ms
+2026-10-04T19:42:54.4316503Z  ✓ __tests__/user.test.ts (2 tests) 12ms
+2026-10-04T19:42:54.6521416Z  ✓ __tests__/base-types.test.ts (1 test) 4ms
+2026-10-04T19:42:54.8989447Z  ✓ __tests__/sharing-policy.test.ts (1 test) 4ms
+2026-10-04T19:42:58.7299713Z  ✓ __tests__/schema-to-ts.test.ts (36 tests) 9481ms
+2026-10-04T19:42:58.7302143Z      ✓ keeps known tool overloads strict while accepting dynamic names  2211ms
+2026-10-04T19:42:58.7303817Z      ✓ maps JSON Schema constructs onto TypeScript  1617ms
+2026-10-04T19:42:58.7305534Z      ✓ widens conflicting additional properties enough to form valid TypeScript  1307ms
+2026-10-04T19:42:58.7307609Z      ✓ degrades malformed property schemas without losing valid siblings  1151ms
+2026-10-04T19:42:58.7309441Z      ✓ contains hostile comments and property names as inert declaration text  1224ms
+2026-10-04T19:42:58.7311193Z      ✓ does not let Unicode line separators break out of the header comment  974ms
+2026-10-04T19:42:58.7312631Z      ✓ bounds render fan-out so a small schema cannot hang catalog generation  981ms
+2026-10-04T19:42:58.7335832Z 
+2026-10-04T19:42:58.7360820Z  Test Files  22 passed (22)
+2026-10-04T19:42:58.7375843Z       Tests  324 passed (324)
+2026-10-04T19:42:58.7378089Z    Start at  19:42:47
+2026-10-04T19:42:58.7379451Z    Duration  11.07s (transform 1.16s, setup 0ms, import 2.79s, tests 10.94s, environment 3ms)
+2026-10-04T19:42:58.7380254Z 
+2026-10-04T19:42:58.8513123Z 
+2026-10-04T19:42:58.8514798Z ~/packages/gatekeeper-github$ gadgets-with-timeout --idle 60 --max 600 -- vitest run ⊘ cache disabled
+2026-10-04T19:42:59.3147681Z 
+2026-10-04T19:42:59.3153237Z  RUN  v4.1.11 /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github
+2026-10-04T19:42:59.3154323Z 
+2026-10-04T19:42:59.7805450Z  ✓ __tests__/git-transport.test.ts (35 tests) 95ms
+2026-10-04T19:43:00.0225619Z  ✓ __tests__/git-commits.test.ts (17 tests) 14ms
+2026-10-04T19:43:00.0532718Z  ✓ __tests__/git-diff.test.ts (24 tests) 360ms
+2026-10-04T19:43:00.2863798Z  ✓ __tests__/github-api.test.ts (16 tests) 41ms
+2026-10-04T19:43:00.2939216Z 
+2026-10-04T19:43:00.2948144Z  Test Files  4 passed (4)
+2026-10-04T19:43:00.2950537Z       Tests  92 passed (92)
+2026-10-04T19:43:00.2951507Z    Start at  19:42:59
+2026-10-04T19:43:00.2952760Z    Duration  971ms (transform 369ms, setup 0ms, import 461ms, tests 510ms, environment 0ms)
+2026-10-04T19:43:00.2953441Z 
+2026-10-04T19:43:00.3220897Z 
+2026-10-04T19:43:00.3222482Z ~/packages/gatekeeper-github$ gadgets-with-timeout --idle 60 --max 600 -- vitest run -c vitest.worker.config.ts ⊘ cache disabled
+2026-10-04T19:43:00.5089485Z  ✓ __tests__/resume-suspended-agent.test.ts (3 tests) 20ms
+2026-10-04T19:43:01.9722615Z  ✓ __tests__/gadget-export.test.ts (9 tests) 28ms
+2026-10-04T19:43:02.3092633Z 
+2026-10-04T19:43:02.3114459Z  RUN  v4.1.11 /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github
+2026-10-04T19:43:02.3115691Z 
+2026-10-04T19:43:04.2471860Z /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github/src/github.ts:1046:1: capnweb-validate: `ArrayCursor` is generic; unconstrained type parameters default to `any` and are not runtime-validated. Pass a concrete type argument (e.g. @validateRpc<ArrayCursor<string>>()) or constrain the parameter (`<T extends ...>`) to validate those positions.
+2026-10-04T19:43:04.2503909Z /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github/src/github.ts:1076:1: capnweb-validate: `StreamingCursor` is generic; unconstrained type parameters default to `any` and are not runtime-validated. Pass a concrete type argument (e.g. @validateRpc<StreamingCursor<string>>()) or constrain the parameter (`<T extends ...>`) to validate those positions.
+2026-10-04T19:43:04.2527982Z /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github/src/github.ts:1200:1: capnweb-validate: `AdvertisingCursor` is generic; unconstrained type parameters default to `any` and are not runtime-validated. Pass a concrete type argument (e.g. @validateRpc<AdvertisingCursor<string>>()) or constrain the parameter (`<T extends ...>`) to validate those positions.
+2026-10-04T19:43:04.8655591Z  ✓ __tests__/message-format-refs.test.ts (14 tests) 11ms
+2026-10-04T19:43:05.1854960Z [vitest-pool-workers] Failed to import "/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github/generated/github-issue-configurator-ui.txt?mf_vitest_force=Text" from "/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/vitest@4.1.11_@opentelemetry+api@1.9.1_@types+node@26.1.0_@vitest+browser-preview@5.0.1_cce3a19021d2ce15ddf7a6827eb3d4d9/node_modules/vitest/dist/module-evaluator.js". To resolve this, try bundling the relevant dependency with Vite. For more details, refer to https://developers.cloudflare.com/workers/testing/vitest-integration/known-issues/#module-resolution
+2026-10-04T19:43:05.1870860Z [vitest-pool-workers] Failed to import "/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github/generated/github-issue-configurator-ui.txt?mf_vitest_force=Text" from "/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/vitest@4.1.11_@opentelemetry+api@1.9.1_@types+node@26.1.0_@vitest+browser-preview@5.0.1_cce3a19021d2ce15ddf7a6827eb3d4d9/node_modules/vitest/dist/module-evaluator.js". To resolve this, try bundling the relevant dependency with Vite. For more details, refer to https://developers.cloudflare.com/workers/testing/vitest-integration/known-issues/#module-resolution
+2026-10-04T19:43:05.1881088Z Fallback service failed to fetch module; payload = ; spec = /?specifier=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fpackages%2Fgatekeeper-github%2Fgenerated%2Fgithub-issue-configurator-ui.txt%3Fmf_vitest_force%3DText&referrer=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fnode_modules%2F.pnpm%2Fvitest%404.1.11_%40opentelemetry%2Bapi%401.9.1_%40types%2Bnode%4026.1.0_%40vitest%2Bbrowser-preview%405.0.1_cce3a19021d2ce15ddf7a6827eb3d4d9%2Fnode_modules%2Fvitest%2Fdist%2Fmodule-evaluator.js&rawSpecifier=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fpackages%2Fgatekeeper-github%2Fgenerated%2Fgithub-issue-configurator-ui.txt%3Fmf_vitest_force%3DText
+2026-10-04T19:43:05.1902962Z Fallback service failed to fetch module; payload = ; spec = /?specifier=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fpackages%2Fgatekeeper-github%2Fgenerated%2Fgithub-issue-configurator-ui.txt%3Fmf_vitest_force%3DText&referrer=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fnode_modules%2F.pnpm%2Fvitest%404.1.11_%40opentelemetry%2Bapi%401.9.1_%40types%2Bnode%4026.1.0_%40vitest%2Bbrowser-preview%405.0.1_cce3a19021d2ce15ddf7a6827eb3d4d9%2Fnode_modules%2Fvitest%2Fdist%2Fmodule-evaluator.js&rawSpecifier=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fpackages%2Fgatekeeper-github%2Fgenerated%2Fgithub-issue-configurator-ui.txt%3Fmf_vitest_force%3DText
+2026-10-04T19:43:05.2025158Z  ❯ __tests__/workerd/pull-simulation.test.ts (0 test)
+2026-10-04T19:43:05.2029165Z  ❯ __tests__/workerd/push.test.ts (0 test)
+2026-10-04T19:43:05.4507067Z stderr | __tests__/slash-commands.test.ts > slash command helpers > isolates a provider catalog failure
+2026-10-04T19:43:05.4509178Z Failed to load slash commands for gatekeeper 2: Error: list failed
+2026-10-04T19:43:05.4511597Z     at Object.list (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/__tests__/slash-commands.test.ts:26:39)
+2026-10-04T19:43:05.4514031Z     at /home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/slash-commands.ts:26:37
+2026-10-04T19:43:05.4515341Z     at async Promise.all (index 1)
+2026-10-04T19:43:05.4517013Z     at collectSlashCommands (/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/workshop-backend/src/slash-commands.ts:22:18)
+2026-10-04T19:43:05.4518416Z 
+2026-10-04T19:43:05.5557623Z  ✓ __tests__/slash-commands.test.ts (5 tests) 134ms
+2026-10-04T19:43:05.9224541Z [vitest-pool-workers] Failed to import "/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github/generated/github-issue-configurator-ui.txt?mf_vitest_force=Text" from "/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/node_modules/.pnpm/vitest@4.1.11_@opentelemetry+api@1.9.1_@types+node@26.1.0_@vitest+browser-preview@5.0.1_cce3a19021d2ce15ddf7a6827eb3d4d9/node_modules/vitest/dist/module-evaluator.js". To resolve this, try bundling the relevant dependency with Vite. For more details, refer to https://developers.cloudflare.com/workers/testing/vitest-integration/known-issues/#module-resolution
+2026-10-04T19:43:05.9234935Z Fallback service failed to fetch module; payload = ; spec = /?specifier=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fpackages%2Fgatekeeper-github%2Fgenerated%2Fgithub-issue-configurator-ui.txt%3Fmf_vitest_force%3DText&referrer=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fnode_modules%2F.pnpm%2Fvitest%404.1.11_%40opentelemetry%2Bapi%401.9.1_%40types%2Bnode%4026.1.0_%40vitest%2Bbrowser-preview%405.0.1_cce3a19021d2ce15ddf7a6827eb3d4d9%2Fnode_modules%2Fvitest%2Fdist%2Fmodule-evaluator.js&rawSpecifier=%2Fhome%2Frunner%2Fwork%2Fcloudflare-os-starter%2Fcloudflare-os-starter%2Fcloudflare-os%2Fpackages%2Fgatekeeper-github%2Fgenerated%2Fgithub-issue-configurator-ui.txt%3Fmf_vitest_force%3DText
+2026-10-04T19:43:05.9321078Z  ❯ __tests__/workerd/session-git.test.ts (0 test)
+2026-10-04T19:43:05.9355782Z 
+2026-10-04T19:43:05.9357087Z ⎯⎯⎯⎯⎯⎯ Failed Suites 3 ⎯⎯⎯⎯⎯⎯⎯
+2026-10-04T19:43:05.9358009Z 
+2026-10-04T19:43:05.9363747Z  FAIL  __tests__/workerd/pull-simulation.test.ts [ __tests__/workerd/pull-simulation.test.ts ]
+2026-10-04T19:43:05.9365612Z  FAIL  __tests__/workerd/push.test.ts [ __tests__/workerd/push.test.ts ]
+2026-10-04T19:43:05.9369039Z  FAIL  __tests__/workerd/session-git.test.ts [ __tests__/workerd/session-git.test.ts ]
+2026-10-04T19:43:05.9373026Z Error: No such module "home/runner/work/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/packages/gatekeeper-github/generated/github-issue-configurator-ui.txt?mf_vitest_force=Text".
+2026-10-04T19:43:05.9376601Z ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+2026-10-04T19:43:05.9377406Z 
+2026-10-04T19:43:05.9379639Z 
+2026-10-04T19:43:05.9380426Z  Test Files  3 failed (3)
+2026-10-04T19:43:05.9381403Z       Tests  no tests
+2026-10-04T19:43:05.9383270Z    Start at  19:43:02
+2026-10-04T19:43:05.9384616Z    Duration  3.62s (transform 3.08s, setup 72ms, import 0ms, tests 0ms, environment 0ms)
+2026-10-04T19:43:05.9386802Z 
+2026-10-04T19:43:06.0427026Z 
+2026-10-04T19:43:06.0467047Z 
+2026-10-04T19:43:06.0474881Z ---
+2026-10-04T19:43:06.0476486Z vp run: 0/27 cache hit (0%), 2 failed. (Run `vp run --last-details` for full details)
+2026-10-04T19:43:06.1697415Z [ELIFECYCLE] Test failed. See above for more details.
+2026-10-04T19:43:06.2044558Z 
+2026-10-04T19:43:06.2045499Z Deploy failed. .: pnpm test failed. Its output is above.
+2026-10-04T19:43:06.2470252Z [ELIFECYCLE] Command failed with exit code 1.
+2026-10-04T19:43:06.2881388Z ##[group]Run deployment_summary() ***
+2026-10-04T19:43:06.2881797Z deployment_summary() ***
+2026-10-04T19:43:06.2882117Z   python - <<'PY'
+2026-10-04T19:43:06.2882410Z import json, os, re
+2026-10-04T19:43:06.2882708Z from pathlib import Path
+2026-10-04T19:43:06.2883091Z path = Path(os.environ['RUNNER_TEMP']) / 'cfos-deploy.log'
+2026-10-04T19:43:06.2883669Z output = path.read_text(errors='replace') if path.exists() else 'No deployment output.'
+2026-10-04T19:43:06.2884288Z for value in json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS']).values():
+2026-10-04T19:43:06.2884770Z     output = output.replace(value, '***')
+2026-10-04T19:43:06.2885180Z output = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', output)
+2026-10-04T19:43:06.2885809Z Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('```text\n' + '\n'.join(output.splitlines()[-200:]) + '\n```\n')
+2026-10-04T19:43:06.2886405Z PY
+2026-10-04T19:43:06.2886674Z ***
+2026-10-04T19:43:06.2886941Z trap deployment_summary EXIT
+2026-10-04T19:43:06.2887595Z node scripts/github-deploy.ts 2>&1 | tee "$RUNNER_TEMP/cfos-deploy.log"
+2026-10-04T19:43:06.2956015Z shell: /usr/bin/bash -e ***0***
+2026-10-04T19:43:06.2956338Z env:
+2026-10-04T19:43:06.2958114Z   CFOS_DEPLOY_CREDENTIALS: ***
+2026-10-04T19:43:06.2958424Z ##[endgroup]
+2026-10-04T19:43:07.8809322Z 
+2026-10-04T19:43:07.8810635Z  ⛅️ wrangler 4.147.0
+2026-10-04T19:43:07.8811754Z ────────────────────
+2026-10-04T19:43:07.8956722Z Getting User settings...
+2026-10-04T19:43:08.4452479Z 
+2026-10-04T19:43:08.4946990Z ✘ [ERROR] Failed to automatically retrieve account IDs for the logged in user.
+2026-10-04T19:43:08.4947916Z 
+2026-10-04T19:43:08.4949792Z   You may have incorrect permissions on your API token, or your authentication may have expired. Try running `wrangler login` to re-authenticate. You can also skip this account check by adding an `account_id` in your Wrangler configuration file, or by setting the value of CLOUDFLARE_ACCOUNT_ID
+2026-10-04T19:43:08.4951173Z 
+2026-10-04T19:43:08.4951179Z 
+2026-10-04T19:43:08.4974011Z 🪵  Logs were written to "/home/runner/.config/.wrangler/logs/wrangler-2026-10-04_19-43-07_550.log"
+2026-10-04T19:43:08.5350908Z file:///home/runner/work/cloudflare-os-starter/cloudflare-os-starter/scripts/github-deploy.ts:59
+2026-10-04T19:43:08.5352173Z   if (auth.error || auth.status !== 0) throw new Error("Cloudflare authentication failed; nothing was deployed.");
+2026-10-04T19:43:08.5353021Z                                              ^
+2026-10-04T19:43:08.5353445Z 
+2026-10-04T19:43:08.5353987Z Error: Cloudflare authentication failed; nothing was deployed.
+2026-10-04T19:43:08.5355184Z     at file:///home/runner/work/cloudflare-os-starter/cloudflare-os-starter/scripts/github-deploy.ts:59:46
+2026-10-04T19:43:08.5355852Z 
+2026-10-04T19:43:08.5356012Z Node.js v24.19.0
+2026-10-04T19:43:08.5737462Z ##[group]Run python - <<'PY'
+2026-10-04T19:43:08.5738267Z python - <<'PY'
+2026-10-04T19:43:08.5738788Z import json, os, urllib.request, urllib.error
+2026-10-04T19:43:08.5739312Z from pathlib import Path
+2026-10-04T19:43:08.5739719Z try:
+2026-10-04T19:43:08.5740245Z     credentials = json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS'])
+2026-10-04T19:43:08.5740909Z     token = credentials['CLOUDFLARE_API_TOKEN']
+2026-10-04T19:43:08.5741444Z except Exception:
+2026-10-04T19:43:08.5742246Z     raise SystemExit('The private deployment secret is missing or malformed; no values were printed.')
+2026-10-04T19:43:08.5743133Z for value in credentials.values():
+2026-10-04T19:43:08.5743671Z     print('::add-mask::' + value.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A'))
+2026-10-04T19:43:08.5744203Z account = '9ae12807d5b18bf3d1bcbe38b9050e05'
+2026-10-04T19:43:08.5744736Z origin = 'https://hellgate-os-router.mchayes89.workers.dev'
+2026-10-04T19:43:08.5745196Z results = []
+2026-10-04T19:43:08.5745488Z def report(message):
+2026-10-04T19:43:08.5745817Z     results.append(message)
+2026-10-04T19:43:08.5746164Z     print(message, flush=True)
+2026-10-04T19:43:08.5746722Z     Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('\n'.join('- ' + item for item in results) + '\n')
+2026-10-04T19:43:08.5747562Z def api(path):
+2026-10-04T19:43:08.5748152Z     request = urllib.request.Request('https://api.cloudflare.com/client/v4/accounts/' + account + path,
+2026-10-04T19:43:08.5748839Z         headers=***'Authorization': 'Bearer ' + token***)
+2026-10-04T19:43:08.5749256Z     try:
+2026-10-04T19:43:08.5749650Z         with urllib.request.urlopen(request, timeout=30) as response:
+2026-10-04T19:43:08.5750115Z             data = json.load(response)
+2026-10-04T19:43:08.5750518Z     except urllib.error.HTTPError as error:
+2026-10-04T19:43:08.5751165Z         raise SystemExit('Cloudflare inspection failed with HTTP ' + str(error.code) + '; no response body was printed.')
+2026-10-04T19:43:08.5751772Z     if not data.get('success'):
+2026-10-04T19:43:08.5752355Z         raise SystemExit('Cloudflare inspection returned an unsuccessful result; no response body was printed.')
+2026-10-04T19:43:08.5752938Z     return data['result']
+2026-10-04T19:43:08.5753381Z custom = ['snowflake', 'huggingface', 'cloudflareaccount', 'alphaxiv']
+2026-10-04T19:43:08.5754111Z expected = ***'hellgate-os-' + name for name in ['router', 'workshop', 'context', 'scheduler', 'gatekeeper', 'reporter']***
+2026-10-04T19:43:08.5754836Z expected.update('hellgate-os-gatekeeper-' + name for name in custom)
+2026-10-04T19:43:08.5755405Z installed = ***worker['id'] for worker in api('/workers/scripts')***
+2026-10-04T19:43:08.5755858Z missing = expected - installed
+2026-10-04T19:43:08.5756199Z if missing:
+2026-10-04T19:43:08.5756629Z     raise SystemExit('Missing deployed Workers: ' + ', '.join(sorted(missing)))
+2026-10-04T19:43:08.5757377Z report('All 10 configured Workers are deployed.')
+2026-10-04T19:43:08.5758053Z for worker, integrations in [('hellgate-os-workshop', custom), ('hellgate-os-router', ['snowflake', 'huggingface'])]:
+2026-10-04T19:43:08.5758774Z     bindings = api('/workers/scripts/' + worker + '/settings')['bindings']
+2026-10-04T19:43:08.5759502Z     services = ***binding.get('name'): binding.get('service') for binding in bindings if binding.get('type') == 'service'***
+2026-10-04T19:43:08.5760124Z     for integration in integrations:
+2026-10-04T19:43:08.5760702Z         if services.get('GATEKEEPER_' + integration.upper()) != 'hellgate-os-gatekeeper-' + integration:
+2026-10-04T19:43:08.5761712Z             raise SystemExit('Missing or incorrect ' + integration + ' binding on ' + worker)
+2026-10-04T19:43:08.5762457Z     report(worker + ': custom Gatekeeper service bindings verified.')
+2026-10-04T19:43:08.5763337Z for integration, required in [('snowflake', ***'SNOWFLAKE_ACCOUNT', 'SNOWFLAKE_ROLE', 'CLIENT_ID', 'CLIENT_SECRET'***), ('cloudflareaccount', ***'CLOUDFLARE_API_TOKEN'***)]:
+2026-10-04T19:43:08.5764351Z     names = ***secret['name'] for secret in api('/workers/scripts/hellgate-os-gatekeeper-' + integration + '/secrets')***
+2026-10-04T19:43:08.5764956Z     if not required <= names:
+2026-10-04T19:43:08.5765435Z         raise SystemExit('Required Worker secrets are missing for ' + integration)
+2026-10-04T19:43:08.5766109Z     report(integration + ': required Worker secret names verified; values were not retrieved.')
+2026-10-04T19:43:08.5766897Z with urllib.request.urlopen(origin + '/gatekeeper/huggingface/.well-known/oauth-cimd', timeout=30) as response:
+2026-10-04T19:43:08.5767634Z     metadata = json.load(response)
+2026-10-04T19:43:08.5768587Z if metadata.get('client_id') != origin + '/gatekeeper/huggingface/.well-known/oauth-cimd' or metadata.get('redirect_uris') != [origin + '/gatekeeper/huggingface/oauth'] or metadata.get('token_endpoint_auth_method') != 'none':
+2026-10-04T19:43:08.5769673Z     raise SystemExit('Hugging Face public OAuth metadata does not match the deployment.')
+2026-10-04T19:43:08.5770328Z report('Hugging Face public browser OAuth metadata is reachable and correct.')
+2026-10-04T19:43:08.5770869Z for integration in ['snowflake', 'huggingface']:
+2026-10-04T19:43:08.5771247Z     try:
+2026-10-04T19:43:08.5771691Z         urllib.request.urlopen(origin + '/gatekeeper/' + integration + '/oauth', timeout=30)
+2026-10-04T19:43:08.5772232Z     except urllib.error.HTTPError as error:
+2026-10-04T19:43:08.5772612Z         if error.code != 400:
+2026-10-04T19:43:08.5773151Z             raise SystemExit(integration + ' OAuth callback returned unexpected HTTP ' + str(error.code))
+2026-10-04T19:43:08.5773703Z     else:
+2026-10-04T19:43:08.5774159Z         raise SystemExit(integration + ' OAuth callback accepted an incomplete request.')
+2026-10-04T19:43:08.5774866Z     report(integration + ': browser OAuth callback is reachable and rejects an incomplete request.')
+2026-10-04T19:43:08.5775499Z with urllib.request.urlopen(origin, timeout=30) as response:
+2026-10-04T19:43:08.5775942Z     if response.status != 200:
+2026-10-04T19:43:08.5776391Z         raise SystemExit('The public frontend did not return HTTP 200.')
+2026-10-04T19:43:08.5776892Z report('The public OS frontend is reachable.')
+2026-10-04T19:43:08.5777732Z Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('\n'.join('- ' + item for item in results) + '\n')
+2026-10-04T19:43:08.5778256Z PY
+2026-10-04T19:43:08.5846950Z shell: /usr/bin/bash -e ***0***
+2026-10-04T19:43:08.5847391Z env:
+2026-10-04T19:43:08.5848996Z   CFOS_DEPLOY_CREDENTIALS: ***
+2026-10-04T19:43:08.5849312Z ##[endgroup]
+2026-10-04T19:43:09.2430070Z Missing deployed Workers: hellgate-os-context, hellgate-os-gatekeeper, hellgate-os-gatekeeper-alphaxiv, hellgate-os-gatekeeper-cloudflareaccount, hellgate-os-gatekeeper-huggingface, hellgate-os-gatekeeper-snowflake, hellgate-os-reporter, hellgate-os-router, hellgate-os-scheduler, hellgate-os-workshop
+2026-10-04T19:43:09.2542935Z ##[error]Process completed with exit code 1.
+2026-10-04T19:43:09.2681867Z Post job cleanup.
+2026-10-04T19:43:09.3509042Z [command]/usr/bin/git version
+2026-10-04T19:43:09.3551238Z git version 2.55.0
+2026-10-04T19:43:09.3595257Z Temporarily overriding HOME='/home/runner/work/_temp/975fc80c-bb97-4393-9400-1d8e8d80c4ec' before making global git config changes
+2026-10-04T19:43:09.3597326Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-04T19:43:09.3600382Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/cloudflare-os-starter/cloudflare-os-starter
+2026-10-04T19:43:09.3633120Z Removing SSH command configuration
+2026-10-04T19:43:09.3640063Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-04T19:43:09.3677869Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-04T19:43:09.3942844Z Removing HTTP extra header
+2026-10-04T19:43:09.3950015Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-04T19:43:09.3989982Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-04T19:43:09.4256802Z Removing includeIf entries pointing to credentials config files
+2026-10-04T19:43:09.4264513Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-04T19:43:09.4301411Z includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git.path
+2026-10-04T19:43:09.4303046Z includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path
+2026-10-04T19:43:09.4304351Z includeif.gitdir:/github/workspace/.git.path
+2026-10-04T19:43:09.4305423Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-04T19:43:09.4313354Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git.path
+2026-10-04T19:43:09.4342517Z /home/runner/work/_temp/git-credentials-f6b777bf-cbd7-47b7-98e6-105b3ea916d5.config
+2026-10-04T19:43:09.4353407Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-f6b777bf\-cbd7\-47b7\-98e6\-105b3ea916d5\.config
+2026-10-04T19:43:09.4395672Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path
+2026-10-04T19:43:09.4427629Z /home/runner/work/_temp/git-credentials-f6b777bf-cbd7-47b7-98e6-105b3ea916d5.config
+2026-10-04T19:43:09.4460945Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-f6b777bf\-cbd7\-47b7\-98e6\-105b3ea916d5\.config
+2026-10-04T19:43:09.4493121Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-04T19:43:09.4523119Z /github/runner_temp/git-credentials-f6b777bf-cbd7-47b7-98e6-105b3ea916d5.config
+2026-10-04T19:43:09.4532186Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-f6b777bf\-cbd7\-47b7\-98e6\-105b3ea916d5\.config
+2026-10-04T19:43:09.4579233Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-04T19:43:09.4608097Z /github/runner_temp/git-credentials-f6b777bf-cbd7-47b7-98e6-105b3ea916d5.config
+2026-10-04T19:43:09.4616424Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-f6b777bf\-cbd7\-47b7\-98e6\-105b3ea916d5\.config
+2026-10-04T19:43:09.4658402Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-04T19:43:09.4922484Z Removing credentials config '/home/runner/work/_temp/git-credentials-f6b777bf-cbd7-47b7-98e6-105b3ea916d5.config'
+2026-10-04T19:43:09.5086995Z Cleaning up orphan processes
