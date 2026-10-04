@@ -81,26 +81,27 @@ jobs:
           class NoRedirect(urllib.request.HTTPRedirectHandler):
               def redirect_request(self, request, file, code, message, headers, newurl):
                   return None
-          request = urllib.request.Request('https://api.github.com/repos/Cirrefera/cloudflare-os-starter/actions/jobs/111517700545/logs',
-              headers={'Authorization': 'Bearer ' + os.environ['GH_ACTION_TOKEN'], 'Accept': 'application/vnd.github+json'})
-          try:
+          for job, filename in [('111532074604', 'deployment-command.log'), ('111527297192', 'windows-verify.log'), ('111527297053', 'windows-ci.log')]:
+              request = urllib.request.Request(f'https://api.github.com/repos/Cirrefera/cloudflare-os-starter/actions/jobs/{job}/logs',
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_ACTION_TOKEN'], 'Accept': 'application/vnd.github+json'})
               try:
-                  response = urllib.request.build_opener(NoRedirect).open(request, timeout=30)
-                  logs = response.read().decode(errors='replace')
-              except urllib.error.HTTPError as error:
-                  if error.code != 302:
-                      raise
-                  logs = urllib.request.urlopen(error.headers['Location'], timeout=30).read().decode(errors='replace')
-              for value in list(credentials.values()) + [token, os.environ['GH_ACTION_TOKEN']]:
-                  for form in [value, urllib.parse.quote(value, safe=''), base64.b64encode(value.encode()).decode()]:
-                      logs = logs.replace(form, '***')
-              logs = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', logs)
-              logs = '\n'.join(logs.splitlines()[-500:]) + '\n'
-              if any(value in logs for value in credentials.values()):
-                  raise RuntimeError('Credential match')
-              Path('deployment-command.log').write_text(logs)
-          except Exception:
-              report['deployment_log'] = 'Could not retrieve credential-safe job log.'
+                  try:
+                      response = urllib.request.build_opener(NoRedirect).open(request, timeout=30)
+                      logs = response.read().decode(errors='replace')
+                  except urllib.error.HTTPError as error:
+                      if error.code != 302:
+                          raise
+                      logs = urllib.request.urlopen(error.headers['Location'], timeout=30).read().decode(errors='replace')
+                  for value in list(credentials.values()) + [token, os.environ['GH_ACTION_TOKEN']]:
+                      for form in [value, urllib.parse.quote(value, safe=''), base64.b64encode(value.encode()).decode()]:
+                          logs = logs.replace(form, '***')
+                  logs = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', logs)
+                  logs = '\n'.join(logs.splitlines()[-500:]) + '\n'
+                  if any(value in logs for value in credentials.values()):
+                      raise RuntimeError('Credential match')
+                  Path(filename).write_text(logs)
+              except Exception:
+                  report[filename] = 'Could not retrieve credential-safe job log.'
           Path('deployment-live-status.json').write_text(json.dumps(report, indent=2) + '\n')
           PY
       - name: Publish credential-free deployment status
@@ -108,6 +109,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add deployment-live-status.json
-          if [ -f deployment-command.log ]; then git add deployment-command.log; fi
+          for log in deployment-command.log windows-verify.log windows-ci.log; do
+            if [ -f "$log" ]; then git add "$log"; fi
+          done
           git commit -m 'Record live Worker wiring and public endpoint status'
           git push origin HEAD:refs/heads/codex/deployment-status-${{ github.run_id }}
