@@ -1,0 +1,500 @@
+2026-10-04T20:47:44.3361932Z   ✔ uses VITE_BACKEND_HOST as the public host and Wrangler port (11.7773ms)
+2026-10-04T20:47:44.3362870Z   ✔ uses --port as the public host and Wrangler port (0.4085ms)
+2026-10-04T20:47:44.3363564Z   ✔ accepts --port=value (2.5977ms)
+2026-10-04T20:47:44.3364163Z   ✔ rejects invalid arguments: --port (0.2128ms)
+2026-10-04T20:47:44.3364859Z   ✔ rejects invalid arguments: --port nope (0.1112ms)
+2026-10-04T20:47:44.3365538Z   ✔ rejects invalid arguments: --port=0 (0.1408ms)
+2026-10-04T20:47:44.3366262Z   ✔ rejects invalid arguments: --port=65536 (0.2532ms)
+2026-10-04T20:47:44.3366990Z ✔ getDevServerConfig (18.613ms)
+2026-10-04T20:47:44.3367539Z ▶ build-time env passthrough
+2026-10-04T20:47:44.3368077Z   ✔ uses only known categories (1.5856ms)
+2026-10-04T20:47:44.3369170Z   ✔ accounts for every build-time env read in the workspace (505.0103ms)
+2026-10-04T20:47:44.3370226Z   ✔ declares every forwarded variable on the task that reads it (3.3804ms)
+2026-10-04T20:47:44.3371316Z   ✔ keeps the tasks behind `uncached` variables actually uncached (0.6164ms)
+2026-10-04T20:47:44.3372170Z ✔ build-time env passthrough (512.8009ms)
+2026-10-04T20:47:44.9938036Z ✔ a commit that touches nothing a run executes, tests included, keeps every key (860.3189ms)
+2026-10-04T20:47:44.9942584Z ✔ a task edit changes only that task's key (819.7818ms)
+2026-10-04T20:47:44.9949383Z ✔ the Worker, the harness, the lockfile, shared helpers and admission change every key (5721.8827ms)
+2026-10-04T20:47:44.9953784Z ✔ the workflow's eval settings change every key (472.8257ms)
+2026-10-04T20:47:44.9956952Z ✔ only eval code changes a task's definition, not the product or the rest of the harness (3025.0434ms)
+2026-10-04T20:47:44.9960885Z ✔ a report change keeps every task key and changes the report key (779.363ms)
+2026-10-04T20:47:45.0086039Z ✔ a stored result is reused, and a key both sides share is measured once, by the candidate (3.0386ms)
+2026-10-04T20:47:45.0087420Z ✔ a push measures its one commit as the baseline (0.3041ms)
+2026-10-04T20:47:45.0088728Z ✔ with nothing to measure there are no legs or store, since an empty matrix fails the run (0.3642ms)
+2026-10-04T20:47:45.0090669Z ✔ a stored result is reused only if this repository stored it and it outlives the run, newest first (1.515ms)
+2026-10-04T20:47:45.0094000Z ✔ the posted comments are current only if the newest results comment has this key and a Bonk eval review follows it (0.8297ms)
+2026-10-04T20:47:45.0095723Z ✔ a new results comment replaces only earlier results comments and Bonk eval reviews (0.3887ms)
+2026-10-04T20:47:45.0096681Z ▶ killProcessTree
+2026-10-04T20:47:45.0098000Z   ✔ rejects a non-numeric pid rather than signalling a process group (21.7384ms)
+2026-10-04T20:47:45.0099747Z   ✔ rejects pids that would address process groups or only look numeric (22.0165ms)
+2026-10-04T20:47:45.0100793Z   ✔ resolves for a pid that is already gone (222.6756ms)
+2026-10-04T20:47:45.0101697Z   ✔ reaches a grandchild the wrapper's own death would hide (273.8097ms)
+2026-10-04T20:47:45.0102467Z ✔ killProcessTree (289.4137ms)
+2026-10-04T20:47:45.0103019Z ▶ killProcessTreeEscalating
+2026-10-04T20:47:45.0103707Z   ✔ SIGKILLs a descendant that ignored the SIGTERM (251.0142ms)
+2026-10-04T20:47:45.0104974Z   ✔ reaps a tree that goes down on the SIGTERM without waiting out the grace (246.9049ms)
+2026-10-04T20:47:45.0107344Z   ✔ escalates immediately when forceSignal aborts, instead of waiting out the grace (255.0502ms)
+2026-10-04T20:47:45.0108652Z   ✔ rejects pids that would address process groups (0.8134ms)
+2026-10-04T20:47:45.0109397Z ✔ killProcessTreeEscalating (265.7118ms)
+2026-10-04T20:47:45.0109928Z ▶ mapConcurrent
+2026-10-04T20:47:45.0110572Z   ✔ returns results in the input's order, not completion order (2.8243ms)
+2026-10-04T20:47:45.0111669Z   ✔ runs no more than `limit` tasks at a time (12.9323ms)
+2026-10-04T20:47:45.0112423Z   ✔ runs every remaining task after one rejects (1.4943ms)
+2026-10-04T20:47:45.0113120Z   ✔ rethrows a lone failure unwrapped (0.6084ms)
+2026-10-04T20:47:45.0113739Z   ✔ aggregates multiple failures (1.894ms)
+2026-10-04T20:47:45.0114670Z   ✔ stops claiming items on abort, awaits the tasks in flight, rejects with the reason (0.505ms)
+2026-10-04T20:47:45.0115540Z   ✔ rejects on an abort that cost it no items, with every task still succeeding (2.6431ms)
+2026-10-04T20:47:45.0116145Z   ✔ reports a task's own failure rather than the abort reason (0.4755ms)
+2026-10-04T20:47:45.0116574Z   ✔ accepts an empty list (0.287ms)
+2026-10-04T20:47:45.0116911Z   ✔ rejects a nonsensical limit (3.4233ms)
+2026-10-04T20:47:45.0117233Z ✔ mapConcurrent (29.9302ms)
+2026-10-04T20:47:45.0117499Z ▶ prefer-jsdoc
+2026-10-04T20:47:45.0117708Z   ▶ valid
+2026-10-04T20:47:45.0117979Z     ✔ // Explains an implementation detail.
+2026-10-04T20:47:45.0118283Z const value = 1; (17.7308ms)
+2026-10-04T20:47:45.0118693Z     ✔ /** Documents the public value. */
+2026-10-04T20:47:45.0119059Z export const value = 1; (6.6741ms)
+2026-10-04T20:47:45.0119428Z     ✔ // A detached module note.
+2026-10-04T20:47:45.0119608Z 
+2026-10-04T20:47:45.0119732Z export const value = 1; (0.6508ms)
+2026-10-04T20:47:45.0120110Z     ✔ // oxlint-disable-next-line no-warning-comments
+2026-10-04T20:47:45.0120460Z export const value = 1; (0.7853ms)
+2026-10-04T20:47:45.0120823Z     ✔ /// <reference path="./types.d.ts" />
+2026-10-04T20:47:45.0121155Z export const value = 1; (0.58ms)
+2026-10-04T20:47:45.0121523Z     ✔ // Re-export the canonical value.
+2026-10-04T20:47:45.0121860Z export { value }; (0.8775ms)
+2026-10-04T20:47:45.0122273Z     ✔ initialize(); // Explains initialization.
+2026-10-04T20:47:45.0122669Z export const value = 1; (1.0664ms)
+2026-10-04T20:47:45.0123031Z     ✔ /*! Retain this license. */
+2026-10-04T20:47:45.0123368Z export const value = 1; (0.9305ms)
+2026-10-04T20:47:45.0123703Z     ✔ /*@__PURE__*/
+2026-10-04T20:47:45.0124030Z export const value = makeValue(); (0.6505ms)
+2026-10-04T20:47:45.0124455Z     ✔ /*@__NO_SIDE_EFFECTS__*/
+2026-10-04T20:47:45.0124779Z export function value() {} (1.4601ms)
+2026-10-04T20:47:45.0125109Z     ✔ interface Internal {
+2026-10-04T20:47:45.0125396Z   // Internal property.
+2026-10-04T20:47:45.0125649Z   value: number;
+2026-10-04T20:47:45.0125898Z } (1.9345ms)
+2026-10-04T20:47:45.0126250Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0126542Z   // Private state.
+2026-10-04T20:47:45.0126805Z   private value = 1;
+2026-10-04T20:47:45.0127061Z } (1.2678ms)
+2026-10-04T20:47:45.0127369Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0127652Z   #read(): {
+2026-10-04T20:47:45.0127927Z     // Private result.
+2026-10-04T20:47:45.0129090Z     value: number;
+2026-10-04T20:47:45.0129371Z   } { return { value: 1 }; }
+2026-10-04T20:47:45.0129657Z } (1.5442ms)
+2026-10-04T20:47:45.0130000Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0130315Z   run(): void {
+2026-10-04T20:47:45.0130606Z     const local: {
+2026-10-04T20:47:45.0130862Z       // Local value.
+2026-10-04T20:47:45.0131083Z       value: number;
+2026-10-04T20:47:45.0131287Z     } = { value: 1 };
+2026-10-04T20:47:45.0131946Z   }
+2026-10-04T20:47:45.0132180Z } (0.7004ms)
+2026-10-04T20:47:45.0132529Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0132866Z   constructor(
+2026-10-04T20:47:45.0133262Z     // Private state.
+2026-10-04T20:47:45.0133534Z     private value: number,
+2026-10-04T20:47:45.0133791Z   ) {}
+2026-10-04T20:47:45.0134021Z } (0.8358ms)
+2026-10-04T20:47:45.0134322Z     ✔ export function run() {
+2026-10-04T20:47:45.0134623Z   return {} as {
+2026-10-04T20:47:45.0134860Z     // Local value.
+2026-10-04T20:47:45.0135118Z     value: number;
+2026-10-04T20:47:45.0135384Z   };
+2026-10-04T20:47:45.0135612Z } (0.6285ms)
+2026-10-04T20:47:45.0135928Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0136267Z   constructor(private value: {
+2026-10-04T20:47:45.0136602Z     // Private nested state.
+2026-10-04T20:47:45.0136886Z     nested: number;
+2026-10-04T20:47:45.0137137Z   }) {}
+2026-10-04T20:47:45.0137366Z } (1.4188ms)
+2026-10-04T20:47:45.0137676Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0137992Z   accessor state = makeValue<{
+2026-10-04T20:47:45.0138324Z     // Initializer detail.
+2026-10-04T20:47:45.0138596Z     nested: number;
+2026-10-04T20:47:45.0138830Z   }>();
+2026-10-04T20:47:45.0139056Z } (0.8198ms)
+2026-10-04T20:47:45.0139334Z   ✔ valid (43.1194ms)
+2026-10-04T20:47:45.0139615Z   ▶ invalid
+2026-10-04T20:47:45.0139892Z     ✔ // The public value.
+2026-10-04T20:47:45.0140249Z export const value = 1; (2.3918ms)
+2026-10-04T20:47:45.0140623Z     ✔ // The public operation.
+2026-10-04T20:47:45.0140964Z // Throws when it cannot finish.
+2026-10-04T20:47:45.0141339Z export function run(): void {} (0.5323ms)
+2026-10-04T20:47:45.0141713Z     ✔ // The public contract.
+2026-10-04T20:47:45.0142053Z export interface Contract {} (0.382ms)
+2026-10-04T20:47:45.0142476Z     ✔ // The default implementation.
+2026-10-04T20:47:45.0142862Z export default class Implementation {} (0.8431ms)
+2026-10-04T20:47:45.0143277Z     ✔ // A delimiter example: */.
+2026-10-04T20:47:45.0143623Z export const value = 1; (0.4645ms)
+2026-10-04T20:47:45.0143963Z     ✔ /* The public value. */
+2026-10-04T20:47:45.0144249Z export const value = 1; (0.4465ms)
+2026-10-04T20:47:45.0144573Z     ✔ export interface Contract {
+2026-10-04T20:47:45.0144875Z   // Runs the operation.
+2026-10-04T20:47:45.0145163Z   run(): void;
+2026-10-04T20:47:45.0145411Z } (0.8878ms)
+2026-10-04T20:47:45.0145700Z     ✔ export type Options = {
+2026-10-04T20:47:45.0145988Z   // Enables retries.
+2026-10-04T20:47:45.0146267Z   retry: boolean;
+2026-10-04T20:47:45.0146447Z }; (0.8188ms)
+2026-10-04T20:47:45.0146726Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0147019Z   // Runs the operation.
+2026-10-04T20:47:45.0147345Z   run(): void {}
+2026-10-04T20:47:45.0147590Z } (0.5941ms)
+2026-10-04T20:47:45.0147870Z     ✔ export enum Status {
+2026-10-04T20:47:45.0148160Z   // The operation completed.
+2026-10-04T20:47:45.0148438Z   Done,
+2026-10-04T20:47:45.0148694Z } (1.0308ms)
+2026-10-04T20:47:45.0148999Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0149289Z   run(): {
+2026-10-04T20:47:45.0149535Z     // Public result.
+2026-10-04T20:47:45.0149794Z     value: number;
+2026-10-04T20:47:45.0150059Z   } { return { value: 1 }; }
+2026-10-04T20:47:45.0150322Z } (0.7777ms)
+2026-10-04T20:47:45.0150666Z     ✔ export abstract class PublicClass {
+2026-10-04T20:47:45.0150998Z   // Runs the operation.
+2026-10-04T20:47:45.0151258Z   abstract run(): void;
+2026-10-04T20:47:45.0151500Z   // Public state.
+2026-10-04T20:47:45.0152125Z   abstract value: number;
+2026-10-04T20:47:45.0152541Z } (1.0442ms)
+2026-10-04T20:47:45.0152907Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0153197Z   // Public state.
+2026-10-04T20:47:45.0153459Z   accessor value = 1;
+2026-10-04T20:47:45.0153718Z } (0.413ms)
+2026-10-04T20:47:45.0154026Z     ✔ export class PublicClass {
+2026-10-04T20:47:45.0154323Z   constructor(
+2026-10-04T20:47:45.0154594Z     // Public state.
+2026-10-04T20:47:45.0154865Z     public value: number,
+2026-10-04T20:47:45.0155121Z   ) {}
+2026-10-04T20:47:45.0155351Z } (0.4154ms)
+2026-10-04T20:47:45.0155622Z   ✔ invalid (11.947ms)
+2026-10-04T20:47:45.0155954Z ✔ prefer-jsdoc (55.8085ms)
+2026-10-04T20:47:45.0156398Z ▶ self-contained-agent-types
+2026-10-04T20:47:45.0156751Z   ▶ valid
+2026-10-04T20:47:45.0157043Z     ✔ export interface Cursor<T> {
+2026-10-04T20:47:45.0157378Z   next(): Promise<T[] | null>;
+2026-10-04T20:47:45.0157657Z } (6.4077ms)
+2026-10-04T20:47:45.0157945Z     ✔ interface Cursor<T> {}
+2026-10-04T20:47:45.0158280Z export type { Cursor }; (0.3735ms)
+2026-10-04T20:47:45.0158759Z     ✔ import type { RpcTarget } from "cloudflare:workers";
+2026-10-04T20:47:45.0159212Z export interface Session extends RpcTarget {} (1.2577ms)
+2026-10-04T20:47:45.0159599Z     ✔ /// <reference lib="es2024" />
+2026-10-04T20:47:45.0159896Z export interface Session {} (0.6565ms)
+2026-10-04T20:47:45.0160162Z     ✔ /**
+2026-10-04T20:47:45.0160375Z  * import { Helper } from "./helper";
+2026-10-04T20:47:45.0160621Z  */
+2026-10-04T20:47:45.0160851Z export interface Session {} (0.3811ms)
+2026-10-04T20:47:45.0161231Z     ✔ import type { ReadSession } from "./read-types";
+2026-10-04T20:47:45.0161651Z export interface Session extends ReadSession {} (1.1283ms)
+2026-10-04T20:47:45.0161997Z   ✔ valid (10.6765ms)
+2026-10-04T20:47:45.0162214Z   ▶ invalid
+2026-10-04T20:47:45.0162567Z     ✔ import { Cursor } from "@gadgets/workshop-shared/gatekeeper";
+2026-10-04T20:47:45.0162942Z export type { Cursor }; (0.8579ms)
+2026-10-04T20:47:45.0163400Z     ✔ export type { Cursor } from "@gadgets/workshop-shared/gatekeeper"; (0.5462ms)
+2026-10-04T20:47:45.0163883Z     ✔ export * from "./other-types"; (0.6033ms)
+2026-10-04T20:47:45.0164304Z     ✔ export type Page = import("./other-types").Page; (0.7764ms)
+2026-10-04T20:47:45.0164711Z     ✔ import shared = require("./shared");
+2026-10-04T20:47:45.0165026Z export type Page = shared.Page; (0.8634ms)
+2026-10-04T20:47:45.0165412Z     ✔ /// <reference types="@cloudflare/workers-types" />
+2026-10-04T20:47:45.0165765Z export interface Session {} (0.5694ms)
+2026-10-04T20:47:45.0166093Z     ✔ /// <reference path="./other.d.ts" />
+2026-10-04T20:47:45.0166406Z export interface Session {} (0.4375ms)
+2026-10-04T20:47:45.0166727Z     ✔ import type { A } from "./a";
+2026-10-04T20:47:45.0167019Z import type { B } from "./b"; (0.5358ms)
+2026-10-04T20:47:45.0167309Z   ✔ invalid (5.7426ms)
+2026-10-04T20:47:45.0167614Z ✔ self-contained-agent-types (16.6924ms)
+2026-10-04T20:47:45.0167901Z ▶ pnpmCommand
+2026-10-04T20:47:45.0168257Z   ✔ runs pnpm's own entry point through node on Windows (2.419ms)
+2026-10-04T20:47:45.0168718Z   ✔ recognises a .cjs entry as well as .mjs (0.3242ms)
+2026-10-04T20:47:45.0169244Z   ✔ passes arguments through untouched, including one containing a space (0.2661ms)
+2026-10-04T20:47:45.0169848Z   ✔ rejects npm's CLI rather than using the wrong package manager (0.2421ms)
+2026-10-04T20:47:45.0170417Z   ✔ falls back to bare pnpm when npm_execpath is absent or empty (0.3436ms)
+2026-10-04T20:47:45.0170932Z   ✔ leaves other platforms exactly as they were (0.2866ms)
+2026-10-04T20:47:45.0171294Z ✔ pnpmCommand (6.1916ms)
+2026-10-04T20:47:45.0179606Z CF_AI_GATEWAY is unset, so CF_AI_GATEWAY_ACCOUNT_ID will be ignored: the preview will ask each user for their own model API keys.
+2026-10-04T20:47:45.0180659Z PREVIEW_GITHUB_CLIENT_ID is unset: gatekeeper-github is deployed unconfigured, and connecting it in this preview will fail.
+2026-10-04T20:47:45.0181367Z ✔ preview names are slugified (2.2517ms)
+2026-10-04T20:47:45.0181861Z ✔ over-long preview names truncate to a stable hashed form (1.2468ms)
+2026-10-04T20:47:45.0182694Z ✔ the preview name cap leaves every provisioned bucket inside R2's limit (14.8716ms)
+2026-10-04T20:47:45.0183364Z ✔ PREVIEW_NAME is what CI passes, and it wins over the local git fallback (0.4368ms)
+2026-10-04T20:47:45.0184104Z ✔ the preview name carries the pull request number, so look-alike branches cannot collide (0.3411ms)
+2026-10-04T20:47:45.0184843Z ✔ the pull request number stays inside the name cap, and reads back out of it (0.4403ms)
+2026-10-04T20:47:45.0185602Z ✔ a reserved prefix shrinks the slug budget rather than overflowing it (0.3481ms)
+2026-10-04T20:47:45.0186289Z ✔ every deployable package gets a preview config, on the configured account (6.8989ms)
+2026-10-04T20:47:45.0186937Z ✔ the router is the only worker with a public hostname (6.0342ms)
+2026-10-04T20:47:45.0187592Z ✔ the backend's per-preview resources carry no ids, so wrangler provisions them (7.6729ms)
+2026-10-04T20:47:45.0188227Z ✔ no config names a resource belonging to another deployment (5.6247ms)
+2026-10-04T20:47:45.0188790Z ✔ the backend is told the router's origin, and nothing else (4.5677ms)
+2026-10-04T20:47:45.0189413Z ✔ the backend's secrets are the admin list, the Access pair and the AI gateway (0.2692ms)
+2026-10-04T20:47:45.0190041Z ✔ the AI gateway is optional as a group, but not half-configured (1.6039ms)
+2026-10-04T20:47:45.0190678Z ✔ a preview that cannot use the binding transport needs the gateway token (0.5263ms)
+2026-10-04T20:47:45.0191249Z ✔ no generated config declares a secret's variable (5.0595ms)
+2026-10-04T20:47:45.0191777Z ✔ no generated config carries a secret's value anywhere (19.2752ms)
+2026-10-04T20:47:45.0192791Z ✔ every gatekeeper is bound to the backend by RPC and to the router by HTTP (6.6875ms)
+2026-10-04T20:47:45.0193413Z ✔ every gatekeeper is mounted under the router's origin (6.5014ms)
+2026-10-04T20:47:45.0194040Z ✔ each preview's context collections are namespaced to that preview (4.9569ms)
+2026-10-04T20:47:45.0194703Z ✔ a worker whose name diverges from its package directory is rejected (0.3359ms)
+2026-10-04T20:47:45.0195390Z ✔ an unrecognized deployable package is rejected rather than half-configured (0.2599ms)
+2026-10-04T20:47:45.0196007Z ✔ the target account has no default, in either direction (0.7667ms)
+2026-10-04T20:47:45.0196566Z ✔ the Access application has no default, in either direction (0.4289ms)
+2026-10-04T20:47:45.0197140Z ✔ a gatekeeper's OAuth app is optional, but never half of one (0.4832ms)
+2026-10-04T20:47:45.0197830Z ✔ every gatekeeper handed an OAuth app is a package that exists, and reads that pair (4.6261ms)
+2026-10-04T20:47:45.0198307Z ▶ registry policy
+2026-10-04T20:47:45.0198719Z   ✔ resolves every lockfile tarball from the public npm registry (14.3361ms)
+2026-10-04T20:47:45.0199335Z   ✔ configures the @cloudflare scope, and nothing else, in the root .npmrc (0.4165ms)
+2026-10-04T20:47:45.0199797Z ✔ registry policy (17.0722ms)
+2026-10-04T20:47:45.0200347Z ﹣ relayTermination (3.1755ms) # the relay and these signal fixtures are POSIX-only
+2026-10-04T20:47:45.0200865Z ✔ sha256Hex matches node crypto (2.0656ms)
+2026-10-04T20:47:45.0201373Z ✔ cfAssetHash is truncated sha256 of base64 content plus extension (0.5879ms)
+2026-10-04T20:47:45.0201998Z ✔ collectModules finds the main module and skips maps and READMEs (2.6359ms)
+2026-10-04T20:47:45.0202552Z ✔ collectModules fails on unrecognized file types (7.9371ms)
+2026-10-04T20:47:45.0203049Z ✔ collectModules requires exactly one ESM module (3.3582ms)
+2026-10-04T20:47:45.0203666Z ✔ collectAssets builds an upload-session-shaped manifest with deduped blobs (1.7168ms)
+2026-10-04T20:47:45.0204324Z ✔ stableStringify sorts object keys but preserves array order (0.3165ms)
+2026-10-04T20:47:45.0204916Z ✔ manifest generated from real configs matches the golden file (28.901ms)
+2026-10-04T20:47:45.0205558Z ✔ every $-token in binding templates and vars uses known placeholder syntax (18.8366ms)
+2026-10-04T20:47:45.0206127Z ✔ worker entries carry the deploy contract (20.6336ms)
+2026-10-04T20:47:45.0206755Z ✔ every gatekeeper shortName is a legal deploy slug (13.3169ms)
+2026-10-04T20:47:45.0207323Z ✔ installable gatekeepers that take no inputs are install-once (12.0987ms)
+2026-10-04T20:47:45.0207929Z ✔ releaseShortName folds package names into the slug charset (0.4054ms)
+2026-10-04T20:47:45.0208533Z ✔ releaseShortName rejects names that don't fold to a legal slug (0.8367ms)
+2026-10-04T20:47:45.0209039Z ✔ every gatekeeper shortName is unique (11.2375ms)
+2026-10-04T20:47:45.0209697Z ✔ generateManifest rejects gatekeepers whose folded shortNames collide (12.8146ms)
+2026-10-04T20:47:45.0210379Z ✔ per-package deploy-inputs.json files are well-formed when present (5.0948ms)
+2026-10-04T20:47:45.0210994Z ✔ a gatekeeper-prefixed library is not a deployable worker (4.1173ms)
+2026-10-04T20:47:45.0211550Z ✔ ciRunNumber parses CI ids and rejects everything else (4.3646ms)
+2026-10-04T20:47:45.0212089Z ✔ a higher published run number supersedes the candidate (0.3563ms)
+2026-10-04T20:47:45.0212971Z ✔ equal or lower run numbers do not supersede (0.3086ms)
+2026-10-04T20:47:45.0213483Z ✔ non-CI ids never participate in ordering, on either side (0.6391ms)
+2026-10-04T20:47:45.3425387Z ▶ withTestTimeout
+2026-10-04T20:47:45.3426290Z   ✔ wraps a bare command in the default thresholds (1.2338ms)
+2026-10-04T20:47:45.3427264Z   ✔ lets the object form raise only the idle threshold (0.1975ms)
+2026-10-04T20:47:45.3428197Z   ✔ never lets a command override the wall-clock backstop (0.3445ms)
+2026-10-04T20:47:45.3428645Z ✔ withTestTimeout (3.6505ms)
+2026-10-04T20:47:45.3428988Z ▶ the watchdog off switch
+2026-10-04T20:47:45.3429412Z   ✔ is declared in cache.env on every generated test task (0.515ms)
+2026-10-04T20:47:45.3429987Z   ✔ reaches every hand-declared cached task that wraps the watchdog (9.8228ms)
+2026-10-04T20:47:45.3430489Z   ✔ kills a silent child when unset (570.8802ms)
+2026-10-04T20:47:45.3430932Z   ✔ lets the child run to completion when set (1702.6099ms)
+2026-10-04T20:47:45.3431606Z ✔ the watchdog off switch (2284.8956ms)
+2026-10-04T20:47:45.3551984Z ▶ defaultConcurrencyLimit
+2026-10-04T20:47:45.3553667Z   ✔ 4 cpus / 16 GiB -> 4 (1.4701ms)
+2026-10-04T20:47:45.3554379Z   ✔ 4 cpus / 8 GiB -> 4 (0.1978ms)
+2026-10-04T20:47:45.3555854Z   ✔ 8 cpus / 16 GiB -> 8 (0.143ms)
+2026-10-04T20:47:45.3556485Z   ✔ 10 cpus / 32 GiB -> 10 (0.1453ms)
+2026-10-04T20:47:45.3557106Z   ✔ 16 cpus / 64 GiB -> 16 (0.1709ms)
+2026-10-04T20:47:45.3557710Z   ✔ 2 cpus / 4 GiB -> 4 (0.1425ms)
+2026-10-04T20:47:45.3558301Z   ✔ 64 cpus / 8 GiB -> 4 (0.2258ms)
+2026-10-04T20:47:45.3558930Z   ✔ 16 cpus / 24 GiB -> 12 (0.2667ms)
+2026-10-04T20:47:45.3559622Z   ✔ never goes below Vite+'s own default (0.3118ms)
+2026-10-04T20:47:45.3560340Z   ✔ budgets 2 GiB per task (0.3481ms)
+2026-10-04T20:47:45.3561258Z   ✔ lands on the floor inside a memory-limited container on a big host (0.2306ms)
+2026-10-04T20:47:45.3562199Z ✔ defaultConcurrencyLimit (6.26ms)
+2026-10-04T20:47:45.3563263Z ▶ effectiveMemoryBytes
+2026-10-04T20:47:45.3563835Z   ✔ no cgroup limit -> 32 GiB (0.2499ms)
+2026-10-04T20:47:45.3564516Z   ✔ limit above host memory -> 8 GiB (0.0764ms)
+2026-10-04T20:47:45.3565246Z   ✔ limit below host memory -> 4 GiB (0.0676ms)
+2026-10-04T20:47:45.3565851Z   ✔ zero -> 32 GiB (0.0629ms)
+2026-10-04T20:47:45.3566709Z   ✔ negative -> 32 GiB (0.0555ms)
+2026-10-04T20:47:45.3567986Z   ✔ NaN -> 32 GiB (0.0533ms)
+2026-10-04T20:47:45.3568515Z   ✔ Infinity -> 32 GiB (0.1341ms)
+2026-10-04T20:47:45.3569101Z ✔ effectiveMemoryBytes (1.119ms)
+2026-10-04T20:47:45.3570384Z ▶ cgroupMounts
+2026-10-04T20:47:45.3572621Z   ✔ canonical v2 at the cgroupfs root -> /sys/fs/cgroup / no v1 memory (2.0864ms)
+2026-10-04T20:47:45.3573988Z   ✔ hybrid cgroup2 beside a v1 memory controller -> /sys/fs/cgroup/unified / /sys/fs/cgroup/memory (0.9219ms)
+2026-10-04T20:47:45.3575993Z   ✔ v1 memory co-mounted under a joined name -> no v2 / /sys/fs/cgroup/cpu,memory (2.1832ms)
+2026-10-04T20:47:45.3578329Z   ✔ a line with no optional fields at all -> /sys/fs/cgroup / no v1 memory (0.7851ms)
+2026-10-04T20:47:45.3579880Z   ✔ a mount point carrying octal escapes -> /tmp/odd cgroup\dir / no v1 memory (0.7928ms)
+2026-10-04T20:47:45.3581161Z   ✔ a nested bind mount of the same hierarchy -> /sys/fs/cgroup / no v1 memory (0.8356ms)
+2026-10-04T20:47:45.3582184Z   ✔ no cgroup mounts at all -> no v2 / no v1 memory (0.9042ms)
+2026-10-04T20:47:45.3582982Z   ✔ unparseable junk -> no v2 / no v1 memory (0.849ms)
+2026-10-04T20:47:45.3583797Z   ✔ reports neither hierarchy when the file is absent (0.2293ms)
+2026-10-04T20:47:45.3584511Z ✔ cgroupMounts (9.9634ms)
+2026-10-04T20:47:45.3585034Z ▶ cgroupMemoryLimitBytes
+2026-10-04T20:47:45.3585570Z   ✔ reads a v2 memory.max (2.3095ms)
+2026-10-04T20:47:45.3586503Z   ✔ treats v2's `max` sentinel as no limit (2.0877ms)
+2026-10-04T20:47:45.3587078Z   ✔ takes the tightest ancestor, not the deepest cgroup (3.305ms)
+2026-10-04T20:47:45.3587672Z   ✔ reads a v1 memory.limit_in_bytes for the memory controller's own path (2.852ms)
+2026-10-04T20:47:45.3588303Z   ✔ returns v1's unlimited sentinel and lets the host clamp it (2.4721ms)
+2026-10-04T20:47:45.3588837Z   ✔ reports no limit when the controller files are absent (2.0309ms)
+2026-10-04T20:47:45.3589379Z   ✔ falls back to the root cgroup when /proc/self/cgroup is missing (1.4449ms)
+2026-10-04T20:47:45.3589962Z   ✔ finds a hybrid layout's cgroup2 mount away from the cgroupfs root (2.8199ms)
+2026-10-04T20:47:45.3590795Z   ✔ finds a v1 memory controller co-mounted under a joined name (3.8868ms)
+2026-10-04T20:47:45.3591377Z   ✔ falls back to the canonical layout when mountinfo is unreadable (2.5579ms)
+2026-10-04T20:47:45.3591887Z   ✔ reports no limit and reads nothing off Linux (1.6992ms)
+2026-10-04T20:47:45.3592302Z ✔ cgroupMemoryLimitBytes (27.9772ms)
+2026-10-04T20:47:45.3592632Z ▶ envFileConcurrencyLimit
+2026-10-04T20:47:45.3592927Z   ✔ reads a bare value (1.1511ms)
+2026-10-04T20:47:45.3593256Z   ✔ reads a export prefix value (0.8023ms)
+2026-10-04T20:47:45.3593603Z   ✔ reads a double quoted value (0.7816ms)
+2026-10-04T20:47:45.3593939Z   ✔ reads a single quoted value (0.9485ms)
+2026-10-04T20:47:45.3594269Z   ✔ reads a padded value (1.0589ms)
+2026-10-04T20:47:45.3594609Z   ✔ reads a after a comment value (2.7606ms)
+2026-10-04T20:47:45.3594964Z   ✔ reads a among other vars value (0.8117ms)
+2026-10-04T20:47:45.3595352Z   ✔ reports nothing when the file is absent (0.2741ms)
+2026-10-04T20:47:45.3595830Z   ✔ reports nothing when the file sets other variables only (0.9057ms)
+2026-10-04T20:47:45.3596483Z   ✔ passes a non-numeric value through untouched (1.001ms)
+2026-10-04T20:47:45.3597058Z   ✔ defaults to the repo-root .env, not the current directory (0.2356ms)
+2026-10-04T20:47:45.3597627Z ✔ envFileConcurrencyLimit (11.2786ms)
+2026-10-04T20:47:45.3598122Z ▶ concurrencyEnv
+2026-10-04T20:47:45.3598694Z   ✔ sets the variable when absent and says so (0.2533ms)
+2026-10-04T20:47:45.3599550Z   ✔ names the cgroup limit when that is what capped the memory (0.1095ms)
+2026-10-04T20:47:45.3600346Z   ✔ takes a .env value over the formula and says where it came from (0.1756ms)
+2026-10-04T20:47:45.3600869Z   ✔ lets a real environment value beat .env, silently (0.1412ms)
+2026-10-04T20:47:45.3601378Z   ✔ passes an unparseable .env value through for vp to report (0.1763ms)
+2026-10-04T20:47:45.3601920Z   ✔ leaves an existing value byte-identical and prints nothing (0.1202ms)
+2026-10-04T20:47:45.3602361Z   ✔ does not mutate the input (0.1984ms)
+2026-10-04T20:47:45.3602674Z ✔ concurrencyEnv (1.4691ms)
+2026-10-04T20:47:45.3602951Z ▶ overridesConcurrency
+2026-10-04T20:47:45.3603370Z   ✔ detects ["--concurrency-limit","2"] (0.2395ms)
+2026-10-04T20:47:45.3603775Z   ✔ detects ["--concurrency-limit=2"] (0.1045ms)
+2026-10-04T20:47:45.3604144Z   ✔ detects ["--parallel"] (0.0483ms)
+2026-10-04T20:47:45.3604684Z   ✔ detects ["--filter=!cloudflare-os","--cache","build","--concurrency-limit","2"] (0.0458ms)
+2026-10-04T20:47:45.3605316Z   ✔ detects ["--parallel","--filter=@gadgets/typed-storage","build"] (0.0408ms)
+2026-10-04T20:47:45.3605819Z   ✔ detects ["--concurrency-limit"] (0.0391ms)
+2026-10-04T20:47:45.3606136Z   ✔ ignores [] (0.0374ms)
+2026-10-04T20:47:45.3606420Z   ✔ ignores ["build"] (0.0491ms)
+2026-10-04T20:47:45.3606821Z   ✔ ignores ["--filter=!cloudflare-os","--cache","test"] (0.0449ms)
+2026-10-04T20:47:45.3607263Z   ✔ ignores ["--concurrency-limitx","2"] (0.0456ms)
+2026-10-04T20:47:45.3607652Z   ✔ ignores ["--concurrency-limit-ish=2"] (0.044ms)
+2026-10-04T20:47:45.3608010Z   ✔ ignores ["--no-parallel"] (0.0407ms)
+2026-10-04T20:47:45.3608407Z   ✔ detects ["build","--","--concurrency-limit"] (0.0393ms)
+2026-10-04T20:47:45.3608822Z   ✔ ignores ["--grep","--parallel-ish"] (0.0424ms)
+2026-10-04T20:47:45.3609193Z ✔ overridesConcurrency (1.2736ms)
+2026-10-04T20:47:45.3609457Z ▶ vpRunEnv
+2026-10-04T20:47:45.3609861Z   ✔ stays silent but still sets the variable when a flag overrides it (0.9372ms)
+2026-10-04T20:47:45.3610617Z   ✔ prints the note when no flag overrides it (0.2594ms)
+2026-10-04T20:47:45.3611076Z   ✔ prints the note when given no arguments at all (0.2248ms)
+2026-10-04T20:47:45.3611576Z   ✔ stays silent for an environment value, flag or no flag (0.3142ms)
+2026-10-04T20:47:45.3611968Z ✔ vpRunEnv (1.9078ms)
+2026-10-04T20:47:45.3612222Z ▶ splitConcurrencyLimit
+2026-10-04T20:47:45.3612522Z   ✔ divides evenly: 16 / 2 -> 8 (0.2576ms)
+2026-10-04T20:47:45.3612868Z   ✔ divides four ways: 16 / 4 -> 4 (0.1006ms)
+2026-10-04T20:47:45.3613285Z   ✔ floors at vp's default rather than 3: 6 / 2 -> 4 (0.0521ms)
+2026-10-04T20:47:45.3613815Z   ✔ never raises an explicit limit past what was asked: 3 / 2 -> 3 (0.0543ms)
+2026-10-04T20:47:45.3614288Z   ✔ one run is no division: 16 / 1 -> 16 (0.0701ms)
+2026-10-04T20:47:45.3614734Z   ✔ passes a non-numeric value through: abc / 2 -> abc (0.1107ms)
+2026-10-04T20:47:45.3615181Z   ✔ passes a fraction through: 2.5 / 2 -> 2.5 (0.085ms)
+2026-10-04T20:47:45.3615568Z   ✔ passes zero through: 0 / 2 -> 0 (0.0701ms)
+2026-10-04T20:47:45.3615939Z   ✔ leaves an unset variable unset (0.1041ms)
+2026-10-04T20:47:45.3616289Z   ✔ returns a copy, never the input (0.1032ms)
+2026-10-04T20:47:45.3616881Z ✔ splitConcurrencyLimit (1.3663ms)
+2026-10-04T20:47:45.3617185Z ▶ vpRunEnv concurrentRuns
+2026-10-04T20:47:45.3617481Z   ✔ divides evenly: 16 / 2 -> 8 (1.0151ms)
+2026-10-04T20:47:45.3617823Z   ✔ divides four ways: 16 / 4 -> 4 (0.2059ms)
+2026-10-04T20:47:45.3618254Z   ✔ floors at vp's default rather than 3: 6 / 2 -> 4 (0.1822ms)
+2026-10-04T20:47:45.3618780Z   ✔ never raises an explicit limit past what was asked: 3 / 2 -> 3 (0.1229ms)
+2026-10-04T20:47:45.3619278Z   ✔ one run is no division: 16 / 1 -> 16 (0.1105ms)
+2026-10-04T20:47:45.3619719Z   ✔ passes a non-numeric value through: abc / 2 -> abc (0.1091ms)
+2026-10-04T20:47:45.3620168Z   ✔ passes a fraction through: 2.5 / 2 -> 2.5 (0.2424ms)
+2026-10-04T20:47:45.3620540Z   ✔ passes zero through: 0 / 2 -> 0 (0.202ms)
+2026-10-04T20:47:45.3621029Z   ✔ divides the machine-derived limit and prints the whole budget once (0.7261ms)
+2026-10-04T20:47:45.3621662Z ✔ vpRunEnv concurrentRuns (3.4981ms)
+2026-10-04T20:47:45.3621999Z ℹ tests 321
+2026-10-04T20:47:45.3622191Z ℹ suites 40
+2026-10-04T20:47:45.3622380Z ℹ pass 318
+2026-10-04T20:47:45.3622574Z ℹ fail 3
+2026-10-04T20:47:45.3622761Z ℹ cancelled 0
+2026-10-04T20:47:45.3622957Z ℹ skipped 0
+2026-10-04T20:47:45.3623142Z ℹ todo 0
+2026-10-04T20:47:45.3623354Z ℹ duration_ms 15202.9825
+2026-10-04T20:47:45.3623495Z 
+2026-10-04T20:47:45.3623596Z ✖ failing tests:
+2026-10-04T20:47:45.3623717Z 
+2026-10-04T20:47:45.3624026Z test at scripts\build-bundled-blueprints.test.ts:173:3
+2026-10-04T20:47:45.3624656Z ✖ keeps what lives beside blueprint.json and files/ when importing an update (873.034ms)
+2026-10-04T20:47:45.3625232Z   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+2026-10-04T20:47:45.3625605Z   + actual - expected
+2026-10-04T20:47:45.3625838Z   
+2026-10-04T20:47:45.3626005Z   + '..\\NOTES.md'
+2026-10-04T20:47:45.3626215Z   - '../NOTES.md'
+2026-10-04T20:47:45.3626392Z        ^
+2026-10-04T20:47:45.3626545Z   
+2026-10-04T20:47:45.3627201Z       at TestContext.<anonymous> (file:///D:/a/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/scripts/build-bundled-blueprints.test.ts:203:12)
+2026-10-04T20:47:45.3627956Z       at async Test.run (node:internal/test_runner/test:1389:7)
+2026-10-04T20:47:45.3628457Z       at async Suite.processPendingSubtests (node:internal/test_runner/test:960:7) {
+2026-10-04T20:47:45.3628877Z     generatedMessage: true,
+2026-10-04T20:47:45.3629103Z     code: 'ERR_ASSERTION',
+2026-10-04T20:47:45.3629325Z     actual: '..\\NOTES.md',
+2026-10-04T20:47:45.3629550Z     expected: '../NOTES.md',
+2026-10-04T20:47:45.3629778Z     operator: 'strictEqual',
+2026-10-04T20:47:45.3629998Z     diff: 'simple'
+2026-10-04T20:47:45.3630178Z   }
+2026-10-04T20:47:45.3630272Z 
+2026-10-04T20:47:45.3630674Z test at scripts\build-bundled-blueprints.test.ts:307:3
+2026-10-04T20:47:45.3631152Z ✖ rejects extracted files ignored by Git (1102.8659ms)
+2026-10-04T20:47:45.3631962Z   AssertionError [ERR_ASSERTION]: The input did not match the regular expression /imported blueprint paths are ignored by Git: example\/files\/dist\/client\.js/. Input:
+2026-10-04T20:47:45.3633328Z   
+2026-10-04T20:47:45.3635299Z   'error: imported blueprint paths are ignored by Git: example\\files\\dist\\client.js\n'
+2026-10-04T20:47:45.3636175Z   
+2026-10-04T20:47:45.3637045Z       at TestContext.<anonymous> (file:///D:/a/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/scripts/build-bundled-blueprints.test.ts:321:12)
+2026-10-04T20:47:45.3637842Z       at async Test.run (node:internal/test_runner/test:1389:7)
+2026-10-04T20:47:45.3638350Z       at async Suite.processPendingSubtests (node:internal/test_runner/test:960:7) {
+2026-10-04T20:47:45.3638774Z     generatedMessage: true,
+2026-10-04T20:47:45.3639006Z     code: 'ERR_ASSERTION',
+2026-10-04T20:47:45.3639464Z     actual: 'error: imported blueprint paths are ignored by Git: example\\files\\dist\\client.js\n',
+2026-10-04T20:47:45.3640139Z     expected: /imported blueprint paths are ignored by Git: example\/files\/dist\/client\.js/,
+2026-10-04T20:47:45.3640569Z     operator: 'match',
+2026-10-04T20:47:45.3640777Z     diff: 'simple'
+2026-10-04T20:47:45.3640956Z   }
+2026-10-04T20:47:45.3641050Z 
+2026-10-04T20:47:45.3641251Z test at scripts\build-bundled-blueprints.test.ts:326:3
+2026-10-04T20:47:45.3641790Z ✖ rejects a generated manifest ignored by Git (937.023ms)
+2026-10-04T20:47:45.3642593Z   AssertionError [ERR_ASSERTION]: The input did not match the regular expression /imported blueprint paths are ignored by Git: example\/blueprint\.json/. Input:
+2026-10-04T20:47:45.3643246Z   
+2026-10-04T20:47:45.3643588Z   'error: imported blueprint paths are ignored by Git: example\\blueprint.json\n'
+2026-10-04T20:47:45.3643963Z   
+2026-10-04T20:47:45.3644592Z       at TestContext.<anonymous> (file:///D:/a/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/scripts/build-bundled-blueprints.test.ts:343:12)
+2026-10-04T20:47:45.3646327Z       at async Test.run (node:internal/test_runner/test:1389:7)
+2026-10-04T20:47:45.3647152Z       at async Suite.processPendingSubtests (node:internal/test_runner/test:960:7) {
+2026-10-04T20:47:45.3647630Z     generatedMessage: true,
+2026-10-04T20:47:45.3647885Z     code: 'ERR_ASSERTION',
+2026-10-04T20:47:45.3648330Z     actual: 'error: imported blueprint paths are ignored by Git: example\\blueprint.json\n',
+2026-10-04T20:47:45.3648963Z     expected: /imported blueprint paths are ignored by Git: example\/blueprint\.json/,
+2026-10-04T20:47:45.3649537Z     operator: 'match',
+2026-10-04T20:47:45.3649753Z     diff: 'simple'
+2026-10-04T20:47:45.3649931Z   }
+2026-10-04T20:47:45.3767361Z 
+2026-10-04T20:47:45.3773369Z ---
+2026-10-04T20:47:45.3774034Z vp run: 0/8 cache hit (0%), 1 failed. (Run `vp run --last-details` for full details)
+2026-10-04T20:47:45.4914633Z [ELIFECYCLE] Test failed. See above for more details.
+2026-10-04T20:47:45.5079982Z 
+2026-10-04T20:47:45.5080592Z Deploy failed. .: pnpm test failed. Its output is above.
+2026-10-04T20:47:45.5391479Z [ELIFECYCLE] Command failed with exit code 1.
+2026-10-04T20:47:45.5806685Z ##[error]Process completed with exit code 1.
+2026-10-04T20:47:45.6071950Z Post job cleanup.
+2026-10-04T20:47:45.8082803Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-04T20:47:45.8365246Z git version 2.55.0.windows.5
+2026-10-04T20:47:45.8436921Z Temporarily overriding HOME='D:\a\_temp\859537aa-1b6c-4d0f-842f-3dec500d759a' before making global git config changes
+2026-10-04T20:47:45.8439361Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-04T20:47:45.8452073Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\cloudflare-os-starter\cloudflare-os-starter
+2026-10-04T20:47:45.8853325Z Removing SSH command configuration
+2026-10-04T20:47:45.8865025Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-04T20:47:45.9182331Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-04T20:47:46.4804237Z Removing HTTP extra header
+2026-10-04T20:47:46.4814310Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-04T20:47:46.5107760Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-04T20:47:47.0590281Z Removing includeIf entries pointing to credentials config files
+2026-10-04T20:47:47.0602222Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-04T20:47:47.0875854Z includeif.gitdir:D:/a/cloudflare-os-starter/cloudflare-os-starter/.git.path
+2026-10-04T20:47:47.0877298Z includeif.gitdir:D:/a/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path
+2026-10-04T20:47:47.0878363Z includeif.gitdir:/github/workspace/.git.path
+2026-10-04T20:47:47.0879103Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-04T20:47:47.0915055Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/cloudflare-os-starter/cloudflare-os-starter/.git.path
+2026-10-04T20:47:47.1186744Z D:\a\_temp\git-credentials-87ea28cb-6c8f-43df-a1cf-2ebc708704c0.config
+2026-10-04T20:47:47.1233873Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/cloudflare-os-starter/cloudflare-os-starter/.git.path D\:\\a\\_temp\\git\-credentials\-87ea28cb\-6c8f\-43df\-a1cf\-2ebc708704c0\.config
+2026-10-04T20:47:47.1544362Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path
+2026-10-04T20:47:47.1794431Z D:\a\_temp\git-credentials-87ea28cb-6c8f-43df-a1cf-2ebc708704c0.config
+2026-10-04T20:47:47.1834196Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/cloudflare-os-starter/cloudflare-os-starter/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-87ea28cb\-6c8f\-43df\-a1cf\-2ebc708704c0\.config
+2026-10-04T20:47:47.2190062Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-04T20:47:47.2572097Z /github/runner_temp/git-credentials-87ea28cb-6c8f-43df-a1cf-2ebc708704c0.config
+2026-10-04T20:47:47.2608980Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-87ea28cb\-6c8f\-43df\-a1cf\-2ebc708704c0\.config
+2026-10-04T20:47:47.2895547Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-04T20:47:47.3142337Z /github/runner_temp/git-credentials-87ea28cb-6c8f-43df-a1cf-2ebc708704c0.config
+2026-10-04T20:47:47.3221273Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-87ea28cb\-6c8f\-43df\-a1cf\-2ebc708704c0\.config
+2026-10-04T20:47:47.3528499Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-04T20:47:47.8529655Z Removing credentials config 'D:\a\_temp\git-credentials-87ea28cb-6c8f-43df-a1cf-2ebc708704c0.config'
+2026-10-04T20:47:47.8732007Z Cleaning up orphan processes

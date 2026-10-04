@@ -1,0 +1,500 @@
+2026-10-04T20:49:20.0476761Z ▶ deploy scripts
+2026-10-04T20:49:20.0477918Z   ✔ covers the packages that deploy (4.7763ms)
+2026-10-04T20:49:20.0479026Z   ✔ never lets a deploy replay a cached artifact (7.9205ms)
+2026-10-04T20:49:20.0480479Z   ✔ reaches codegen through its task rather than invoking the builder (0.4836ms)
+2026-10-04T20:49:20.0481454Z ✔ deploy scripts (29.9518ms)
+2026-10-04T20:49:20.0482071Z ▶ getWranglerPortFromBackendHost
+2026-10-04T20:49:20.0482775Z   ✔ extracts a port from a localhost backend host (1.4972ms)
+2026-10-04T20:49:20.0483619Z   ✔ extracts a port from an IPv6 backend host (0.3906ms)
+2026-10-04T20:49:20.0484757Z   ✔ returns null when the backend host has no port (0.2518ms)
+2026-10-04T20:49:20.0485740Z   ✔ rejects invalid ports (0.8923ms)
+2026-10-04T20:49:20.0486568Z   ✔ rejects invalid IPv6 ports (0.5295ms)
+2026-10-04T20:49:20.0487133Z   ✔ rejects port zero (0.2491ms)
+2026-10-04T20:49:20.0487639Z   ✔ rejects invalid hosts (1.4511ms)
+2026-10-04T20:49:20.0488247Z ✔ getWranglerPortFromBackendHost (7.9849ms)
+2026-10-04T20:49:20.0488779Z ▶ getDevServerConfig
+2026-10-04T20:49:20.0489439Z   ✔ uses VITE_BACKEND_HOST as the public host and Wrangler port (1.7412ms)
+2026-10-04T20:49:20.0490045Z   ✔ uses --port as the public host and Wrangler port (0.3239ms)
+2026-10-04T20:49:20.0490465Z   ✔ accepts --port=value (0.3999ms)
+2026-10-04T20:49:20.0490813Z   ✔ rejects invalid arguments: --port (0.2951ms)
+2026-10-04T20:49:20.0491223Z   ✔ rejects invalid arguments: --port nope (0.1567ms)
+2026-10-04T20:49:20.0491619Z   ✔ rejects invalid arguments: --port=0 (0.2382ms)
+2026-10-04T20:49:20.0492003Z   ✔ rejects invalid arguments: --port=65536 (0.1541ms)
+2026-10-04T20:49:20.0492658Z ✔ getDevServerConfig (4.0551ms)
+2026-10-04T20:49:20.0492948Z ▶ build-time env passthrough
+2026-10-04T20:49:20.0493251Z   ✔ uses only known categories (6.2327ms)
+2026-10-04T20:49:20.0493688Z   ✔ accounts for every build-time env read in the workspace (542.0172ms)
+2026-10-04T20:49:20.0494230Z   ✔ declares every forwarded variable on the task that reads it (2.8311ms)
+2026-10-04T20:49:20.0494788Z   ✔ keeps the tasks behind `uncached` variables actually uncached (0.7318ms)
+2026-10-04T20:49:20.0495246Z ✔ build-time env passthrough (554.2135ms)
+2026-10-04T20:49:20.9351871Z ✔ a commit that touches nothing a run executes, tests included, keeps every key (955.8056ms)
+2026-10-04T20:49:20.9357027Z ✔ a task edit changes only that task's key (899.1168ms)
+2026-10-04T20:49:20.9365620Z ✔ the Worker, the harness, the lockfile, shared helpers and admission change every key (6294.1565ms)
+2026-10-04T20:49:20.9368713Z ✔ the workflow's eval settings change every key (554.3857ms)
+2026-10-04T20:49:20.9372158Z ✔ only eval code changes a task's definition, not the product or the rest of the harness (3253.628ms)
+2026-10-04T20:49:20.9374932Z ✔ a report change keeps every task key and changes the report key (815.7655ms)
+2026-10-04T20:49:20.9508662Z ✔ a stored result is reused, and a key both sides share is measured once, by the candidate (3.3293ms)
+2026-10-04T20:49:20.9511039Z ✔ a push measures its one commit as the baseline (0.2731ms)
+2026-10-04T20:49:20.9513218Z ✔ with nothing to measure there are no legs or store, since an empty matrix fails the run (0.3382ms)
+2026-10-04T20:49:20.9515580Z ✔ a stored result is reused only if this repository stored it and it outlives the run, newest first (1.4441ms)
+2026-10-04T20:49:20.9517528Z ✔ the posted comments are current only if the newest results comment has this key and a Bonk eval review follows it (0.8926ms)
+2026-10-04T20:49:20.9537509Z ✔ a new results comment replaces only earlier results comments and Bonk eval reviews (0.3414ms)
+2026-10-04T20:49:20.9538481Z ▶ killProcessTree
+2026-10-04T20:49:20.9539448Z   ✔ rejects a non-numeric pid rather than signalling a process group (21.2493ms)
+2026-10-04T20:49:20.9540132Z   ✔ rejects pids that would address process groups or only look numeric (21.7212ms)
+2026-10-04T20:49:20.9540682Z   ✔ resolves for a pid that is already gone (256.2453ms)
+2026-10-04T20:49:20.9541173Z   ✔ reaches a grandchild the wrapper's own death would hide (259.5517ms)
+2026-10-04T20:49:20.9541620Z ✔ killProcessTree (273.8264ms)
+2026-10-04T20:49:20.9541950Z ▶ killProcessTreeEscalating
+2026-10-04T20:49:20.9542712Z   ✔ SIGKILLs a descendant that ignored the SIGTERM (289.1561ms)
+2026-10-04T20:49:20.9543320Z   ✔ reaps a tree that goes down on the SIGTERM without waiting out the grace (289.8664ms)
+2026-10-04T20:49:20.9544036Z   ✔ escalates immediately when forceSignal aborts, instead of waiting out the grace (284.6286ms)
+2026-10-04T20:49:20.9544636Z   ✔ rejects pids that would address process groups (0.7038ms)
+2026-10-04T20:49:20.9545069Z ✔ killProcessTreeEscalating (298.1569ms)
+2026-10-04T20:49:20.9545363Z ▶ mapConcurrent
+2026-10-04T20:49:20.9545760Z   ✔ returns results in the input's order, not completion order (2.8738ms)
+2026-10-04T20:49:20.9546253Z   ✔ runs no more than `limit` tasks at a time (9.2494ms)
+2026-10-04T20:49:20.9546692Z   ✔ runs every remaining task after one rejects (1.2611ms)
+2026-10-04T20:49:20.9547100Z   ✔ rethrows a lone failure unwrapped (0.404ms)
+2026-10-04T20:49:20.9547464Z   ✔ aggregates multiple failures (0.6657ms)
+2026-10-04T20:49:20.9548000Z   ✔ stops claiming items on abort, awaits the tasks in flight, rejects with the reason (0.4649ms)
+2026-10-04T20:49:20.9548771Z   ✔ rejects on an abort that cost it no items, with every task still succeeding (0.4152ms)
+2026-10-04T20:49:20.9549370Z   ✔ reports a task's own failure rather than the abort reason (0.4054ms)
+2026-10-04T20:49:20.9549802Z   ✔ accepts an empty list (0.2455ms)
+2026-10-04T20:49:20.9550122Z   ✔ rejects a nonsensical limit (0.35ms)
+2026-10-04T20:49:20.9550612Z ✔ mapConcurrent (19.0826ms)
+2026-10-04T20:49:20.9550852Z ▶ prefer-jsdoc
+2026-10-04T20:49:20.9551047Z   ▶ valid
+2026-10-04T20:49:20.9551303Z     ✔ // Explains an implementation detail.
+2026-10-04T20:49:20.9551591Z const value = 1; (20.0457ms)
+2026-10-04T20:49:20.9551885Z     ✔ /** Documents the public value. */
+2026-10-04T20:49:20.9552187Z export const value = 1; (2.6462ms)
+2026-10-04T20:49:20.9552482Z     ✔ // A detached module note.
+2026-10-04T20:49:20.9552637Z 
+2026-10-04T20:49:20.9552761Z export const value = 1; (0.5917ms)
+2026-10-04T20:49:20.9553134Z     ✔ // oxlint-disable-next-line no-warning-comments
+2026-10-04T20:49:20.9553479Z export const value = 1; (0.7756ms)
+2026-10-04T20:49:20.9553794Z     ✔ /// <reference path="./types.d.ts" />
+2026-10-04T20:49:20.9554098Z export const value = 1; (0.6752ms)
+2026-10-04T20:49:20.9554401Z     ✔ // Re-export the canonical value.
+2026-10-04T20:49:20.9554664Z export { value }; (1.0053ms)
+2026-10-04T20:49:20.9554991Z     ✔ initialize(); // Explains initialization.
+2026-10-04T20:49:20.9555312Z export const value = 1; (1.3116ms)
+2026-10-04T20:49:20.9555603Z     ✔ /*! Retain this license. */
+2026-10-04T20:49:20.9555872Z export const value = 1; (0.6067ms)
+2026-10-04T20:49:20.9556120Z     ✔ /*@__PURE__*/
+2026-10-04T20:49:20.9556389Z export const value = makeValue(); (0.7279ms)
+2026-10-04T20:49:20.9556722Z     ✔ /*@__NO_SIDE_EFFECTS__*/
+2026-10-04T20:49:20.9556992Z export function value() {} (1.5801ms)
+2026-10-04T20:49:20.9557267Z     ✔ interface Internal {
+2026-10-04T20:49:20.9557486Z   // Internal property.
+2026-10-04T20:49:20.9557685Z   value: number;
+2026-10-04T20:49:20.9557866Z } (1.7054ms)
+2026-10-04T20:49:20.9558107Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9558348Z   // Private state.
+2026-10-04T20:49:20.9558539Z   private value = 1;
+2026-10-04T20:49:20.9558727Z } (1.2308ms)
+2026-10-04T20:49:20.9558959Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9559603Z   #read(): {
+2026-10-04T20:49:20.9559786Z     // Private result.
+2026-10-04T20:49:20.9560003Z     value: number;
+2026-10-04T20:49:20.9560197Z   } { return { value: 1 }; }
+2026-10-04T20:49:20.9560403Z } (2.5271ms)
+2026-10-04T20:49:20.9560658Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9560881Z   run(): void {
+2026-10-04T20:49:20.9561057Z     const local: {
+2026-10-04T20:49:20.9561248Z       // Local value.
+2026-10-04T20:49:20.9561433Z       value: number;
+2026-10-04T20:49:20.9561613Z     } = { value: 1 };
+2026-10-04T20:49:20.9561788Z   }
+2026-10-04T20:49:20.9561943Z } (1.0302ms)
+2026-10-04T20:49:20.9562178Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9562575Z   constructor(
+2026-10-04T20:49:20.9562772Z     // Private state.
+2026-10-04T20:49:20.9562966Z     private value: number,
+2026-10-04T20:49:20.9563165Z   ) {}
+2026-10-04T20:49:20.9563320Z } (0.9168ms)
+2026-10-04T20:49:20.9563542Z     ✔ export function run() {
+2026-10-04T20:49:20.9563752Z   return {} as {
+2026-10-04T20:49:20.9563931Z     // Local value.
+2026-10-04T20:49:20.9564122Z     value: number;
+2026-10-04T20:49:20.9564299Z   };
+2026-10-04T20:49:20.9564453Z } (0.7857ms)
+2026-10-04T20:49:20.9564685Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9564942Z   constructor(private value: {
+2026-10-04T20:49:20.9565170Z     // Private nested state.
+2026-10-04T20:49:20.9565373Z     nested: number;
+2026-10-04T20:49:20.9565546Z   }) {}
+2026-10-04T20:49:20.9565695Z } (1.482ms)
+2026-10-04T20:49:20.9565925Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9566174Z   accessor state = makeValue<{
+2026-10-04T20:49:20.9566396Z     // Initializer detail.
+2026-10-04T20:49:20.9566618Z     nested: number;
+2026-10-04T20:49:20.9566785Z   }>();
+2026-10-04T20:49:20.9566935Z } (0.9095ms)
+2026-10-04T20:49:20.9567138Z   ✔ valid (43.3079ms)
+2026-10-04T20:49:20.9567345Z   ▶ invalid
+2026-10-04T20:49:20.9567545Z     ✔ // The public value.
+2026-10-04T20:49:20.9567800Z export const value = 1; (2.6153ms)
+2026-10-04T20:49:20.9568084Z     ✔ // The public operation.
+2026-10-04T20:49:20.9568487Z // Throws when it cannot finish.
+2026-10-04T20:49:20.9568776Z export function run(): void {} (0.5616ms)
+2026-10-04T20:49:20.9569078Z     ✔ // The public contract.
+2026-10-04T20:49:20.9569345Z export interface Contract {} (0.3854ms)
+2026-10-04T20:49:20.9569653Z     ✔ // The default implementation.
+2026-10-04T20:49:20.9569974Z export default class Implementation {} (0.9542ms)
+2026-10-04T20:49:20.9570319Z     ✔ // A delimiter example: */.
+2026-10-04T20:49:20.9570584Z export const value = 1; (0.4593ms)
+2026-10-04T20:49:20.9570854Z     ✔ /* The public value. */
+2026-10-04T20:49:20.9571108Z export const value = 1; (0.4504ms)
+2026-10-04T20:49:20.9571388Z     ✔ export interface Contract {
+2026-10-04T20:49:20.9571615Z   // Runs the operation.
+2026-10-04T20:49:20.9571813Z   run(): void;
+2026-10-04T20:49:20.9571980Z } (0.9376ms)
+2026-10-04T20:49:20.9572200Z     ✔ export type Options = {
+2026-10-04T20:49:20.9572417Z   // Enables retries.
+2026-10-04T20:49:20.9572605Z   retry: boolean;
+2026-10-04T20:49:20.9572787Z }; (0.9001ms)
+2026-10-04T20:49:20.9573016Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9573244Z   // Runs the operation.
+2026-10-04T20:49:20.9573469Z   run(): void {}
+2026-10-04T20:49:20.9573639Z } (0.6197ms)
+2026-10-04T20:49:20.9573842Z     ✔ export enum Status {
+2026-10-04T20:49:20.9574061Z   // The operation completed.
+2026-10-04T20:49:20.9574261Z   Done,
+2026-10-04T20:49:20.9574409Z } (0.9142ms)
+2026-10-04T20:49:20.9574635Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9574848Z   run(): {
+2026-10-04T20:49:20.9575012Z     // Public result.
+2026-10-04T20:49:20.9575205Z     value: number;
+2026-10-04T20:49:20.9575399Z   } { return { value: 1 }; }
+2026-10-04T20:49:20.9575600Z } (0.7866ms)
+2026-10-04T20:49:20.9575857Z     ✔ export abstract class PublicClass {
+2026-10-04T20:49:20.9576115Z   // Runs the operation.
+2026-10-04T20:49:20.9576328Z   abstract run(): void;
+2026-10-04T20:49:20.9576526Z   // Public state.
+2026-10-04T20:49:20.9576714Z   abstract value: number;
+2026-10-04T20:49:20.9576922Z } (1.1955ms)
+2026-10-04T20:49:20.9577154Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9577369Z   // Public state.
+2026-10-04T20:49:20.9577544Z   accessor value = 1;
+2026-10-04T20:49:20.9577731Z } (0.4683ms)
+2026-10-04T20:49:20.9577950Z     ✔ export class PublicClass {
+2026-10-04T20:49:20.9578163Z   constructor(
+2026-10-04T20:49:20.9578332Z     // Public state.
+2026-10-04T20:49:20.9578525Z     public value: number,
+2026-10-04T20:49:20.9578715Z   ) {}
+2026-10-04T20:49:20.9578868Z } (0.5735ms)
+2026-10-04T20:49:20.9579062Z   ✔ invalid (12.6625ms)
+2026-10-04T20:49:20.9579957Z ✔ prefer-jsdoc (56.9415ms)
+2026-10-04T20:49:20.9580301Z ▶ self-contained-agent-types
+2026-10-04T20:49:20.9580548Z   ▶ valid
+2026-10-04T20:49:20.9580779Z     ✔ export interface Cursor<T> {
+2026-10-04T20:49:20.9581042Z   next(): Promise<T[] | null>;
+2026-10-04T20:49:20.9581252Z } (7.3881ms)
+2026-10-04T20:49:20.9581457Z     ✔ interface Cursor<T> {}
+2026-10-04T20:49:20.9581718Z export type { Cursor }; (0.5126ms)
+2026-10-04T20:49:20.9582079Z     ✔ import type { RpcTarget } from "cloudflare:workers";
+2026-10-04T20:49:20.9582495Z export interface Session extends RpcTarget {} (1.4454ms)
+2026-10-04T20:49:20.9582867Z     ✔ /// <reference lib="es2024" />
+2026-10-04T20:49:20.9583148Z export interface Session {} (0.5338ms)
+2026-10-04T20:49:20.9583400Z     ✔ /**
+2026-10-04T20:49:20.9583597Z  * import { Helper } from "./helper";
+2026-10-04T20:49:20.9583821Z  */
+2026-10-04T20:49:20.9584027Z export interface Session {} (0.369ms)
+2026-10-04T20:49:20.9584381Z     ✔ import type { ReadSession } from "./read-types";
+2026-10-04T20:49:20.9584792Z export interface Session extends ReadSession {} (1.1777ms)
+2026-10-04T20:49:20.9585126Z   ✔ valid (11.9574ms)
+2026-10-04T20:49:20.9585332Z   ▶ invalid
+2026-10-04T20:49:20.9585662Z     ✔ import { Cursor } from "@gadgets/workshop-shared/gatekeeper";
+2026-10-04T20:49:20.9586036Z export type { Cursor }; (0.6611ms)
+2026-10-04T20:49:20.9586639Z     ✔ export type { Cursor } from "@gadgets/workshop-shared/gatekeeper"; (0.6123ms)
+2026-10-04T20:49:20.9587113Z     ✔ export * from "./other-types"; (0.5521ms)
+2026-10-04T20:49:20.9587526Z     ✔ export type Page = import("./other-types").Page; (0.6441ms)
+2026-10-04T20:49:20.9587916Z     ✔ import shared = require("./shared");
+2026-10-04T20:49:20.9588224Z export type Page = shared.Page; (0.8572ms)
+2026-10-04T20:49:20.9588601Z     ✔ /// <reference types="@cloudflare/workers-types" />
+2026-10-04T20:49:20.9588944Z export interface Session {} (0.5542ms)
+2026-10-04T20:49:20.9589261Z     ✔ /// <reference path="./other.d.ts" />
+2026-10-04T20:49:20.9589566Z export interface Session {} (0.4776ms)
+2026-10-04T20:49:20.9589867Z     ✔ import type { A } from "./a";
+2026-10-04T20:49:20.9590147Z import type { B } from "./b"; (0.7599ms)
+2026-10-04T20:49:20.9590424Z   ✔ invalid (5.5789ms)
+2026-10-04T20:49:20.9590710Z ✔ self-contained-agent-types (17.8839ms)
+2026-10-04T20:49:20.9590978Z ▶ pnpmCommand
+2026-10-04T20:49:20.9591322Z   ✔ runs pnpm's own entry point through node on Windows (8.7633ms)
+2026-10-04T20:49:20.9591754Z   ✔ recognises a .cjs entry as well as .mjs (0.372ms)
+2026-10-04T20:49:20.9592269Z   ✔ passes arguments through untouched, including one containing a space (1.3388ms)
+2026-10-04T20:49:20.9592861Z   ✔ rejects npm's CLI rather than using the wrong package manager (0.272ms)
+2026-10-04T20:49:20.9593405Z   ✔ falls back to bare pnpm when npm_execpath is absent or empty (0.2819ms)
+2026-10-04T20:49:20.9593885Z   ✔ leaves other platforms exactly as they were (0.6799ms)
+2026-10-04T20:49:20.9594235Z ✔ pnpmCommand (13.8731ms)
+2026-10-04T20:49:20.9594953Z CF_AI_GATEWAY is unset, so CF_AI_GATEWAY_ACCOUNT_ID will be ignored: the preview will ask each user for their own model API keys.
+2026-10-04T20:49:20.9595899Z PREVIEW_GITHUB_CLIENT_ID is unset: gatekeeper-github is deployed unconfigured, and connecting it in this preview will fail.
+2026-10-04T20:49:20.9596545Z ✔ preview names are slugified (2.5101ms)
+2026-10-04T20:49:20.9597004Z ✔ over-long preview names truncate to a stable hashed form (1.3177ms)
+2026-10-04T20:49:20.9597614Z ✔ the preview name cap leaves every provisioned bucket inside R2's limit (14.9024ms)
+2026-10-04T20:49:20.9598264Z ✔ PREVIEW_NAME is what CI passes, and it wins over the local git fallback (0.4028ms)
+2026-10-04T20:49:20.9598993Z ✔ the preview name carries the pull request number, so look-alike branches cannot collide (0.3782ms)
+2026-10-04T20:49:20.9600310Z ✔ the pull request number stays inside the name cap, and reads back out of it (0.3904ms)
+2026-10-04T20:49:20.9601007Z ✔ a reserved prefix shrinks the slug budget rather than overflowing it (0.3534ms)
+2026-10-04T20:49:20.9601683Z ✔ every deployable package gets a preview config, on the configured account (24.4648ms)
+2026-10-04T20:49:20.9602263Z ✔ the router is the only worker with a public hostname (6.628ms)
+2026-10-04T20:49:20.9602886Z ✔ the backend's per-preview resources carry no ids, so wrangler provisions them (6.8154ms)
+2026-10-04T20:49:20.9603516Z ✔ no config names a resource belonging to another deployment (6.0073ms)
+2026-10-04T20:49:20.9604049Z ✔ the backend is told the router's origin, and nothing else (5.0407ms)
+2026-10-04T20:49:20.9604658Z ✔ the backend's secrets are the admin list, the Access pair and the AI gateway (0.3241ms)
+2026-10-04T20:49:20.9605278Z ✔ the AI gateway is optional as a group, but not half-configured (1.7672ms)
+2026-10-04T20:49:20.9605898Z ✔ a preview that cannot use the binding transport needs the gateway token (0.8085ms)
+2026-10-04T20:49:20.9606453Z ✔ no generated config declares a secret's variable (5.5541ms)
+2026-10-04T20:49:20.9606966Z ✔ no generated config carries a secret's value anywhere (6.3718ms)
+2026-10-04T20:49:20.9607551Z ✔ every gatekeeper is bound to the backend by RPC and to the router by HTTP (5.498ms)
+2026-10-04T20:49:20.9608125Z ✔ every gatekeeper is mounted under the router's origin (6.2373ms)
+2026-10-04T20:49:20.9608705Z ✔ each preview's context collections are namespaced to that preview (4.3104ms)
+2026-10-04T20:49:20.9609580Z ✔ a worker whose name diverges from its package directory is rejected (0.3409ms)
+2026-10-04T20:49:20.9610250Z ✔ an unrecognized deployable package is rejected rather than half-configured (0.2444ms)
+2026-10-04T20:49:20.9610857Z ✔ the target account has no default, in either direction (0.6273ms)
+2026-10-04T20:49:20.9611400Z ✔ the Access application has no default, in either direction (0.3854ms)
+2026-10-04T20:49:20.9611957Z ✔ a gatekeeper's OAuth app is optional, but never half of one (0.4795ms)
+2026-10-04T20:49:20.9612626Z ✔ every gatekeeper handed an OAuth app is a package that exists, and reads that pair (7.8815ms)
+2026-10-04T20:49:20.9613092Z ▶ registry policy
+2026-10-04T20:49:20.9613481Z   ✔ resolves every lockfile tarball from the public npm registry (5.4284ms)
+2026-10-04T20:49:20.9614077Z   ✔ configures the @cloudflare scope, and nothing else, in the root .npmrc (0.4302ms)
+2026-10-04T20:49:20.9614523Z ✔ registry policy (7.9496ms)
+2026-10-04T20:49:20.9615022Z ﹣ relayTermination (0.8838ms) # the relay and these signal fixtures are POSIX-only
+2026-10-04T20:49:20.9615503Z ✔ sha256Hex matches node crypto (2.2962ms)
+2026-10-04T20:49:20.9615997Z ✔ cfAssetHash is truncated sha256 of base64 content plus extension (0.5435ms)
+2026-10-04T20:49:20.9616605Z ✔ collectModules finds the main module and skips maps and READMEs (2.786ms)
+2026-10-04T20:49:20.9617138Z ✔ collectModules fails on unrecognized file types (4.0737ms)
+2026-10-04T20:49:20.9617617Z ✔ collectModules requires exactly one ESM module (3.5994ms)
+2026-10-04T20:49:20.9619150Z ✔ collectAssets builds an upload-session-shaped manifest with deduped blobs (2.113ms)
+2026-10-04T20:49:20.9620384Z ✔ stableStringify sorts object keys but preserves array order (0.4034ms)
+2026-10-04T20:49:20.9621032Z ✔ manifest generated from real configs matches the golden file (30.4471ms)
+2026-10-04T20:49:20.9621714Z ✔ every $-token in binding templates and vars uses known placeholder syntax (17.142ms)
+2026-10-04T20:49:20.9622288Z ✔ worker entries carry the deploy contract (20.787ms)
+2026-10-04T20:49:20.9622764Z ✔ every gatekeeper shortName is a legal deploy slug (19.8154ms)
+2026-10-04T20:49:20.9623315Z ✔ installable gatekeepers that take no inputs are install-once (13.0726ms)
+2026-10-04T20:49:20.9623899Z ✔ releaseShortName folds package names into the slug charset (0.2659ms)
+2026-10-04T20:49:20.9624488Z ✔ releaseShortName rejects names that don't fold to a legal slug (1.5574ms)
+2026-10-04T20:49:20.9624978Z ✔ every gatekeeper shortName is unique (12.3832ms)
+2026-10-04T20:49:20.9625543Z ✔ generateManifest rejects gatekeepers whose folded shortNames collide (15.9231ms)
+2026-10-04T20:49:20.9626201Z ✔ per-package deploy-inputs.json files are well-formed when present (6.8872ms)
+2026-10-04T20:49:20.9626813Z ✔ a gatekeeper-prefixed library is not a deployable worker (13.4215ms)
+2026-10-04T20:49:20.9627367Z ✔ ciRunNumber parses CI ids and rejects everything else (4.0518ms)
+2026-10-04T20:49:20.9627897Z ✔ a higher published run number supersedes the candidate (0.3965ms)
+2026-10-04T20:49:20.9628398Z ✔ equal or lower run numbers do not supersede (0.3128ms)
+2026-10-04T20:49:20.9628892Z ✔ non-CI ids never participate in ordering, on either side (0.2684ms)
+2026-10-04T20:49:21.1147217Z ▶ withTestTimeout
+2026-10-04T20:49:21.1148291Z   ✔ wraps a bare command in the default thresholds (1.0442ms)
+2026-10-04T20:49:21.1149815Z   ✔ lets the object form raise only the idle threshold (0.1991ms)
+2026-10-04T20:49:21.1150566Z   ✔ never lets a command override the wall-clock backstop (0.3406ms)
+2026-10-04T20:49:21.1151315Z ✔ withTestTimeout (3.3623ms)
+2026-10-04T20:49:21.1152519Z ▶ the watchdog off switch
+2026-10-04T20:49:21.1154123Z   ✔ is declared in cache.env on every generated test task (0.5497ms)
+2026-10-04T20:49:21.1155299Z   ✔ reaches every hand-declared cached task that wraps the watchdog (11.0666ms)
+2026-10-04T20:49:21.1156166Z   ✔ kills a silent child when unset (651.2485ms)
+2026-10-04T20:49:21.1156877Z   ✔ lets the child run to completion when set (1745.5655ms)
+2026-10-04T20:49:21.1158043Z ✔ the watchdog off switch (2409.4644ms)
+2026-10-04T20:49:21.1313078Z ▶ defaultConcurrencyLimit
+2026-10-04T20:49:21.1314023Z   ✔ 4 cpus / 16 GiB -> 4 (1.2744ms)
+2026-10-04T20:49:21.1314807Z   ✔ 4 cpus / 8 GiB -> 4 (0.2632ms)
+2026-10-04T20:49:21.1315423Z   ✔ 8 cpus / 16 GiB -> 8 (0.1623ms)
+2026-10-04T20:49:21.1316222Z   ✔ 10 cpus / 32 GiB -> 10 (0.1217ms)
+2026-10-04T20:49:21.1316843Z   ✔ 16 cpus / 64 GiB -> 16 (0.1543ms)
+2026-10-04T20:49:21.1317483Z   ✔ 2 cpus / 4 GiB -> 4 (0.0937ms)
+2026-10-04T20:49:21.1318063Z   ✔ 64 cpus / 8 GiB -> 4 (0.1806ms)
+2026-10-04T20:49:21.1318739Z   ✔ 16 cpus / 24 GiB -> 12 (0.2741ms)
+2026-10-04T20:49:21.1319480Z   ✔ never goes below Vite+'s own default (0.3045ms)
+2026-10-04T20:49:21.1320187Z   ✔ budgets 2 GiB per task (0.2448ms)
+2026-10-04T20:49:21.1321098Z   ✔ lands on the floor inside a memory-limited container on a big host (0.2153ms)
+2026-10-04T20:49:21.1322011Z ✔ defaultConcurrencyLimit (5.357ms)
+2026-10-04T20:49:21.1322631Z ▶ effectiveMemoryBytes
+2026-10-04T20:49:21.1323190Z   ✔ no cgroup limit -> 32 GiB (0.1804ms)
+2026-10-04T20:49:21.1323865Z   ✔ limit above host memory -> 8 GiB (0.0738ms)
+2026-10-04T20:49:21.1324565Z   ✔ limit below host memory -> 4 GiB (0.0633ms)
+2026-10-04T20:49:21.1325187Z   ✔ zero -> 32 GiB (0.0578ms)
+2026-10-04T20:49:21.1326311Z   ✔ negative -> 32 GiB (0.0503ms)
+2026-10-04T20:49:21.1326928Z   ✔ NaN -> 32 GiB (0.0535ms)
+2026-10-04T20:49:21.1327484Z   ✔ Infinity -> 32 GiB (0.0961ms)
+2026-10-04T20:49:21.1328105Z ✔ effectiveMemoryBytes (0.829ms)
+2026-10-04T20:49:21.1328617Z ▶ cgroupMounts
+2026-10-04T20:49:21.1329796Z   ✔ canonical v2 at the cgroupfs root -> /sys/fs/cgroup / no v1 memory (2.2077ms)
+2026-10-04T20:49:21.1331142Z   ✔ hybrid cgroup2 beside a v1 memory controller -> /sys/fs/cgroup/unified / /sys/fs/cgroup/memory (0.9644ms)
+2026-10-04T20:49:21.1332478Z   ✔ v1 memory co-mounted under a joined name -> no v2 / /sys/fs/cgroup/cpu,memory (5.9048ms)
+2026-10-04T20:49:21.1333621Z   ✔ a line with no optional fields at all -> /sys/fs/cgroup / no v1 memory (1.1384ms)
+2026-10-04T20:49:21.1334744Z   ✔ a mount point carrying octal escapes -> /tmp/odd cgroup\dir / no v1 memory (1.2563ms)
+2026-10-04T20:49:21.1336131Z   ✔ a nested bind mount of the same hierarchy -> /sys/fs/cgroup / no v1 memory (1.0817ms)
+2026-10-04T20:49:21.1337570Z   ✔ no cgroup mounts at all -> no v2 / no v1 memory (0.9893ms)
+2026-10-04T20:49:21.1338496Z   ✔ unparseable junk -> no v2 / no v1 memory (0.9304ms)
+2026-10-04T20:49:21.1339281Z   ✔ reports neither hierarchy when the file is absent (0.3123ms)
+2026-10-04T20:49:21.1339958Z ✔ cgroupMounts (15.2848ms)
+2026-10-04T20:49:21.1340411Z ▶ cgroupMemoryLimitBytes
+2026-10-04T20:49:21.1340881Z   ✔ reads a v2 memory.max (8.6105ms)
+2026-10-04T20:49:21.1341490Z   ✔ treats v2's `max` sentinel as no limit (2.5673ms)
+2026-10-04T20:49:21.1342258Z   ✔ takes the tightest ancestor, not the deepest cgroup (4.1379ms)
+2026-10-04T20:49:21.1343231Z   ✔ reads a v1 memory.limit_in_bytes for the memory controller's own path (3.5937ms)
+2026-10-04T20:49:21.1344253Z   ✔ returns v1's unlimited sentinel and lets the host clamp it (3.937ms)
+2026-10-04T20:49:21.1345145Z   ✔ reports no limit when the controller files are absent (1.2652ms)
+2026-10-04T20:49:21.1348201Z   ✔ falls back to the root cgroup when /proc/self/cgroup is missing (1.7555ms)
+2026-10-04T20:49:21.1349361Z   ✔ finds a hybrid layout's cgroup2 mount away from the cgroupfs root (3.5226ms)
+2026-10-04T20:49:21.1350389Z   ✔ finds a v1 memory controller co-mounted under a joined name (3.8465ms)
+2026-10-04T20:49:21.1351398Z   ✔ falls back to the canonical layout when mountinfo is unreadable (3.1134ms)
+2026-10-04T20:49:21.1352285Z   ✔ reports no limit and reads nothing off Linux (1.8411ms)
+2026-10-04T20:49:21.1352975Z ✔ cgroupMemoryLimitBytes (38.931ms)
+2026-10-04T20:49:21.1353488Z ▶ envFileConcurrencyLimit
+2026-10-04T20:49:21.1353949Z   ✔ reads a bare value (1.215ms)
+2026-10-04T20:49:21.1354469Z   ✔ reads a export prefix value (0.9219ms)
+2026-10-04T20:49:21.1355413Z   ✔ reads a double quoted value (0.933ms)
+2026-10-04T20:49:21.1355974Z   ✔ reads a single quoted value (1.1033ms)
+2026-10-04T20:49:21.1356523Z   ✔ reads a padded value (0.9426ms)
+2026-10-04T20:49:21.1357067Z   ✔ reads a after a comment value (0.9331ms)
+2026-10-04T20:49:21.1357656Z   ✔ reads a among other vars value (1.0128ms)
+2026-10-04T20:49:21.1358309Z   ✔ reports nothing when the file is absent (0.3763ms)
+2026-10-04T20:49:21.1359119Z   ✔ reports nothing when the file sets other variables only (0.9486ms)
+2026-10-04T20:49:21.1360500Z   ✔ passes a non-numeric value through untouched (0.8009ms)
+2026-10-04T20:49:21.1361374Z   ✔ defaults to the repo-root .env, not the current directory (0.3163ms)
+2026-10-04T20:49:21.1362148Z ✔ envFileConcurrencyLimit (10.0023ms)
+2026-10-04T20:49:21.1362619Z ▶ concurrencyEnv
+2026-10-04T20:49:21.1363141Z   ✔ sets the variable when absent and says so (0.2831ms)
+2026-10-04T20:49:21.1363975Z   ✔ names the cgroup limit when that is what capped the memory (0.1217ms)
+2026-10-04T20:49:21.1364952Z   ✔ takes a .env value over the formula and says where it came from (0.2081ms)
+2026-10-04T20:49:21.1366117Z   ✔ lets a real environment value beat .env, silently (0.1463ms)
+2026-10-04T20:49:21.1367025Z   ✔ passes an unparseable .env value through for vp to report (0.2161ms)
+2026-10-04T20:49:21.1367992Z   ✔ leaves an existing value byte-identical and prints nothing (0.1236ms)
+2026-10-04T20:49:21.1368813Z   ✔ does not mutate the input (0.191ms)
+2026-10-04T20:49:21.1369322Z ✔ concurrencyEnv (1.5806ms)
+2026-10-04T20:49:21.1370017Z ▶ overridesConcurrency
+2026-10-04T20:49:21.1370558Z   ✔ detects ["--concurrency-limit","2"] (0.2806ms)
+2026-10-04T20:49:21.1371200Z   ✔ detects ["--concurrency-limit=2"] (0.1085ms)
+2026-10-04T20:49:21.1371778Z   ✔ detects ["--parallel"] (0.0646ms)
+2026-10-04T20:49:21.1372668Z   ✔ detects ["--filter=!cloudflare-os","--cache","build","--concurrency-limit","2"] (0.0512ms)
+2026-10-04T20:49:21.1373773Z   ✔ detects ["--parallel","--filter=@gadgets/typed-storage","build"] (0.0501ms)
+2026-10-04T20:49:21.1374571Z   ✔ detects ["--concurrency-limit"] (0.0504ms)
+2026-10-04T20:49:21.1375077Z   ✔ ignores [] (0.0466ms)
+2026-10-04T20:49:21.1375521Z   ✔ ignores ["build"] (0.0486ms)
+2026-10-04T20:49:21.1376181Z   ✔ ignores ["--filter=!cloudflare-os","--cache","test"] (0.0517ms)
+2026-10-04T20:49:21.1376910Z   ✔ ignores ["--concurrency-limitx","2"] (0.0652ms)
+2026-10-04T20:49:21.1377580Z   ✔ ignores ["--concurrency-limit-ish=2"] (0.0466ms)
+2026-10-04T20:49:21.1380151Z   ✔ ignores ["--no-parallel"] (0.0423ms)
+2026-10-04T20:49:21.1380887Z   ✔ detects ["build","--","--concurrency-limit"] (0.0396ms)
+2026-10-04T20:49:21.1381624Z   ✔ ignores ["--grep","--parallel-ish"] (0.0418ms)
+2026-10-04T20:49:21.1382224Z ✔ overridesConcurrency (1.4617ms)
+2026-10-04T20:49:21.1382658Z ▶ vpRunEnv
+2026-10-04T20:49:21.1383304Z   ✔ stays silent but still sets the variable when a flag overrides it (0.8805ms)
+2026-10-04T20:49:21.1384146Z   ✔ prints the note when no flag overrides it (0.2992ms)
+2026-10-04T20:49:21.1384873Z   ✔ prints the note when given no arguments at all (0.2372ms)
+2026-10-04T20:49:21.1385701Z   ✔ stays silent for an environment value, flag or no flag (0.2858ms)
+2026-10-04T20:49:21.1386422Z ✔ vpRunEnv (1.8619ms)
+2026-10-04T20:49:21.1386844Z ▶ splitConcurrencyLimit
+2026-10-04T20:49:21.1387335Z   ✔ divides evenly: 16 / 2 -> 8 (0.2536ms)
+2026-10-04T20:49:21.1388261Z   ✔ divides four ways: 16 / 4 -> 4 (0.0858ms)
+2026-10-04T20:49:21.1388952Z   ✔ floors at vp's default rather than 3: 6 / 2 -> 4 (0.0518ms)
+2026-10-04T20:49:21.1389823Z   ✔ never raises an explicit limit past what was asked: 3 / 2 -> 3 (0.0524ms)
+2026-10-04T20:49:21.1390647Z   ✔ one run is no division: 16 / 1 -> 16 (0.0415ms)
+2026-10-04T20:49:21.1391376Z   ✔ passes a non-numeric value through: abc / 2 -> abc (0.0416ms)
+2026-10-04T20:49:21.1392115Z   ✔ passes a fraction through: 2.5 / 2 -> 2.5 (0.0754ms)
+2026-10-04T20:49:21.1392719Z   ✔ passes zero through: 0 / 2 -> 0 (0.0812ms)
+2026-10-04T20:49:21.1393711Z   ✔ leaves an unset variable unset (0.1248ms)
+2026-10-04T20:49:21.1394295Z   ✔ returns a copy, never the input (0.1191ms)
+2026-10-04T20:49:21.1394866Z ✔ splitConcurrencyLimit (2.2303ms)
+2026-10-04T20:49:21.1395347Z ▶ vpRunEnv concurrentRuns
+2026-10-04T20:49:21.1395803Z   ✔ divides evenly: 16 / 2 -> 8 (0.3871ms)
+2026-10-04T20:49:21.1396324Z   ✔ divides four ways: 16 / 4 -> 4 (0.3273ms)
+2026-10-04T20:49:21.1396965Z   ✔ floors at vp's default rather than 3: 6 / 2 -> 4 (0.206ms)
+2026-10-04T20:49:21.1397821Z   ✔ never raises an explicit limit past what was asked: 3 / 2 -> 3 (0.1876ms)
+2026-10-04T20:49:21.1398597Z   ✔ one run is no division: 16 / 1 -> 16 (0.1745ms)
+2026-10-04T20:49:21.1399313Z   ✔ passes a non-numeric value through: abc / 2 -> abc (0.1585ms)
+2026-10-04T20:49:21.1400057Z   ✔ passes a fraction through: 2.5 / 2 -> 2.5 (0.3333ms)
+2026-10-04T20:49:21.1400680Z   ✔ passes zero through: 0 / 2 -> 0 (0.2456ms)
+2026-10-04T20:49:21.1401513Z   ✔ divides the machine-derived limit and prints the whole budget once (0.4759ms)
+2026-10-04T20:49:21.1402317Z ✔ vpRunEnv concurrentRuns (3.4617ms)
+2026-10-04T20:49:21.1402870Z ℹ tests 321
+2026-10-04T20:49:21.1403180Z ℹ suites 40
+2026-10-04T20:49:21.1403481Z ℹ pass 318
+2026-10-04T20:49:21.1403760Z ℹ fail 3
+2026-10-04T20:49:21.1404053Z ℹ cancelled 0
+2026-10-04T20:49:21.1404361Z ℹ skipped 0
+2026-10-04T20:49:21.1404650Z ℹ todo 0
+2026-10-04T20:49:21.1404987Z ℹ duration_ms 16074.8535
+2026-10-04T20:49:21.1405210Z 
+2026-10-04T20:49:21.1405382Z ✖ failing tests:
+2026-10-04T20:49:21.1405556Z 
+2026-10-04T20:49:21.1406178Z test at scripts\build-bundled-blueprints.test.ts:173:3
+2026-10-04T20:49:21.1407354Z ✖ keeps what lives beside blueprint.json and files/ when importing an update (976.2458ms)
+2026-10-04T20:49:21.1408647Z   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+2026-10-04T20:49:21.1409275Z   + actual - expected
+2026-10-04T20:49:21.1409579Z   
+2026-10-04T20:49:21.1409843Z   + '..\\NOTES.md'
+2026-10-04T20:49:21.1410149Z   - '../NOTES.md'
+2026-10-04T20:49:21.1410429Z        ^
+2026-10-04T20:49:21.1410656Z   
+2026-10-04T20:49:21.1411763Z       at TestContext.<anonymous> (file:///D:/a/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/scripts/build-bundled-blueprints.test.ts:203:12)
+2026-10-04T20:49:21.1413517Z       at async Test.run (node:internal/test_runner/test:1389:7)
+2026-10-04T20:49:21.1417051Z       at async Suite.processPendingSubtests (node:internal/test_runner/test:960:7) {
+2026-10-04T20:49:21.1417821Z     generatedMessage: true,
+2026-10-04T20:49:21.1418228Z     code: 'ERR_ASSERTION',
+2026-10-04T20:49:21.1418594Z     actual: '..\\NOTES.md',
+2026-10-04T20:49:21.1418962Z     expected: '../NOTES.md',
+2026-10-04T20:49:21.1419350Z     operator: 'strictEqual',
+2026-10-04T20:49:21.1419710Z     diff: 'simple'
+2026-10-04T20:49:21.1420010Z   }
+2026-10-04T20:49:21.1420168Z 
+2026-10-04T20:49:21.1420527Z test at scripts\build-bundled-blueprints.test.ts:307:3
+2026-10-04T20:49:21.1421428Z ✖ rejects extracted files ignored by Git (1141.8054ms)
+2026-10-04T20:49:21.1422912Z   AssertionError [ERR_ASSERTION]: The input did not match the regular expression /imported blueprint paths are ignored by Git: example\/files\/dist\/client\.js/. Input:
+2026-10-04T20:49:21.1424144Z   
+2026-10-04T20:49:21.1424783Z   'error: imported blueprint paths are ignored by Git: example\\files\\dist\\client.js\n'
+2026-10-04T20:49:21.1425505Z   
+2026-10-04T20:49:21.1427024Z       at TestContext.<anonymous> (file:///D:/a/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/scripts/build-bundled-blueprints.test.ts:321:12)
+2026-10-04T20:49:21.1428420Z       at async Test.run (node:internal/test_runner/test:1389:7)
+2026-10-04T20:49:21.1429317Z       at async Suite.processPendingSubtests (node:internal/test_runner/test:960:7) {
+2026-10-04T20:49:21.1430058Z     generatedMessage: true,
+2026-10-04T20:49:21.1430443Z     code: 'ERR_ASSERTION',
+2026-10-04T20:49:21.1431244Z     actual: 'error: imported blueprint paths are ignored by Git: example\\files\\dist\\client.js\n',
+2026-10-04T20:49:21.1433849Z     expected: /imported blueprint paths are ignored by Git: example\/files\/dist\/client\.js/,
+2026-10-04T20:49:21.1434634Z     operator: 'match',
+2026-10-04T20:49:21.1434962Z     diff: 'simple'
+2026-10-04T20:49:21.1435258Z   }
+2026-10-04T20:49:21.1435412Z 
+2026-10-04T20:49:21.1435765Z test at scripts\build-bundled-blueprints.test.ts:326:3
+2026-10-04T20:49:21.1436668Z ✖ rejects a generated manifest ignored by Git (1016.4498ms)
+2026-10-04T20:49:21.1438142Z   AssertionError [ERR_ASSERTION]: The input did not match the regular expression /imported blueprint paths are ignored by Git: example\/blueprint\.json/. Input:
+2026-10-04T20:49:21.1439320Z   
+2026-10-04T20:49:21.1439905Z   'error: imported blueprint paths are ignored by Git: example\\blueprint.json\n'
+2026-10-04T20:49:21.1440579Z   
+2026-10-04T20:49:21.1442295Z       at TestContext.<anonymous> (file:///D:/a/cloudflare-os-starter/cloudflare-os-starter/cloudflare-os/scripts/build-bundled-blueprints.test.ts:343:12)
+2026-10-04T20:49:21.1444192Z       at async Test.run (node:internal/test_runner/test:1389:7)
+2026-10-04T20:49:21.1447023Z       at async Suite.processPendingSubtests (node:internal/test_runner/test:960:7) {
+2026-10-04T20:49:21.1447773Z     generatedMessage: true,
+2026-10-04T20:49:21.1448173Z     code: 'ERR_ASSERTION',
+2026-10-04T20:49:21.1448932Z     actual: 'error: imported blueprint paths are ignored by Git: example\\blueprint.json\n',
+2026-10-04T20:49:21.1450410Z     expected: /imported blueprint paths are ignored by Git: example\/blueprint\.json/,
+2026-10-04T20:49:21.1451209Z     operator: 'match',
+2026-10-04T20:49:21.1451562Z     diff: 'simple'
+2026-10-04T20:49:21.1451877Z   }
+2026-10-04T20:49:21.1601984Z 
+2026-10-04T20:49:21.1607940Z ---
+2026-10-04T20:49:21.1608682Z vp run: 0/8 cache hit (0%), 1 failed. (Run `vp run --last-details` for full details)
+2026-10-04T20:49:21.2809066Z [ELIFECYCLE] Test failed. See above for more details.
+2026-10-04T20:49:21.3044512Z 
+2026-10-04T20:49:21.3045204Z Deploy failed. .: pnpm test failed. Its output is above.
+2026-10-04T20:49:21.3357210Z [ELIFECYCLE] Command failed with exit code 1.
+2026-10-04T20:49:21.4474706Z ##[error]Process completed with exit code 1.
+2026-10-04T20:49:21.4684286Z Post job cleanup.
+2026-10-04T20:49:21.6715005Z Pruning is unnecessary.
+2026-10-04T20:49:21.7131657Z Post job cleanup.
+2026-10-04T20:49:21.9338053Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-04T20:49:21.9622336Z git version 2.55.0.windows.5
+2026-10-04T20:49:21.9695195Z Temporarily overriding HOME='D:\a\_temp\a9115066-cfcc-466a-b08d-c6490bf1260f' before making global git config changes
+2026-10-04T20:49:21.9696731Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-04T20:49:21.9707068Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\cloudflare-os-starter\cloudflare-os-starter
+2026-10-04T20:49:22.0035995Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-04T20:49:22.0368315Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-04T20:49:22.6334767Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-04T20:49:22.6651353Z http.https://github.com/.extraheader
+2026-10-04T20:49:22.6721735Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-04T20:49:22.7145042Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-04T20:49:23.2785966Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-04T20:49:23.3124390Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-04T20:49:23.9183332Z Cleaning up orphan processes
+2026-10-04T20:49:23.9560176Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
