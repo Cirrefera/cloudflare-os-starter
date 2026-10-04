@@ -16,6 +16,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Check whether deployment is configured
         id: credentials
@@ -56,6 +59,7 @@ jobs:
           {
             pnpm check:boundary
             pnpm types:scripts
+            pnpm build
             pnpm check:full
           } 2>&1 | tee "$log"
 

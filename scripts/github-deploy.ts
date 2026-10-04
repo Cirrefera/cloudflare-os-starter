@@ -55,8 +55,13 @@ if (validateOnly) {
     CLOUDFLARE_ACCOUNT_ID: config.accountId,
     WRANGLER_SEND_METRICS: "false", VP_RUN_CONCURRENCY_LIMIT: "2" };
   delete env.CFOS_DEPLOY_CREDENTIALS;
-  const auth = spawnSync("pnpm", ["exec", "wrangler", "whoami"], { cwd: root, env, stdio: "inherit" });
-  if (auth.error || auth.status !== 0) throw new Error("Cloudflare authentication failed; nothing was deployed.");
+  const auth = await fetch(`https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts`, {
+    headers: { Authorization: `Bearer ${values.CLOUDFLARE_API_TOKEN}` },
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!auth.ok) throw new Error(`Cloudflare account verification failed (HTTP ${auth.status}); nothing was deployed.`);
+  const account = await auth.json() as { success?: boolean };
+  if (!account.success) throw new Error("Cloudflare account verification failed; nothing was deployed.");
   const deploy = spawnSync(process.execPath, [join(root, "scripts/deploy.ts"), "--with-secrets"], { cwd: root, env, stdio: "inherit" });
   if (deploy.error || deploy.status !== 0) throw new Error("Cloudflare deployment did not finish; inspect the Worker deployment log.");
 }
