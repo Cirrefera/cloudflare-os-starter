@@ -1,0 +1,42 @@
+{
+  "configured_origin": "https://hellgate-os-router.mchayes89.workers.dev",
+  "requests": {
+    "/workers/subdomain": {
+      "http_status": 403
+    },
+    "/workers/scripts": {
+      "http_status": 200,
+      "success": true
+    },
+    "/workers/scripts/hellgate-os-router/settings": {
+      "http_status": 403
+    },
+    "/workers/scripts/hellgate-os-workshop/settings": {
+      "http_status": 403
+    },
+    "/workers/scripts/hellgate-os-gatekeeper-snowflake/secrets": {
+      "http_status": 403
+    },
+    "/workers/scripts/hellgate-os-gatekeeper-cloudflareaccount/secrets": {
+      "http_status": 403
+    }
+  },
+  "os_workers": [],
+  "services": {},
+  "secret_names": {},
+  "endpoints": {
+    "https://hellgate-os-router.mchayes89.workers.dev/": {
+      "http_status": 403
+    },
+    "https://hellgate-os-router.mchayes89.workers.dev/gatekeeper/huggingface/.well-known/oauth-cimd": {
+      "http_status": 403
+    },
+    "https://hellgate-os-router.mchayes89.workers.dev/gatekeeper/snowflake/oauth": {
+      "http_status": 403
+    },
+    "https://hellgate-os-router.mchayes89.workers.dev/gatekeeper/huggingface/oauth": {
+      "http_status": 403
+    }
+  },
+  "deployment_log": "Could not retrieve credential-safe job log."
+}
