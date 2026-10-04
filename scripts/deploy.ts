@@ -244,7 +244,7 @@ export function validateConfig(config: DeploymentConfig): DeploymentConfig {
     throw new Error("Worker names must use lowercase letters, numbers, and hyphens.");
   }
   for (const [id, gatekeeper] of Object.entries(config.gatekeepers)) {
-    if (!gatekeeper.enabled) continue;
+    if (!gatekeeper?.enabled) continue;
     if (!WIRED_GATEKEEPERS.includes(id as OptionalGatekeeperId)) {
       throw new Error(
         `Gatekeeper ${id} is enabled, but this Starter cannot deploy it yet: its Worker config, ` +
@@ -607,7 +607,7 @@ export function generateConfigs(
   const gatekeepers: Partial<Record<OptionalGatekeeperId, ProdWranglerConfig>> = {};
   for (const id of WIRED_GATEKEEPERS) {
     const gatekeeper = config.gatekeepers[id];
-    if (!gatekeeper.enabled) continue;
+    if (!gatekeeper?.enabled) continue;
     // validateConfig enforces both guards below; repeated here so the generator itself fails loud
     // if it is ever handed an unvalidated config.
     if (!gatekeeper.workerName) {
@@ -621,6 +621,10 @@ export function generateConfigs(
     }
     const generatedGatekeeper = structuredClone(base);
     setCommon(generatedGatekeeper, config, gatekeeper.workerName);
+    const entry = catalog[id];
+    if (entry.publicFlow) {
+      generatedGatekeeper.vars = { ...generatedGatekeeper.vars, BASE_URL: `${origin}${entry.routePrefix}` };
+    }
     const requiredSecrets = GATEKEEPER_REQUIRED_SECRETS[id];
     if (requiredSecrets) {
       generatedGatekeeper.secrets = { required: [...requiredSecrets] };
@@ -631,8 +635,10 @@ export function generateConfigs(
     if (gatekeeper.vars && Object.keys(gatekeeper.vars).length) {
       generatedGatekeeper.vars = { ...generatedGatekeeper.vars, ...gatekeeper.vars };
     }
+    if (id === "cloudflareaccount") {
+      generatedGatekeeper.vars = { ...generatedGatekeeper.vars, CLOUDFLARE_ACCOUNT_ID: config.accountId };
+    }
     gatekeepers[id] = generatedGatekeeper;
-    const entry = catalog[id];
     // publicFlow decides the Router HTTP flow ONLY. The Workshop service binding exists either
     // way: a service-only package (publicFlow: false) is reachable over vendor RPC, never by a
     // public route — the Router does not discover it at all.
@@ -652,74 +658,14 @@ export function generateConfigs(
   };
 }
 
-// `--no-cache` goes before the task name. Everything after it is `[ADDITIONAL_ARGS]`, forwarded to
-// the task's own command -- `vp run -F x build --no-cache` reaches `tsc` as an unknown option.
-
-/** `vp run --no-cache <task>` for a package in the vendored kernel's workspace. */
-function kernelBuild(pkg: string, task = "build"): string[] {
-  return ["--dir", "cloudflare-os", "exec", "vp", "run", "-F", pkg, "--no-cache", task];
-}
-
-/** `vp run --no-cache <task>` for a package in this repository's own workspace. */
-function ownBuild(pkg: string, task = "build"): string[] {
-  return ["exec", "vp", "run", "-F", pkg, "--no-cache", task];
-}
-
-/**
- * The build steps `pnpm check` and `pnpm deploy` run, in order, from the repository root.
- *
- * Every one goes through `vp run` rather than `pnpm --filter <pkg> build`. Two of the three
- * kernel targets have no `build` *script* at all any more -- they have a Vite+ *task*, which
- * `pnpm --filter` cannot see -- and `vp run` runs scripts and tasks alike, so one form covers both.
- *
- * `--no-cache` on every one. A cache hit is only as good as its fingerprint, which is cheap to get
- * wrong on a build you can re-run and expensive on a deploy you cannot; it is upstream's rule for
- * the same reason (cloudflare-os/scripts/deploy-scripts.test.ts). It also restores the full ambient
- * environment, which is the belt to `workshop-frontend`'s `env: ['VITE_*']` braces: under a *cached*
- * `vp` run only declared patterns survive, and an undeclared variable is dropped from the command
- * and from the fingerprint both.
- *
- * The ordering matters at the end: the frontend has to build before the router deploy picks up
- * `../workshop-frontend/dist` as its assets.
- */
-export function buildCommands(config: DeploymentConfig): BuildCommand[] {
-  return [
-    // `build:app` first, and separately. `gatekeeper-context`'s `build` is a package.json script
-    // that spawns `vp run --cache build:app` itself, and the outer `--no-cache` does not reach a
-    // nested invocation carrying its own flag -- measured: the configurator app replayed from
-    // cache. Rebuilding it here from source is what upstream's own `deploy` script does; the
-    // `build` step below then type-checks and replays the bytes this step just wrote.
-    { args: kernelBuild("@gadgets/gatekeeper-context", "build:app") },
-    { args: kernelBuild("@gadgets/gatekeeper-context") },
-    // The Scheduler's `build` nests the same cached `vp run build:app`, so it needs the same pair.
-    { args: kernelBuild("@gadgets/gatekeeper-scheduler", "build:app") },
-    { args: kernelBuild("@gadgets/gatekeeper-scheduler") },
-    { args: ownBuild("custom-gatekeeper") },
-    // Enabled optional Gatekeepers build alongside the other owned Workers. A disabled one is
-    // never built: it must not appear in the deployment at all.
-    ...enabledWiredGatekeepers(config).map((id) => ({
-      args: ownBuild(gatekeeperPackageName(id)),
-    })),
-    ...(config.errorReporting.enabled ? [{ args: ownBuild("error-reporter") }] : []),
-    // Access mode is a build-time constant in the frontend bundle (`src/useAuth.ts`), so it is set
-    // here rather than inherited: a bundle built under a different value is wrong, not just stale.
-    { args: kernelBuild("@gadgets/workshop-frontend"), env: { VITE_CF_ACCESS_MODE: "true" } },
-    { args: kernelBuild("@gadgets/router") },
-    { args: kernelBuild("@gadgets/workshop-backend") },
-  ];
+/** Build the entire upstream OS and the custom packages before bundling Workers. */
+export function buildCommands(_config: DeploymentConfig): BuildCommand[] {
+  return [{ args: ["build"], env: { VITE_CF_ACCESS_MODE: "true" } }];
 }
 
 /** The optional Gatekeepers this deployment enables, all guaranteed wired by `validateConfig`. */
 export function enabledWiredGatekeepers(config: DeploymentConfig): OptionalGatekeeperId[] {
   return WIRED_GATEKEEPERS.filter((id) => config.gatekeepers[id]?.enabled);
-}
-
-/** The workspace package name of an optional Gatekeeper's directory, e.g. `gatekeeper-snowflake`. */
-function gatekeeperPackageName(id: OptionalGatekeeperId): string {
-  const dir = OPTIONAL_GATEKEEPER_CATALOG[id].packageDir;
-  const name = dir.split("/").pop()!;
-  if (!name) throw new Error(`Optional Gatekeeper ${id} has a malformed packageDir: ${dir}`);
-  return name;
 }
 
 // `allowTrailingComma` because wrangler accepts them and upstream uses them: the Scheduler's base
@@ -963,7 +909,10 @@ async function main(): Promise<void> {
         JSON.stringify(generatedConfig, null, 2) + "\n");
     }
     const check = process.argv.includes("--check");
-    if (check) run(["test"]);
+    // Verification runs only the existing upstream suites.
+    if (check && !process.argv.includes("--skip-tests")) {
+      run(["test"], root, { ...process.env, VITE_CF_ACCESS_MODE: "false" });
+    }
     build(config);
     // Optional first-deploy secret installation: per-Worker contract validation, one temporary
     // file per Worker outside the repository, the installed Wrangler's `secret bulk`. Draft

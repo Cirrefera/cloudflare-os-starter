@@ -1,9 +1,13 @@
 import { DurableObject, RpcStub, RpcTarget, WorkerEntrypoint } from "cloudflare:workers";
-import { skipRpcValidation, validateRpc } from "capnweb-validate";
+import { validateRpc } from "capnweb-validate";
 import type { AccountDescription, ApprovalQueue, Gatekeeper, GatekeeperConnectCallback, GatekeeperConnectOptions, GatekeeperUser, GatekeeperUserVerifier, ResourceConfiguratorFrame, ResourceDescription, SupportedResource, VendorDescription } from "@gadgets/workshop-shared/gatekeeper";
 import type { CommitFileChange, DatasetPage, DatasetQueryOptions, DatasetQueryPages, DatasetQueryResult, DiscussionSummary, HuggingFaceCursor, HuggingFaceDatasetInfo, HuggingFaceDiscussionDetail, HuggingFaceFilePage, HuggingFaceModelCard, HuggingFaceRepository, HuggingFaceSession, HuggingFaceSpaceInfo, InferenceRequest, InferenceResult, InferenceTarget, WriteProposal } from "./types.js";
+import { CredentialSource } from "@gadgets/gatekeeper-kit/credentials";
+import { readTextCapped } from "@gadgets/gatekeeper-kit/response-body";
+import type { HuggingFaceCredential } from "./oauth.js";
+import RESOURCE_CONFIGURATOR_HTML from "./generated/huggingface-resource-configurator-ui.txt";
 import TYPES_CODE from "./types-code.js";
-import { Stage, GatedActions, ExecutionJournal, proposeAction, type StageRecord } from "@gadgets/stage";
+import { Stage, GatedActions, ExecutionJournal, LocalRefusal, proposeAction, type StageRecord } from "@gadgets/stage";
 import type { ActionRef, ApprovalSubject, ExecutionAttempt, ReceiptInput } from "@gadgets/stage";
 import { LivePageSource, offsetPaged, type LivePage } from "@gadgets/cursor";
 import { capOutput, fitRowsToByteBudget, streamTextCapped } from "./limits.js";
@@ -26,9 +30,9 @@ const RESOURCES: SupportedResource[] = [
 ];
 
 type Resource = HuggingFaceRepository & { kind: "model" | "dataset" | "space" };
-type GatekeeperProps = { resourceUrl?: string };
+type GatekeeperProps = { connectionId: string; resourceUrl?: string };
 type Queue = Pick<ApprovalQueue, "authorizeObservation" | "submitAction"> & Partial<{ [Symbol.dispose](): void }>;
-type HuggingFaceWriteAction = { proposalId: string; operation: WriteProposal["operation"]; summary: string; data: unknown };
+type HuggingFaceWriteAction = { proposalId: string; operation: WriteProposal["operation"]; summary: string; data: unknown; credentialGeneration?: string };
 type StoredHuggingFaceAction = StageRecord<HuggingFaceWriteAction>;
 /** The durable payload of a create_commit action: everything bound at approval time. */
 type StoredCommitPayload = {
@@ -56,29 +60,64 @@ function boundedInt(value: number | undefined, fallback: number, max: number): n
 function writesEnabled(env: Env): boolean { return env.HF_ENABLE_WRITES === "true" || env.HF_ENABLE_WRITES === "1"; }
 
 
+class HubAuthError extends Error {}
+
 class HubClient {
-  constructor(private readonly token: string) { if (!token) throw new Error("Hugging Face credentials are not configured."); }
-  #headers(extra?: HeadersInit): Headers {
-    const headers = new Headers(extra);
-    headers.set("Authorization", `Bearer ${this.token}`);
-    headers.set("Accept", "application/json");
-    return headers;
-  }
-  async request(url: string, init: RequestInit = {}): Promise<any> {
-    const response = await fetch(url, { ...init, headers: this.#headers(init.headers), signal: AbortSignal.timeout(30_000) });
-    if (!response.ok) { if ([401, 403, 404].includes(response.status)) throw new Error(`Hugging Face resource is not accessible (${response.status}).`); throw new Error(`Hugging Face request failed (${response.status}).`); }
-    return response.headers.get("content-type")?.includes("json") ? response.json() : response.text();
+  constructor(private readonly credentials: CredentialSource<HuggingFaceCredential>, private readonly generation?: string) {}
+
+  async #fetch(raw: string, init: RequestInit = {}): Promise<Response> {
+    const method = init.method ?? "GET";
+    return this.credentials.run(async (credential, read) => {
+      if (this.generation !== undefined && read.generation !== this.generation) {
+        throw new LocalRefusal("The Hugging Face connection changed after this action was proposed.");
+      }
+      let url = new URL(raw);
+      if (url.protocol !== "https:" || !["huggingface.co", "datasets-server.huggingface.co", "router.huggingface.co"].includes(url.hostname) || url.username || url.password) {
+        throw new Error("Unsupported Hugging Face API destination.");
+      }
+      const origin = url.origin;
+      for (let redirects = 0; redirects <= 5; redirects++) {
+        const headers = new Headers(init.headers);
+        headers.set("Accept", "application/json");
+        if (url.origin === origin) headers.set("Authorization", `Bearer ${credential.accessToken}`);
+        else headers.delete("Authorization");
+        if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+        const response = await fetch(url, { ...init, method, redirect: "manual", headers, signal: AbortSignal.timeout(30_000) });
+        if (response.status === 401 && url.origin === origin) {
+          await response.body?.cancel();
+          throw new HubAuthError("Hugging Face rejected this connection.");
+        }
+        if ([301, 302, 303, 307, 308].includes(response.status)) {
+          const location = response.headers.get("Location");
+          await response.body?.cancel();
+          if (method !== "GET" || !location || redirects === 5) throw new Error("Unexpected Hugging Face redirect.");
+          const next = new URL(location, url);
+          // Repository files may redirect to signed HF CDN URLs; never forward the user token.
+          if (next.protocol !== "https:" || next.username || next.password || next.port ||
+              !(next.origin === origin || next.hostname.endsWith(".hf.co"))) {
+            throw new Error("Unsupported Hugging Face file destination.");
+          }
+          url = next;
+          continue;
+        }
+        if (!response.ok) {
+          await response.body?.cancel();
+          throw new Error(`Hugging Face resource request failed (${response.status}).`);
+        }
+        return response;
+      }
+      throw new Error("Too many Hugging Face redirects.");
+    }, { replayable: method === "GET" });
   }
 
-  /**
-   * Streams a text response with a HARD byte ceiling: reading stops (the stream is cancelled)
-   * once the cap is crossed, so an oversized file is never fully buffered. The bound mechanics
-   * are the tested pure helper in limits.ts.
-   */
+  async request(url: string, init: RequestInit = {}): Promise<any> {
+    const response = await this.#fetch(url, init);
+    const text = await readTextCapped(response, 8 * 1024 * 1024);
+    return text && response.headers.get("content-type")?.includes("json") ? JSON.parse(text) : text;
+  }
+
   async readTextCapped(url: string, maxBytes: number): Promise<string> {
-    const response = await fetch(url, { headers: this.#headers(), signal: AbortSignal.timeout(30_000) });
-    if (!response.ok) { if ([401, 403, 404].includes(response.status)) throw new Error(`Hugging Face resource is not accessible (${response.status}).`); throw new Error(`Hugging Face request failed (${response.status}).`); }
-    return streamTextCapped(response, maxBytes);
+    return streamTextCapped(await this.#fetch(url), maxBytes);
   }
 }
 
@@ -147,16 +186,26 @@ export class HuggingFaceGatekeeper extends DurableObject<Env, GatekeeperProps> i
     runExclusive: this.ctx.blockConcurrencyWhile.bind(this.ctx),
     gatekeeperId: "huggingface",
     // Lazy: defers the env read (which throws when unset) until first journal use.
-    accountId: () => parseResource(this.#url()).id,
+    accountId: () => `${this.ctx.props.connectionId}:${parseResource(this.#url()).id}`,
     label: "Hugging Face",
   });
   readonly #gated = new GatedActions(this.#stage, "Hugging Face", this.#journal);
 
+  #credentials() {
+    return new CredentialSource<HuggingFaceCredential>({
+      account: () => {
+        if (!this.ctx.props.connectionId) throw new Error("Connect Hugging Face in Cloudflare OS to authorize this binding.");
+        return this.ctx.exports.HuggingFaceConnection.get(this.ctx.exports.HuggingFaceConnection.idFromString(this.ctx.props.connectionId));
+      },
+      isAuthError: error => error instanceof HubAuthError,
+      expiredMessage: "Reconnect your Hugging Face account.", vendorId: "huggingface",
+    });
+  }
   #url(): string | undefined { return this.ctx.props?.resourceUrl ?? this.env.HF_RESOURCE_URL; }
   async describe(): Promise<ResourceDescription> { const r = parseResource(this.#url()); return { url: `https://huggingface.co/${r.kind === "model" ? "models" : r.kind === "dataset" ? "datasets" : "spaces"}/${r.id}`, title: `Hugging Face ${r.kind}`, snippet: `Scoped ${r.kind} repository capability`, suggestedBindingName: `HUGGINGFACE_${r.kind.toUpperCase()}`, tsType: "HuggingFaceSession" }; }
   async getTypeScriptTypes(): Promise<string> { return TYPES_CODE; }
   async getAutoApprovableActions(): Promise<[]> { return []; }
-  async startSession(approvalQueue: RpcStub<ApprovalQueue>): Promise<HuggingFaceSession> { return new HuggingFaceSessionImpl(approvalQueue.dup(), this.env, this, this.#url()); }
+  async startSession(approvalQueue: RpcStub<ApprovalQueue>): Promise<HuggingFaceSession> { const credentials = this.#credentials(); await credentials.read(); return new HuggingFaceSessionImpl(approvalQueue.dup(), this.env, this, credentials, this.#url()); }
   async addObserver(_id: string, _user: Fetcher<GatekeeperUserVerifier>): Promise<void> { throw new Error("Hugging Face bindings require tracked observer verification before sharing."); }
   async removeObserver(_id: string): Promise<void> {}
 
@@ -164,11 +213,12 @@ export class HuggingFaceGatekeeper extends DurableObject<Env, GatekeeperProps> i
    * The trusted approval subject for an action, rebuilt from this DO's environment and bound
    * resource scope — never from session-visible arguments. Expiry is bound at proposal time.
    */
-  async #trustedSubject(operation: string, resource: string, expiresAt: number): Promise<ApprovalSubject> {
+  async #trustedSubject(operation: string, resource: string, expiresAt: number, generation?: string): Promise<ApprovalSubject> {
     const r = parseResource(this.#url());
-    const policyVersion = await (await import("@gadgets/stage")).hashPayload({ kind: r.kind, id: r.id, writes: writesEnabled(this.env) });
+    const credentialGeneration = generation ?? (await this.#credentials().read()).generation;
+    const policyVersion = await (await import("@gadgets/stage")).hashPayload({ kind: r.kind, id: r.id, writes: writesEnabled(this.env), credentialGeneration });
     return {
-      ownerId: "operator",
+      ownerId: this.ctx.props.connectionId,
       accountId: r.id,
       workspaceId: "default",
       operation,
@@ -192,7 +242,7 @@ export class HuggingFaceGatekeeper extends DurableObject<Env, GatekeeperProps> i
     const probe = record.operation === "create_commit"
       ? async (): Promise<"applied" | "absent" | "unknown"> => {
           const stored = record.data as StoredCommitPayload;
-          const client = new HubClient(this.env.HF_TOKEN);
+          const client = new HubClient(this.#credentials(), record.credentialGeneration);
           return probeCommit((url) => client.request(url), apiPath(parseResource(this.#url())), {
             revision: validateRevision(stored?.revision),
             summary: (stored?.message ?? "").slice(0, 200),
@@ -221,7 +271,7 @@ export class HuggingFaceGatekeeper extends DurableObject<Env, GatekeeperProps> i
   // completion evidence. Each branch reports the vendor's REAL identifiers when the response
   // carries them, and honest nulls when it does not.
   async #execute(record: StoredHuggingFaceAction, _attempt: ExecutionAttempt): Promise<ReceiptInput> {
-    const client = new HubClient(this.env.HF_TOKEN);
+    const client = new HubClient(this.#credentials(), record.credentialGeneration);
     const r = parseResource(this.#url());
     switch (record.operation) {
       case "create_commit": {
@@ -288,7 +338,9 @@ export class HuggingFaceGatekeeper extends DurableObject<Env, GatekeeperProps> i
   async revertAction(_actionId: number): Promise<void> { throw new Error("Hugging Face actions are not reversible after application."); }
 
   async stageAction(action: HuggingFaceWriteAction): Promise<number> {
-    return this.#stage.stage(action);
+    const generation = (await this.#credentials().read()).generation;
+    const subject = await this.#trustedSubject(action.operation, parseResource(this.#url()).id, Date.now() + 7 * 24 * 60 * 60 * 1000, generation);
+    return this.#stage.stage({ ...action, credentialGeneration: generation }, subject);
   }
 
   async markActionPending(actionId: number): Promise<void> {
@@ -311,10 +363,10 @@ export class HuggingFaceGatekeeper extends DurableObject<Env, GatekeeperProps> i
 
 @validateRpc()
 class HuggingFaceSessionImpl extends RpcTarget implements HuggingFaceSession {
-  constructor(private readonly queue: Queue, private readonly env: Env, private readonly gatekeeper: HuggingFaceGatekeeper, private readonly resourceUrl?: string) { super(); }
+  constructor(private readonly queue: Queue, private readonly env: Env, private readonly gatekeeper: HuggingFaceGatekeeper, private readonly credentials: CredentialSource<HuggingFaceCredential>, private readonly resourceUrl?: string) { super(); }
   #resource(): Resource { return parseResource(this.resourceUrl ?? this.env.HF_RESOURCE_URL); }
-  #client(): HubClient { return new HubClient(this.env.HF_TOKEN); }
-  async getResource(): Promise<Resource | InferenceTarget> { const r = this.#resource(); return r.kind === "model" && this.env.HF_INFERENCE_MODEL ? { model: this.env.HF_INFERENCE_MODEL, provider: this.env.HF_INFERENCE_PROVIDER, task: "text-generation" } : r; }
+  #client(): HubClient { return new HubClient(this.credentials); }
+  async getResource(): Promise<Resource | InferenceTarget> { await this.credentials.read(); const r = this.#resource(); return r.kind === "model" && this.env.HF_INFERENCE_MODEL ? { model: this.env.HF_INFERENCE_MODEL, provider: this.env.HF_INFERENCE_PROVIDER, task: "text-generation" } : r; }
   async getRepositoryInfo(): Promise<HuggingFaceRepository> { const r = this.#resource(); const data = await this.#client().request(apiPath(r)); await this.queue.authorizeObservation({ title: "Read Hugging Face repository metadata", description: `Read metadata for ${r.id}.` }); return { id: data.id ?? r.id, kind: r.kind, private: Boolean(data.private), sha: data.sha, lastModified: data.lastModified }; }
   async getModelCard(): Promise<HuggingFaceModelCard> { const r = this.#resource(); if (r.kind !== "model") throw new Error("The bound resource is not a model."); const d = await this.#client().request(apiPath(r)); await this.queue.authorizeObservation({ title: "Read Hugging Face model card", description: `Read bounded metadata for ${r.id}.` }); return { id: d.id ?? r.id, libraryName: d.library_name, pipelineTag: d.pipeline_tag, tags: Array.isArray(d.tags) ? d.tags.slice(0, 100) : [], summary: typeof d.cardData?.model_summary === "string" ? d.cardData.model_summary.slice(0, 4000) : undefined }; }
   async getDatasetInfo(): Promise<HuggingFaceDatasetInfo> { const r = this.#resource(); if (r.kind !== "dataset") throw new Error("The bound resource is not a dataset."); const d = await this.#client().request(apiPath(r)); await this.queue.authorizeObservation({ title: "Read Hugging Face dataset metadata", description: `Read bounded metadata for ${r.id}.` }); return { id: d.id ?? r.id, tags: Array.isArray(d.tags) ? d.tags.slice(0, 100) : [], gated: Boolean(d.gated), private: Boolean(d.private), description: typeof d.description === "string" ? d.description.slice(0, 4000) : undefined }; }
@@ -516,26 +568,59 @@ class HuggingFaceSessionImpl extends RpcTarget implements HuggingFaceSession {
 }
 
 @validateRpc()
-export class HuggingFaceAccount extends WorkerEntrypoint<Env> implements GatekeeperUser {
-  async describe(): Promise<AccountDescription> { return { displayName: "Hugging Face", avatar: ICON, singleton: { tsType: "HuggingFaceSession" } }; }
-  async getSingletonGatekeeperClass(): Promise<DurableObjectClass<Gatekeeper<HuggingFaceSession>>> { return this.ctx.exports.HuggingFaceGatekeeper({}); }
+export class HuggingFaceAccount extends WorkerEntrypoint<Env, { connectionId: string }> implements GatekeeperUser {
+  #connection() {
+    return this.ctx.exports.HuggingFaceConnection.get(this.ctx.exports.HuggingFaceConnection.idFromString(this.ctx.props.connectionId));
+  }
+  async describe(): Promise<AccountDescription> {
+    return { displayName: await this.#connection().describeUser(), avatar: ICON,
+      ...(this.env.HF_RESOURCE_URL ? { singleton: { tsType: "HuggingFaceSession" } } : {}) };
+  }
+  async getSingletonGatekeeperClass(): Promise<DurableObjectClass<Gatekeeper<HuggingFaceSession>>> {
+    if (!this.env.HF_RESOURCE_URL) throw new Error("Select a Hugging Face repository resource.");
+    return this.ctx.exports.HuggingFaceGatekeeper({ props: { connectionId: this.ctx.props.connectionId } });
+  }
   async getSupportedResources(): Promise<SupportedResource[]> { return RESOURCES; }
-  async getGatekeeperClassFor(url: string): Promise<{ class: DurableObjectClass<Gatekeeper<HuggingFaceSession>>; resource: SupportedResource }> { const parsed = parseResource(url); const resource = RESOURCES.find(x => x.urlPattern.includes(`/${parsed.kind === "model" ? "models" : parsed.kind === "dataset" ? "datasets" : "spaces"}/`))!; return { class: this.ctx.exports.HuggingFaceGatekeeper({ props: { resourceUrl: url } }), resource }; }
-  startResourceConfigurator(_resourceUrlPattern: string): Promise<ResourceConfiguratorFrame> { throw new Error("Hugging Face configurator is not enabled yet."); }
+  async getGatekeeperClassFor(url: string): Promise<{ class: DurableObjectClass<Gatekeeper<HuggingFaceSession>>; resource: SupportedResource }> {
+    await this.#connection().getCredentials();
+    const parsed = parseResource(url);
+    const resource = RESOURCES.find(x => x.urlPattern.includes(`/${parsed.kind === "model" ? "models" : parsed.kind === "dataset" ? "datasets" : "spaces"}/`))!;
+    return { class: this.ctx.exports.HuggingFaceGatekeeper({ props: { connectionId: this.ctx.props.connectionId, resourceUrl: url } }), resource };
+  }
+  async startResourceConfigurator(resourceUrlPattern: string): Promise<ResourceConfiguratorFrame> {
+    const resource = RESOURCES.find(x => x.urlPattern === resourceUrlPattern);
+    if (!resource) throw new Error("Unsupported Hugging Face resource type.");
+    await this.#connection().getCredentials();
+    return { iframeHtml: RESOURCE_CONFIGURATOR_HTML, ui: new RpcStub(new HuggingFaceConfigurator(resourceUrlPattern)) };
+  }
   async ensureResources(_patterns: string[]): Promise<{ url?: string }> { return {}; }
-  async revoke(): Promise<void> {}
-  async reconnect(): Promise<{ url: string }> { throw new Error("Hugging Face reconnect is not enabled; rotate the configured fine-grained token."); }
-  async commitReconnect(_stageId: string): Promise<void> { throw new Error("Hugging Face reconnect is not enabled."); }
+  async revoke(): Promise<void> { await this.#connection().revoke(); }
+  async reconnect(): Promise<{ url: string }> { return this.#connection().reconnect(); }
+  async commitReconnect(stageId: string): Promise<void> { await this.#connection().commitReconnect(stageId); }
   async getAuthenticatedEmail(): Promise<string | null> { return null; }
   async getVerifier(): Promise<Fetcher<GatekeeperUserVerifier>> { return this.ctx.exports.HuggingFaceVerifier({}); }
+}
+
+@validateRpc()
+class HuggingFaceConfigurator extends RpcTarget {
+  constructor(private readonly pattern: string) { super(); }
+  async normalizeResourceUrl(raw: string): Promise<string> {
+    const resource = parseResource(raw.trim());
+    const prefix = resource.kind === "model" ? "models" : resource.kind === "dataset" ? "datasets" : "spaces";
+    if (this.pattern !== `https://huggingface.co/${prefix}/*`) throw new Error("Choose a repository of the selected resource type.");
+    return `https://huggingface.co/${prefix}/${resource.id}`;
+  }
 }
 @validateRpc() export class HuggingFaceVerifier extends WorkerEntrypoint<Env> implements GatekeeperUserVerifier { verify(): void {} }
 
 @validateRpc()
 export class GatekeeperVendor extends WorkerEntrypoint<Env> {
-  async describe(): Promise<VendorDescription> { return { displayName: "Hugging Face", url: "https://huggingface.co", logo: ICON, color: "#ffcf00", tagline: "Governed model, dataset, Space, and inference access", description: "Connect scoped Hugging Face repositories and approved inference targets to Cloudflare OS.", autoProvisionsAccount: true }; }
-  @skipRpcValidation() async createAccount(): Promise<Fetcher<GatekeeperUser>> { return this.ctx.exports.HuggingFaceAccount({}); }
-  connectAccount(_callback: Fetcher<GatekeeperConnectCallback>, _options?: GatekeeperConnectOptions): Promise<{ url: string }> { throw new Error("Hugging Face uses the deployment's secret-backed account until OAuth is enabled."); }
+  async describe(): Promise<VendorDescription> { return { displayName: "Hugging Face", url: "https://huggingface.co", logo: ICON, color: "#ffcf00", tagline: "Governed model, dataset, Space, and inference access", description: "Connect scoped Hugging Face repositories and approved inference targets to Cloudflare OS." }; }
+  async connectAccount(callback: Fetcher<GatekeeperConnectCallback>, _options?: GatekeeperConnectOptions): Promise<{ url: string }> {
+    const namespace = this.ctx.exports.HuggingFaceConnection;
+    const connection = namespace.get(namespace.newUniqueId());
+    return { url: await connection.prepare(callback) };
+  }
   async getSupportedResources(): Promise<SupportedResource[]> { return RESOURCES; }
   async getTypeScriptTypes(): Promise<string> { return TYPES_CODE; }
 }

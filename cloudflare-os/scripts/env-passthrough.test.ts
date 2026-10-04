@@ -29,7 +29,7 @@ import { describe, it } from "node:test";
  *               script run directly, with the full ambient environment. Nothing about the artifact
  *               a cached run produces depends on it.
  *   injected  — set explicitly by the build setup, never inherited. Stripping is correct here:
- *               `build-app.mjs` always passes `GATEKEEPER_APP_UNMINIFIED`, and the frontend build
+ *               `build-app.ts` always passes `GATEKEEPER_APP_UNMINIFIED`, and the frontend build
  *               task sets `NODE_ENV` before importing Vite.
  *   external  — read outside any vp task (release/dev tooling invoked directly), so vp never
  *               filters it.
@@ -63,8 +63,8 @@ const EXPECTED: Record<string, ExpectedArea> = {
     injected: ["WORKSHOP_INTEGRATION_PREBUILT"],
     watch: ["BUNDLED_BLUEPRINTS_DIR"],
   },
-  // `env: ['VITE_*']` — vite's `define` inlines any VITE_-prefixed variable, so the set this
-  // package can depend on is open-ended and the wildcard is the only honest declaration.
+  // `cache: { env: ['VITE_*'] }` — vite's `define` inlines any VITE_-prefixed variable, so the set
+  // this package can depend on is open-ended and the wildcard is the only honest declaration.
   "packages/workshop-frontend": {
     forwarded: [
       "VITE_BACKEND_HOST",
@@ -163,8 +163,9 @@ function readsUnder(directory: string): Set<string> {
 }
 
 // Comments in these files quote the very syntax being searched for — workshop-backend's explains why
-// it is `cache: false` "rather than `env: ['BUNDLED_BLUEPRINTS_DIR']`" — so scanning raw source both
-// reads declarations out of prose and lets a deleted one keep passing. Strip comments first.
+// it is `cache: false` "rather than `cache: { env: ['BUNDLED_BLUEPRINTS_DIR'] }`" — so scanning raw
+// source both reads declarations out of prose and lets a deleted one keep passing. Strip comments
+// first.
 const stripComments = (source: string) =>
   source.replaceAll(/\/\*[\s\S]*?\*\//g, "").replaceAll(/\/\/.*$/gm, "");
 

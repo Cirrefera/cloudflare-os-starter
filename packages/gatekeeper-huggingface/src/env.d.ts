@@ -1,5 +1,5 @@
 interface Env {
-  HF_TOKEN: string;
+  BASE_URL: string;
   HF_RESOURCE_URL?: string;
   HF_INFERENCE_MODEL?: string;
   HF_INFERENCE_PROVIDER?: string;
@@ -9,6 +9,8 @@ interface Env {
 declare namespace Cloudflare {
   interface GlobalProps {
     mainModule: typeof import("./index");
-    durableNamespaces: "HuggingFaceGatekeeper";
+    durableNamespaces: "HuggingFaceGatekeeper" | "HuggingFaceConnection";
   }
 }
+
+declare module "*.txt" { const value: string; export default value; }

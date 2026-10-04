@@ -1,0 +1,21 @@
+{
+  "extends": "../../cloudflare-os/tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "./worker-configuration.d.ts"
+    ],
+    "noEmit": true,
+    "paths": {
+      "@gadgets/workshop-shared/*": [
+        "../../cloudflare-os/packages/workshop-shared/src/*"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    ".wrangler"
+  ]
+}

@@ -26,7 +26,18 @@ export type OptionalGatekeeperId =
   | "mcpv2"
   | "mcpPortal"
   | "snowflake"
-  | "huggingface";
+  | "huggingface"
+  | "email"
+  | "google"
+  | "homeassistant"
+  | "linear"
+  | "notion"
+  | "slack"
+  | "spotify"
+  | "supabase"
+  | "zoominfo"
+  | "cloudflareaccount"
+  | "alphaxiv";
 
 /** One reviewed, deployable integration in the outer repository's deployment catalog. */
 export interface GatekeeperCatalogEntry {
@@ -37,7 +48,7 @@ export interface GatekeeperCatalogEntry {
   /** Public Router prefix; the Worker itself remains private behind the Router. */
   routePrefix: `/gatekeeper/${string}`;
   /** Credential/configuration shape; secrets are supplied separately at deploy time. */
-  auth: "oauth2" | "endpoint" | "portal" | "snowflake" | "huggingface" | "nvidia";
+  auth: "oauth2" | "endpoint" | "portal" | "snowflake" | "huggingface" | "nvidia" | "deployment" | "public";
   /**
    * Whether the Router exposes an HTTP flow for this Gatekeeper (the `/gatekeeper/*` prefix,
    * OAuth redirects, frontend assets). `false` marks a SERVICE-ONLY package: the Workshop binds
@@ -60,6 +71,128 @@ export interface GatekeeperCatalogEntry {
  * it in a later change, after each package's bindings and secret contract have been reviewed.
  */
 export const OPTIONAL_GATEKEEPER_CATALOG: Record<OptionalGatekeeperId, GatekeeperCatalogEntry> = {
+  email: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-email",
+    "binding": "GATEKEEPER_EMAIL",
+    "routePrefix": "/gatekeeper/email",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": []
+  },
+  google: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-google",
+    "binding": "GATEKEEPER_GOOGLE",
+    "routePrefix": "/gatekeeper/google",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": [
+      "CLIENT_ID",
+      "CLIENT_SECRET"
+    ]
+  },
+  homeassistant: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-homeassistant",
+    "binding": "GATEKEEPER_HOMEASSISTANT",
+    "routePrefix": "/gatekeeper/homeassistant",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": []
+  },
+  linear: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-linear",
+    "binding": "GATEKEEPER_LINEAR",
+    "routePrefix": "/gatekeeper/linear",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": [
+      "CLIENT_ID",
+      "CLIENT_SECRET"
+    ]
+  },
+  notion: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-notion",
+    "binding": "GATEKEEPER_NOTION",
+    "routePrefix": "/gatekeeper/notion",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": [
+      "CLIENT_ID",
+      "CLIENT_SECRET"
+    ]
+  },
+  slack: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-slack",
+    "binding": "GATEKEEPER_SLACK",
+    "routePrefix": "/gatekeeper/slack",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": [
+      "CLIENT_ID",
+      "CLIENT_SECRET"
+    ]
+  },
+  spotify: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-spotify",
+    "binding": "GATEKEEPER_SPOTIFY",
+    "routePrefix": "/gatekeeper/spotify",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": [
+      "CLIENT_ID",
+      "CLIENT_SECRET"
+    ]
+  },
+  supabase: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-supabase",
+    "binding": "GATEKEEPER_SUPABASE",
+    "routePrefix": "/gatekeeper/supabase",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": [
+      "CLIENT_ID",
+      "CLIENT_SECRET"
+    ]
+  },
+  zoominfo: {
+    "packageDir": "cloudflare-os/packages/gatekeeper-zoominfo",
+    "binding": "GATEKEEPER_ZOOMINFO",
+    "routePrefix": "/gatekeeper/zoominfo",
+    "auth": "oauth2",
+    "publicFlow": true,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": [
+      "CLIENT_ID",
+      "CLIENT_SECRET"
+    ]
+  },
+  cloudflareaccount: {
+    "packageDir": "packages/gatekeeper-cloudflareaccount",
+    "binding": "GATEKEEPER_CLOUDFLAREACCOUNT",
+    "routePrefix": "/gatekeeper/cloudflareaccount",
+    "auth": "deployment",
+    "publicFlow": false,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": [
+      "CLOUDFLARE_API_TOKEN"
+    ]
+  },
+  alphaxiv: {
+    "packageDir": "packages/gatekeeper-alphaxiv",
+    "binding": "GATEKEEPER_ALPHAXIV",
+    "routePrefix": "/gatekeeper/alphaxiv",
+    "auth": "public",
+    "publicFlow": false,
+    "entrypoint": "GatekeeperVendor",
+    "secrets": []
+  },
   // The durable task runtime: SERVICE-ONLY. The Workshop binds it for mount management and the
   // coordinator talks to it over RPC; the Router never discovers it (publicFlow: false).
   taskRuntime: {
@@ -111,12 +244,11 @@ export const OPTIONAL_GATEKEEPER_CATALOG: Record<OptionalGatekeeperId, Gatekeepe
     secrets: ["CLIENT_ID", "CLIENT_SECRET"],
     // Telemetry/billing observation ONLY: this Worker never carries infrastructure control.
   },
-  // Deployed under the mcpv2 identity (Cloudflare's refreshed MCP platform naming); the upstream
-  // package directory keeps its own name.
+  // Keep the existing configuration key; use the upstream MCP binding and route identity.
   mcpv2: {
     packageDir: "cloudflare-os/packages/gatekeeper-mcp",
-    binding: "GATEKEEPER_MCPV2",
-    routePrefix: "/gatekeeper/mcpv2",
+    binding: "GATEKEEPER_MCP",
+    routePrefix: "/gatekeeper/mcp",
     auth: "endpoint",
     publicFlow: true,
     entrypoint: "GatekeeperVendor",
@@ -143,7 +275,7 @@ export const OPTIONAL_GATEKEEPER_CATALOG: Record<OptionalGatekeeperId, Gatekeepe
     auth: "snowflake",
     publicFlow: true,
     entrypoint: "GatekeeperVendor",
-    secrets: ["SNOWFLAKE_ACCOUNT", "SNOWFLAKE_TOKEN", "SNOWFLAKE_ROLE"],
+    secrets: ["SNOWFLAKE_ACCOUNT", "SNOWFLAKE_ROLE", "CLIENT_ID", "CLIENT_SECRET"],
   },
   huggingface: {
     packageDir: "packages/gatekeeper-huggingface",
@@ -152,7 +284,7 @@ export const OPTIONAL_GATEKEEPER_CATALOG: Record<OptionalGatekeeperId, Gatekeepe
     auth: "huggingface",
     publicFlow: true,
     entrypoint: "GatekeeperVendor",
-    secrets: ["HF_TOKEN"],
+    secrets: [],
   },
 };
 
@@ -184,6 +316,7 @@ export const AI_GATEWAY_PROVIDERS: readonly AiGatewayProvider[] =
  * half-wired.
  */
 export const WIRED_GATEKEEPERS: readonly OptionalGatekeeperId[] = [
+  "email", "google", "homeassistant", "linear", "notion", "slack", "spotify", "supabase", "zoominfo", "cloudflareaccount", "alphaxiv",
   "taskRuntime", "nvidia", "github", "confluence", "cloudflare", "mcpv2", "mcpPortal", "snowflake", "huggingface",
 ];
 
@@ -296,7 +429,7 @@ export interface DeploymentConfig {
     errorReporter?: { name: string };
   };
   /** Explicit optional Gatekeeper Workers; all are disabled until deliberately configured. */
-  gatekeepers: Record<OptionalGatekeeperId, OptionalGatekeeperConfig>;
+  gatekeepers: Partial<Record<OptionalGatekeeperId, OptionalGatekeeperConfig>>;
   access: AccessConfig;
   aiGateway: AiGatewayConfigInput;
   context: ContextConfig;

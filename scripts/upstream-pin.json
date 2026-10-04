@@ -1,6 +1,6 @@
 {
   "repo": "https://github.com/cloudflare/cloudflare-os.git",
-  "commit": "0272b0600eb020aeb0808fad8fab679ec1526fb3",
-  "syncedAt": "2026-09-16",
-  "method": "git subtree squash import; prefix cloudflare-os"
+  "commit": "5cae880e5e54563895a067e7f4dae67514e581be",
+  "syncedAt": "2026-10-04",
+  "method": "Complete verbatim upstream source; custom packages remain outside cloudflare-os"
 }

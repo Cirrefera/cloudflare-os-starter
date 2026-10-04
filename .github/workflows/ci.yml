@@ -36,14 +36,11 @@ jobs:
         run: pnpm install --frozen-lockfile
         working-directory: cloudflare-os
 
-      - name: Test
-        run: pnpm test
-
       - name: Lint
         run: pnpm lint
 
       - name: Boundary check
         run: pnpm check:boundary
 
-      - name: Deployment dry run (non-secret CI fixture)
-        run: node scripts/deploy.ts --check --config scripts/deployment.ci.jsonc
+      - name: Upstream tests and complete deployment dry run
+        run: pnpm check:full

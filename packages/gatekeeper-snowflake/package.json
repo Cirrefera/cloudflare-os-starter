@@ -13,7 +13,8 @@
     "@gadgets/stage": "workspace:*",
     "@gadgets/workshop-shared": "workspace:*",
     "capnweb": "catalog:",
-    "capnweb-validate": "catalog:"
+    "capnweb-validate": "catalog:",
+    "@gadgets/gatekeeper-kit": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:",

@@ -6,3 +6,7 @@ deployment.local.jsonc
 .secrets/
 packages/*/worker-configuration.d.ts
 .subagents/
+
+release-out/
+
+packages/gatekeeper-huggingface/src/generated/

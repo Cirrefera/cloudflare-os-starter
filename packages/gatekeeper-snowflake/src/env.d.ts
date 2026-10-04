@@ -1,21 +1,21 @@
 interface Env {
-  SNOWFLAKE_TOKEN: string;
+  /** Registered Snowflake OAuth application credentials. */
+  CLIENT_ID: string;
+  CLIENT_SECRET: string;
+  BASE_URL?: string;
+  /** Optional explicitly configured provider revocation endpoint. */
+  SNOWFLAKE_OAUTH_REVOCATION_URL?: string;
+  /** Legacy deployment token; interactive connections do not use it. */
+  SNOWFLAKE_TOKEN?: string;
   SNOWFLAKE_ACCOUNT: string;
   SNOWFLAKE_ROLE: string;
-  /**
-   * Operator identity recorded as the trusted approval subject's ownerId (approval provenance).
-   * Defaults to "operator" when unset; it is metadata only and never grants authority.
-   */
+  /** Legacy operator metadata; OAuth ownership is tied to the connected account. */
   SNOWFLAKE_USER?: string;
   SNOWFLAKE_DATABASES?: string;
   SNOWFLAKE_SCHEMAS?: string;
   SNOWFLAKE_TABLES?: string;
   SNOWFLAKE_WAREHOUSE?: string;
-  /**
-   * Dedicated write credential for approved writes. The secrets contract requires it whenever
-   * write authority is enabled (SNOWFLAKE_ENABLE_WRITES); reusing the read token is the
-   * operator's explicit choice and presumes its scope was checked.
-   */
+  /** Legacy deployment write token; interactive connections do not use it. */
   SNOWFLAKE_WRITE_TOKEN?: string;
   /** Optional write-path role: when set, approved writes run under it instead of SNOWFLAKE_ROLE. */
   SNOWFLAKE_WRITE_ROLE?: string;
@@ -43,6 +43,6 @@ declare module "*.d.ts?raw" { const text: string; export default text; }
 declare namespace Cloudflare {
   interface GlobalProps {
     mainModule: typeof import("./index");
-    durableNamespaces: "SnowflakeGatekeeper";
+    durableNamespaces: "SnowflakeGatekeeper" | "SnowflakeConnection";
   }
 }

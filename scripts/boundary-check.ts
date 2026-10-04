@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, lstatSync, readFileSync, readlinkSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
 
 const KERNEL_PATH = "cloudflare-os";
@@ -12,6 +13,33 @@ function git(root: string, args: string[]): string {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
   }).trim();
+}
+
+/** Compare current source bytes with the pinned Git tree, including uncommitted imports. */
+function verifySourceTree(root: string, commit: string): string[] {
+  const issues: string[] = [];
+  const expected = new Set<string>();
+  const entries = git(root, ["ls-tree", "-r", "-z", commit]).split("\0").filter(Boolean);
+  for (const entry of entries) {
+    const [metadata, path] = entry.split("\t");
+    const [mode, , hash] = metadata.split(" ");
+    expected.add(`${KERNEL_PATH}/${path}`);
+    const file = join(root, KERNEL_PATH, path);
+    if (!existsSync(file)) {
+      issues.push(`upstream file is missing: ${path}`);
+      continue;
+    }
+    const bytes = mode === "120000" ? Buffer.from(readlinkSync(file)) : readFileSync(file);
+    const actual = createHash("sha1").update(`blob ${bytes.length}\0`).update(bytes).digest("hex");
+    if (actual !== hash) issues.push(`upstream file differs from the pin: ${path}`);
+  }
+  const current = git(root, ["ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", KERNEL_PATH]);
+  for (const path of new Set(current.split("\0").filter(Boolean))) {
+    if (!expected.has(path) && existsSync(join(root, path)) && !lstatSync(join(root, path)).isDirectory()) {
+      issues.push(`additional file inside upstream source: ${path}`);
+    }
+  }
+  return issues;
 }
 
 /**
@@ -104,26 +132,14 @@ export function collectBoundaryIssues(root = resolve(import.meta.dirname, ".."))
         if (!existsSync(join(kernel, "package.json"))) {
           // already reported above
         } else {
-          const pinTree = git(root, ["rev-parse", `${pin.commit}^{tree}`]);
-          const vendoredTree = git(root, ["rev-parse", `HEAD:${KERNEL_PATH}`]);
-          if (pinTree !== vendoredTree) {
-            issues.push(
-              `vendored cloudflare-os tree ${vendoredTree} differs from pinned upstream ${pin.commit} tree ${pinTree}`,
-            );
-          }
+          issues.push(...verifySourceTree(root, pin.commit));
         }
       } catch {
         // The pinned commit object is not local (fresh shallow clone, offline). Fetch it once;
         // if that is impossible we still verify every structural invariant above.
         try {
           git(root, ["fetch", OFFICIAL_UPSTREAM, pin.commit, "--quiet"]);
-          const pinTree = git(root, ["rev-parse", `${pin.commit}^{tree}`]);
-          const vendoredTree = git(root, ["rev-parse", `HEAD:${KERNEL_PATH}`]);
-          if (pinTree !== vendoredTree) {
-            issues.push(
-              `vendored cloudflare-os tree ${vendoredTree} differs from pinned upstream ${pin.commit} tree ${pinTree}`,
-            );
-          }
+          issues.push(...verifySourceTree(root, pin.commit));
         } catch (error) {
           issues.push(
             `cannot verify the vendored tree against the pinned upstream commit (fetch failed: ${(error as Error).message.split("\n")[0]})`,

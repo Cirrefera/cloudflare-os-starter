@@ -13,7 +13,9 @@
     "@gadgets/stage": "workspace:*",
     "@gadgets/workshop-shared": "workspace:*",
     "capnweb": "catalog:",
-    "capnweb-validate": "catalog:"
+    "capnweb-validate": "catalog:",
+    "@gadgets/gatekeeper-kit": "workspace:*",
+    "@gadgets/configurator-ui": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:",
@@ -21,6 +23,7 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "wrangler": "catalog:"
+    "wrangler": "catalog:",
+    "@gadgets/scripts": "workspace:*"
   }
 }

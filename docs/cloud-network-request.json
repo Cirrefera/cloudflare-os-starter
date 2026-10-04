@@ -1,0 +1,12 @@
+{
+  "config": {
+    "network": {
+      "allowed_domains": [
+        "api.cloudflare.com",
+        "hellgate-os-router.mchayes89.workers.dev",
+        "huggingface.co",
+        "cojinx.cloudflareaccess.com"
+      ]
+    }
+  }
+}

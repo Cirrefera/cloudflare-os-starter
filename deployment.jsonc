@@ -39,6 +39,17 @@
   // Optional integrations are explicit separate Workers. They are disabled until their package,
   // bindings, credentials, and security review are complete. Do not put secrets in this file.
   "gatekeepers": {
+    "email": {"enabled": false, "workerName": null},
+    "google": {"enabled": false, "workerName": null},
+    "homeassistant": {"enabled": false, "workerName": null},
+    "linear": {"enabled": false, "workerName": null},
+    "notion": {"enabled": false, "workerName": null},
+    "slack": {"enabled": false, "workerName": null},
+    "spotify": {"enabled": false, "workerName": null},
+    "supabase": {"enabled": false, "workerName": null},
+    "zoominfo": {"enabled": false, "workerName": null},
+    "cloudflareaccount": {"enabled": true, "workerName": "hellgate-os-gatekeeper-cloudflareaccount"},
+    "alphaxiv": {"enabled": true, "workerName": "hellgate-os-gatekeeper-alphaxiv"},
     "taskRuntime": { "enabled": false, "workerName": null },
     "nvidia": { "enabled": false, "workerName": null },
     "github": { "enabled": false, "workerName": null },
@@ -46,8 +57,16 @@
     "cloudflare": { "enabled": false, "workerName": null },
     "mcpv2": { "enabled": false, "workerName": null },
     "mcpPortal": { "enabled": false, "workerName": null },
-    "snowflake": { "enabled": true, "workerName": "hellgate-os-gatekeeper-snowflake" },
-    "huggingface": { "enabled": false, "workerName": null }
+    "snowflake": {
+      "enabled": true,
+      "workerName": "hellgate-os-gatekeeper-snowflake",
+      "vars": {
+        "SNOWFLAKE_WAREHOUSE": "COMPUTE_WH",
+        "SNOWFLAKE_DATABASES": "REFINERY",
+        "SNOWFLAKE_SCHEMAS": "REFINERY.PUBLIC"
+      }
+    },
+    "huggingface": { "enabled": true, "workerName": "hellgate-os-gatekeeper-huggingface" }
   },
 
   // This starter deploys Cloudflare Access mode. Cloudflare OS also supports built-in password

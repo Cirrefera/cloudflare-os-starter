@@ -1,7 +1,7 @@
 import { RpcStub, RpcTarget, newHttpBatchRpcResponse, newWebSocketRpcSession, RpcSessionOptions } from "capnweb";
 import { validateRpc } from "capnweb-validate";
 import type { JWTPayload } from "jose";
-import { PublicApi, AuthenticatedApi, Overseer, GadgetMetadataWithTimestamps, AiChatAuthorInfo, AiModelConfig, AiGatewayInfo, AiModelProvider, ConnectedAccountsSubscriber, ConnectedAccountsFilter, GatekeeperVendorFilter, ObserverConfigCallback, BlueprintLibrarySummary, BlueprintPublicInfo, BlueprintUserSummary, BlueprintBindingAssignment, AgentSpawnerConfig, WorkpieceId, BLUEPRINT_SCREENSHOT_PATH_PREFIX, BLUEPRINT_SCREENSHOT_R2_PREFIX, blueprintScreenshotUrl, ServerConfig, CloudflareUsageInfo, CloudflareAccountOption, LoginAttempt, GatekeeperAppInfo, AdminApi, GatekeeperVendorInfo, OutputFormatOffer, ListOutputsResult, UserDirectoryRecord, createOpenGadgetError, getOpenGadgetErrorCode, OPEN_GADGET_ERROR_CODES, AUTH_ERROR_CODES, createAuthError, ConnectFlowStart } from '@gadgets/workshop-shared/api';
+import { PublicApi, AuthenticatedApi, Overseer, GadgetMetadataWithTimestamps, AiChatAuthorInfo, RedactedAiModelConfig, AiGatewayInfo, AiModelProvider, ConnectedAccountsSubscriber, ConnectedAccountsFilter, GatekeeperVendorFilter, ObserverConfigCallback, BlueprintLibrarySummary, BlueprintPublicInfo, BlueprintUserSummary, BlueprintBindingAssignment, AgentSpawnerConfig, WorkpieceId, BLUEPRINT_SCREENSHOT_PATH_PREFIX, BLUEPRINT_SCREENSHOT_R2_PREFIX, blueprintScreenshotUrl, ServerConfig, CloudflareUsageInfo, CloudflareAccountOption, LoginAttempt, GatekeeperAppInfo, AdminApi, GatekeeperVendorInfo, OutputFormatOffer, ListOutputsResult, UserDirectoryRecord, createOpenGadgetError, getOpenGadgetErrorCode, OPEN_GADGET_ERROR_CODES, AUTH_ERROR_CODES, createAuthError, ConnectFlowStart } from '@gadgets/workshop-shared/api';
 import type { UiFeatureFlags } from "@gadgets/workshop-shared/feature-flags";
 import { getServerConfig } from "./deployment-config.js";
 import { isPasswordAuthEnabled, getAuthGatekeeperAllowlist } from "./auth/config.js";
@@ -16,9 +16,10 @@ import { deploymentOutputForBlueprint, listFormatOffers, readAdminConfig } from 
 export { PendingLogin, LoginConnectCallbackImpl };
 import { GatekeeperUiFrame } from "@gadgets/workshop-shared/gatekeeper";
 import { LanguageModelGatekeeper } from "./ai-models";
-import { getAiGatewayConfig } from "./ai-gateway.js";
+import { getGatewayModels } from "./ai-gateway.js";
 import { AdminSettings, AdminApiImpl } from "./admin-settings.js";
-import { BlueprintKvRecord, buildBlueprintArchiveStream, sanitizeBlueprintOutput, listFeaturedBlueprintsFromKv, parseBlueprintArchive, randomBlueprintId, readBlueprintContent, readBlueprintKvRecord } from "./blueprint-archive.js";
+import { buildBlueprintArchiveStream, sanitizeBlueprintOutput, parseBlueprintArchive, randomBlueprintId, readBlueprintContent } from "./blueprint-archive.js";
+import { BlueprintKvRecord, listFeaturedBlueprintsFromKv, readBlueprintKvRecord } from "./storage-schema/blueprints-kv.js";
 import { GatekeeperConnectCallbackImpl, normalizeUsername, UserDurableObject, CLOUDFLARE_VENDOR_ID } from "./user";
 import { OverseerDurableObject, GatekeeperLoopback, CodeModeTailLoopback, AgentSpawnerGatekeeper, GatekeeperHookLoopback, GadgetTailLoopback, AgentSelfLoopback } from "./overseer";
 import { UserDirectoryDurableObject } from "./user-directory.js";
@@ -144,6 +145,9 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
   setOwnDisplayName(name: string): Promise<void> {
     return this.#user.setOwnDisplayName(name);
   }
+  setOwnCommitEmail(email: string | null): Promise<void> {
+    return this.#user.setOwnCommitEmail(email);
+  }
   async searchUsers(query: string, excludeIds: string[]): Promise<UserDirectoryRecord[]> {
     if (!(await this.#userSearchEnabled())) return [];
     return retryOnDoReset(() => this.ctx.exports.UserDirectoryDurableObject.getByName("")
@@ -158,8 +162,15 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
   listModels(): Promise<AiChatAuthorInfo[]> {
     return retryOnDoReset(() => this.#user.listModels());
   }
-  addModel(profile: AiChatAuthorInfo, config: AiModelConfig): Promise<void> {
-    return this.#user.addModel(profile, config);
+  addModel(profile: AiChatAuthorInfo, config: RedactedAiModelConfig,
+           copySecretsFrom?: string): Promise<void> {
+    return this.#user.addModel(profile, config, copySecretsFrom);
+  }
+  getModelConfig(id: string): Promise<{profile: AiChatAuthorInfo, config: RedactedAiModelConfig}> {
+    return retryOnDoReset(() => this.#user.getModelConfig(id));
+  }
+  updateModel(profile: AiChatAuthorInfo, config: RedactedAiModelConfig): Promise<void> {
+    return this.#user.updateModel(profile, config);
   }
   deleteModel(id: string): Promise<void> {
     return this.#user.deleteModel(id);
@@ -223,15 +234,17 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
     return new Uint8Array(result);
   }
 
-  getAiConfig(): Promise<AiGatewayInfo> {
-    let gwConfig = getAiGatewayConfig(this.env);
-    if (gwConfig) {
-      return Promise.resolve({
+  async getAiConfig(): Promise<AiGatewayInfo> {
+    let models = await getGatewayModels(this.env);
+    if (models) {
+      return {
         enabled: true,
-        enabledProviders: [...gwConfig.providers] as AiModelProvider[],
-      });
+        enabledProviders: [...models.providers] as AiModelProvider[],
+        builtInModelIds: models.all.map(model => model.id),
+        userModelsEnabled: models.userModels,
+      };
     } else {
-      return Promise.resolve({ enabled: false });
+      return { enabled: false };
     }
   }
 
@@ -289,12 +302,6 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
       throw err;
     }
     started = true;
-    recordAnalytics(this.ctx, this.env, {
-      event_name: "gadget_opened",
-      user_id: userId,
-      gadget_id: id,
-      source: shareKey ? "share_key" : "direct",
-    });
     return result;
   }
 

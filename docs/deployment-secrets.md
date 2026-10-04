@@ -16,7 +16,8 @@ Each file is a flat map of secret name to value:
 ```json
 {
   "SNOWFLAKE_ACCOUNT": "myorg",
-  "SNOWFLAKE_TOKEN": "...",
+  "CLIENT_ID": "<OAuth application client ID>",
+  "CLIENT_SECRET": "<OAuth application client secret>",
   "SNOWFLAKE_ROLE": "READER_ROLE"
 }
 ```
@@ -29,8 +30,10 @@ configuration:
 | Worker | Required secrets |
 | --- | --- |
 | workshop | `CF_AI_GATEWAY_API_TOKEN`, only when the AI Gateway plan needs a token |
-| gatekeeper-snowflake | `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_TOKEN`, `SNOWFLAKE_ROLE` |
-| gatekeeper-huggingface | `HF_TOKEN` |
+| gatekeeper-snowflake | `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_ROLE`, `CLIENT_ID`, `CLIENT_SECRET` |
+| gatekeeper-huggingface | None (browser OAuth) |
+| gatekeeper-cloudflareaccount | `CLOUDFLARE_API_TOKEN` |
+| gatekeeper-alphaxiv | None; its source file is `{}` |
 
 Validation is strict and fails **before** anything is installed:
 
@@ -38,17 +41,14 @@ Validation is strict and fails **before** anything is installed:
 - **Isolation** — names outside the Worker's contract are refused. A Hugging Face token can never
   ride the Snowflake Worker's file, and vice versa.
 
-## Snowflake write authority
+## Snowflake authorization
 
-Write execution is gated by `SNOWFLAKE_ENABLE_WRITES`. When you set it (`"true"`/`"1"`) in the
-Worker's source file, the contract additionally requires **`SNOWFLAKE_WRITE_TOKEN`** — a separate
-write credential used only by the approved-write path (`SNOWFLAKE_WRITE_ROLE` /
-`SNOWFLAKE_WRITE_WAREHOUSE` scope it further).
+Snowflake uses its registered OAuth application's `CLIENT_ID` / `CLIENT_SECRET`. Each human
+signs in and consents through Snowflake; the gatekeeper obtains and refreshes that user's tokens.
+See [Snowflake connection setup](../packages/gatekeeper-snowflake/README.md).
 
-The existing read credential may be reused as the write token only after you have checked its
-scope: create the value deliberately (`"SNOWFLAKE_WRITE_TOKEN": "<same value>"`) with the
-understanding that it then carries write authority. A checked, narrower write credential is the
-recommended setup.
+Approved writes require the operator's `SNOWFLAKE_ENABLE_WRITES` switch and privileges in the
+connected user's OAuth grant. A separate deployment write token is not required in this flow.
 
 ## Installing
 
@@ -84,3 +84,20 @@ rm -rf "${TMPDIR:-/tmp}"/cfos-secrets-*
 ```
 
 Dry runs (`--check`) validate the contracts and install nothing.
+
+## Prepared credential drop location
+
+The ignored directory `.secrets/` contains blank, restricted-permission templates named for
+this deployment's actual Workers. Fill in the quoted empty values:
+
+- `cloudflare-deploy.env`: Wrangler deployment token (`CLOUDFLARE_API_TOKEN`). Load it in
+  the local deployment shell with `source .secrets/cloudflare-deploy.env`, or use Wrangler login.
+- `hellgate-os-gatekeeper-cloudflareaccount.json`: account-integration API token.
+- `hellgate-os-gatekeeper-snowflake.json`: account identifier, role, OAuth application client ID and secret.
+- `hellgate-os-gatekeeper-huggingface.json`: keep `{}`; Hugging Face uses browser OAuth.
+- `hellgate-os-gatekeeper-alphaxiv.json`: keep `{}`; AlphaXiv needs no key.
+
+The deployment token and the Cloudflare Account integration token are separate inputs.
+The integration token needs the permissions for the Cloudflare operations you intend to use.
+The current same-account Workers AI configuration needs no additional model-provider key.
+Completing these files does not install credentials or deploy Workers.

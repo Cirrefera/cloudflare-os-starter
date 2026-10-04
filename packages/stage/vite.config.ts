@@ -7,7 +7,7 @@ export default {
     tasks: {
       test: {
         command: "vitest run",
-        input: [{ auto: true }, { pattern: "!**/.wrangler/**", base: "workspace" }],
+        cache: { input: [{ auto: true }, { pattern: "!**/.wrangler/**", base: "workspace" }] },
       },
     },
   },

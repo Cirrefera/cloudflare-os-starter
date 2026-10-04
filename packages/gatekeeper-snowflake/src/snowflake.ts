@@ -1,5 +1,5 @@
 import { DurableObject, RpcStub, RpcTarget, WorkerEntrypoint } from "cloudflare:workers";
-import { skipRpcValidation, validateRpc } from "capnweb-validate";
+import { validateRpc } from "capnweb-validate";
 import type {
   AccountDescription, ApprovalQueue, Gatekeeper, GatekeeperConnectCallback,
   GatekeeperConnectOptions, GatekeeperUser, GatekeeperUserVerifier, ResourceDescription,
@@ -15,6 +15,8 @@ import type {
   SnowflakeSession,
 } from "./types.js";
 import TYPES_CODE from "./types-code.js";
+import { CredentialSource } from "@gadgets/gatekeeper-kit/credentials";
+import type { SnowflakeCredential } from "./oauth.js";
 import { Stage, GatedActions, ExecutionJournal, LocalRefusal, proposeAction, type StageRecord } from "@gadgets/stage";
 import type { ActionRef, ApprovalSubject } from "@gadgets/stage";
 import { LivePageSource } from "@gadgets/cursor";
@@ -68,13 +70,30 @@ class SqlPagesCursor extends RpcTarget implements ReadOnlySqlPages {
   getLimits(): Promise<ReadOnlySqlPageLimits> { return Promise.resolve(this.limits); }
 }
 
+class SnowflakeAuthError extends Error {
+  constructor() { super("Snowflake rejected the connection credentials."); }
+}
+
 class SnowflakeApi {
-  constructor(private readonly env: Env) {}
+  constructor(private readonly env: Env, private readonly credentials: CredentialSource<SnowflakeCredential>, private readonly generation?: string) {}
+  async #fetch(path: string, init: RequestInit): Promise<Response> {
+    return this.credentials.run(async (credential, read) => {
+      if (this.generation !== undefined && read.generation !== this.generation) throw new LocalRefusal("The Snowflake connection changed after this action was proposed.");
+      const response = await fetch(`${this.#base()}${path}`, {
+        ...init, redirect: "manual", headers: { ...init.headers, authorization: `Bearer ${credential.accessToken}`, "X-Snowflake-Authorization-Token-Type": "OAUTH" },
+      });
+      if (response.status === 401) {
+        await response.body?.cancel();
+        throw new SnowflakeAuthError();
+      }
+      return response;
+    }, { replayable: init.method === "GET" });
+  }
   #base(): string {
     return (this.env.SNOWFLAKE_BASE_URL ?? `https://${this.env.SNOWFLAKE_ACCOUNT}.snowflakecomputing.com`).replace(/\/$/, "");
   }
-  async #post(path: string, body: Record<string, unknown>, label: string, token: string = this.env.SNOWFLAKE_TOKEN): Promise<any> {
-    const response = await fetch(`${this.#base()}${path}`, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(30_000) });
+  async #post(path: string, body: Record<string, unknown>, label: string): Promise<any> {
+    const response = await this.#fetch(path, { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(30_000) });
     if (!response.ok) throw new Error(`${label} failed (${response.status}).`);
     return response.json();
   }
@@ -83,18 +102,16 @@ class SnowflakeApi {
   // active role, so it must actually govern what runs rather than falling back to the
   // credential's default role. Writes go through requestAsWrite(): the optional
   // SNOWFLAKE_WRITE_ROLE/SNOWFLAKE_WRITE_WAREHOUSE split read and write authority.
-  async #run(body: Record<string, unknown>, role: string, warehouse: string | undefined, token: string) {
-    const data = await this.#post("/api/v2/statements", { ...body, role, ...(warehouse ? { warehouse } : {}) }, "Snowflake request", token);
+  async #run(body: Record<string, unknown>, role: string, warehouse: string | undefined) {
+    const data = await this.#post("/api/v2/statements", { ...body, role, ...(warehouse ? { warehouse } : {}) }, "Snowflake request");
     return this.#resultSet(data);
   }
   async request(body: Record<string, unknown>) {
-    return this.#run(body, this.env.SNOWFLAKE_ROLE, this.env.SNOWFLAKE_WAREHOUSE, this.env.SNOWFLAKE_TOKEN);
+    return this.#run(body, this.env.SNOWFLAKE_ROLE, this.env.SNOWFLAKE_WAREHOUSE);
   }
   async requestAsWrite(body: Record<string, unknown>) {
-    // The write path prefers the dedicated write credential (SNOWFLAKE_WRITE_TOKEN) and falls
-    // back to the read token only when the operator explicitly reuses it — the secrets contract
-    // requires the operator to provide the write token whenever write authority is enabled.
-    return this.#run(body, this.env.SNOWFLAKE_WRITE_ROLE ?? this.env.SNOWFLAKE_ROLE, this.env.SNOWFLAKE_WRITE_WAREHOUSE ?? this.env.SNOWFLAKE_WAREHOUSE, this.env.SNOWFLAKE_WRITE_TOKEN ?? this.env.SNOWFLAKE_TOKEN);
+    // Approved writes use the connected human's OAuth grant, narrowed by the configured role.
+    return this.#run(body, this.env.SNOWFLAKE_WRITE_ROLE ?? this.env.SNOWFLAKE_ROLE, this.env.SNOWFLAKE_WRITE_WAREHOUSE ?? this.env.SNOWFLAKE_WAREHOUSE);
   }
 
   /** Normalizes one ResultSet response, including the verified partition metadata. */
@@ -120,8 +137,8 @@ class SnowflakeApi {
   async partition(handle: string, partition: number): Promise<{ rows: unknown[][] }> {
     if (!/^[A-Za-z0-9-]+$/.test(handle)) throw new Error("Invalid Snowflake statement handle.");
     if (!Number.isInteger(partition) || partition < 1) throw new Error("Invalid partition number.");
-    const response = await fetch(`${this.#base()}/api/v2/statements/${encodeURIComponent(handle)}?partition=${partition}`, {
-      headers: { authorization: `Bearer ${this.env.SNOWFLAKE_TOKEN}`, accept: "application/json" },
+    const response = await this.#fetch(`/api/v2/statements/${encodeURIComponent(handle)}?partition=${partition}`, {
+      method: "GET", headers: { accept: "application/json" },
       signal: AbortSignal.timeout(30_000),
     });
     if (!response.ok) throw new Error(`Snowflake partition fetch failed (${response.status}).`);
@@ -154,28 +171,46 @@ class SnowflakeApi {
   }
 }
 
-type Props = { account?: string };
+type Props = { account?: string; connectionId?: string };
 @validateRpc() export class GatekeeperVendor extends WorkerEntrypoint<Env> {
-  async describe(): Promise<VendorDescription> { return { displayName: "Snowflake", url: "https://www.snowflake.com", logo: ICON, color: "#29b5e8", tagline: "Governed data and Cortex access", description: "Scoped Snowflake metadata, bounded read-only SQL, Cortex, and approval-gated data actions.", providesAuth: false, autoProvisionsAccount: true }; }
-  @skipRpcValidation() async createAccount(): Promise<Fetcher<GatekeeperUser>> { return (this.ctx.exports as any).SnowflakeAccount({}); }
-  async connectAccount(_cb: Fetcher<GatekeeperConnectCallback>, _o?: GatekeeperConnectOptions): Promise<{ url: string }> { throw new Error("Snowflake uses a deployment-configured OAuth/token connection; interactive connect is not enabled yet."); }
+  async describe(): Promise<VendorDescription> { return { displayName: "Snowflake", url: "https://www.snowflake.com", logo: ICON, color: "#29b5e8", tagline: "Governed data and Cortex access", description: "Connect your Snowflake account for scoped SQL, Cortex, and approved data actions.", providesAuth: false }; }
+  async connectAccount(callback: Fetcher<GatekeeperConnectCallback>, _options?: GatekeeperConnectOptions): Promise<{ url: string }> {
+    const id = this.ctx.exports.SnowflakeConnection.newUniqueId();
+    const connection = this.ctx.exports.SnowflakeConnection.get(id);
+    return { url: await connection.prepare(callback) };
+  }
   async getSupportedResources(): Promise<SupportedResource[]> { return [RESOURCE]; }
   async getTypeScriptTypes(): Promise<string> { return TYPES_CODE; }
 }
-@validateRpc() export class SnowflakeAccount extends WorkerEntrypoint<Env> implements GatekeeperUser {
-  async describe(): Promise<AccountDescription> { return { displayName: this.env.SNOWFLAKE_ACCOUNT, avatar: ICON, singleton: { tsType: "SnowflakeSession" } }; }
+@validateRpc() export class SnowflakeAccount extends WorkerEntrypoint<Env, Props> implements GatekeeperUser {
+  #connection() {
+    if (!this.ctx.props.connectionId) throw new Error("Connect your Snowflake account using the Connectors page.");
+    return this.ctx.exports.SnowflakeConnection.get(this.ctx.exports.SnowflakeConnection.idFromString(this.ctx.props.connectionId));
+  }
+  async describe(): Promise<AccountDescription> { return { displayName: `${await this.#connection().describeUser()} @ ${this.env.SNOWFLAKE_ACCOUNT}`, avatar: ICON, singleton: { tsType: "SnowflakeSession" } }; }
   async getSupportedResources() { return [RESOURCE]; }
-  async getSingletonGatekeeperClass(): Promise<DurableObjectClass<Gatekeeper<SnowflakeSession>>> { return (this.ctx.exports as any).SnowflakeGatekeeper({ props: { account: this.env.SNOWFLAKE_ACCOUNT } }); }
-  async getGatekeeperClassFor(url: string) { const parsed = new URL(url); if (parsed.protocol !== "snowflake:") throw new Error("Snowflake resource must use snowflake://."); return { class: (this.ctx.exports as any).SnowflakeGatekeeper({ props: { account: parsed.hostname } }), resource: RESOURCE }; }
-  async startResourceConfigurator(): Promise<any> { throw new Error("Snowflake resource configurator is not enabled yet; use an explicitly configured account binding."); }
-  async revoke() {} async reconnect(): Promise<{ url: string }> { throw new Error("Reconnect is managed by the deployment credential."); }
-  async commitReconnect(_stageId: string) {} async ensureResources() { return {}; } async getAuthenticatedEmail() { return null; }
-  async getVerifier(): Promise<Fetcher<GatekeeperUserVerifier>> { return (this.ctx.exports as any).SnowflakeVerifier({}); }
+  async getSingletonGatekeeperClass(): Promise<DurableObjectClass<Gatekeeper<SnowflakeSession>>> {
+    await this.#connection().getCredentials();
+    return this.ctx.exports.SnowflakeGatekeeper({ props: { account: this.env.SNOWFLAKE_ACCOUNT, connectionId: this.ctx.props.connectionId } });
+  }
+  async getGatekeeperClassFor(url: string): Promise<{ class: DurableObjectClass<Gatekeeper<SnowflakeSession>>; resource: SupportedResource }> {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "snowflake:" || parsed.hostname.toLowerCase() !== this.env.SNOWFLAKE_ACCOUNT.toLowerCase()) throw new Error("This resource belongs to a different Snowflake account.");
+    return { class: await this.getSingletonGatekeeperClass(), resource: RESOURCE };
+  }
+  async startResourceConfigurator(): Promise<any> { throw new Error("Use the connected Snowflake account; resource scopes are configured by your administrator."); }
+  async revoke() { await this.#connection().revoke(); }
+  async reconnect(): Promise<{ url: string }> { return this.#connection().reconnect(); }
+  async commitReconnect(stageId: string) { await this.#connection().commitReconnect(stageId); }
+  async ensureResources() { return {}; }
+  async getAuthenticatedEmail() { return null; }
+  async getVerifier(): Promise<Fetcher<GatekeeperUserVerifier>> { return this.ctx.exports.SnowflakeVerifier({}); }
 }
 @validateRpc() export class SnowflakeVerifier extends WorkerEntrypoint<Env> implements GatekeeperUserVerifier { verify(): void {} }
 type SnowflakeWriteOperation = "insert" | "update" | "delete" | "merge" | "insert_select" | "plan" | "operator_sql";
 type SnowflakeWriteAction = {
   proposalId: string;
+  credentialGeneration?: string;
   source: "plan" | "operator_sql";
   operation: SnowflakeWriteOperation;
   target: string;
@@ -198,14 +233,28 @@ type StoredSnowflakeAction = StageRecord<SnowflakeWriteAction>;
     // The DO's real exclusive-execution primitive: while a block runs, every other event queues.
     runExclusive: this.ctx.blockConcurrencyWhile.bind(this.ctx),
     gatekeeperId: "snowflake",
-    accountId: this.env.SNOWFLAKE_ACCOUNT,
+    accountId: this.ctx.props.connectionId ?? this.env.SNOWFLAKE_ACCOUNT,
     label: "Snowflake",
   });
   readonly #gated = new GatedActions(this.#stage, "Snowflake", this.#journal);
 
   async describe(): Promise<ResourceDescription> { return { url: `snowflake://${this.ctx.props?.account ?? this.env.SNOWFLAKE_ACCOUNT}`, title: "Snowflake capability", snippet: "Bounded metadata, read-only SQL, Cortex Analyst/Search, and approval-gated data actions.", suggestedBindingName: "SNOWFLAKE", tsType: "SnowflakeSession" }; }
   async getTypeScriptTypes() { return TYPES_CODE; } async getAutoApprovableActions(): Promise<[]> { return []; }
-  async startSession(q: RpcStub<ApprovalQueue>): Promise<SnowflakeSession> { return new SessionImpl(q.dup(), this.env, this); }
+  #credentials() {
+    return new CredentialSource<SnowflakeCredential>({
+      account: () => {
+        if (!this.ctx.props.connectionId) throw new Error("Connect your Snowflake account again to enable browser authorization.");
+        return this.ctx.exports.SnowflakeConnection.get(this.ctx.exports.SnowflakeConnection.idFromString(this.ctx.props.connectionId));
+      },
+      isAuthError: error => error instanceof SnowflakeAuthError,
+      expiredMessage: "Reconnect your Snowflake account.", vendorId: "snowflake",
+    });
+  }
+  async startSession(q: RpcStub<ApprovalQueue>): Promise<SnowflakeSession> {
+    const credentials = this.#credentials();
+    await credentials.read();
+    return new SessionImpl(q.dup(), this.env, this, credentials);
+  }
   async addObserver() { throw new Error("Snowflake bindings require observer ACL verification before sharing."); }
   async removeObserver() {}
 
@@ -214,14 +263,16 @@ type StoredSnowflakeAction = StageRecord<SnowflakeWriteAction>;
    * never from session-visible arguments. Expiry is bound at proposal time (subject passed to
    * stageAction) and rechecked at execution.
    */
-  async #trustedSubject(operation: string, resource: string, expiresAt: number): Promise<ApprovalSubject> {
+  async #trustedSubject(operation: string, resource: string, expiresAt: number, generation?: string): Promise<ApprovalSubject> {
     const policy = snowflakePolicy(this.env);
+    const credentialGeneration = generation ?? (await this.#credentials().read()).generation;
     const policyVersion = await (await import("@gadgets/stage")).hashPayload({
+      credentialGeneration,
       databases: [...policy.databases].toSorted(), schemas: [...policy.schemas].toSorted(), tables: [...policy.tables].toSorted(),
       role: this.env.SNOWFLAKE_ROLE, warehouse: this.env.SNOWFLAKE_WAREHOUSE ?? null,
     });
     return {
-      ownerId: this.env.SNOWFLAKE_USER ?? "operator",
+      ownerId: this.ctx.props.connectionId ?? "disconnected",
       accountId: this.env.SNOWFLAKE_ACCOUNT,
       workspaceId: "default",
       operation,
@@ -298,7 +349,8 @@ type StoredSnowflakeAction = StageRecord<SnowflakeWriteAction>;
       operatorSql: sql,
       ...(note ? { note: boundedText(note, 500, "operator note") } : {}),
     };
-    const subject = await this.#trustedSubject("operator_sql", payload.target, Date.now() + 60_000);
+    payload.credentialGeneration = (await this.#credentials().read()).generation;
+    const subject = await this.#trustedSubject("operator_sql", payload.target, Date.now() + 60_000, payload.credentialGeneration);
     const actionId = await this.#stage.stage(payload, subject);
     await this.#stage.annotate(actionId, { provenance: "operator" });
     await this.#stage.markApproved(actionId);
@@ -319,10 +371,12 @@ type StoredSnowflakeAction = StageRecord<SnowflakeWriteAction>;
     // migration message, never silently reinterpreted.
     if (record.source !== "plan" && record.source !== "operator_sql") refuseLegacySqlWrite();
     const policy = snowflakePolicy(this.env);
-    const api = new SnowflakeApi(this.env);
+    const api = new SnowflakeApi(this.env, this.#credentials(), record.credentialGeneration);
     // Stable across attempts: Snowflake returns the original status for a repeated requestId
     // instead of executing again, so a redelivery cannot duplicate a write.
-    const requestId = `os-${this.env.SNOWFLAKE_ACCOUNT}-${record.actionId}`;
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${this.ctx.id}:${record.actionId}`));
+    const hex = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
+    const requestId = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-a${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
     const evidence: string[] = [`request:${requestId}`];
     const write = async (statement: string, bindings?: Record<string, { type: string; value: string | boolean | null }>) => {
       const result = await api.requestAsWrite({ statement, timeout: 60, requestId, ...(bindings ? { bindings } : {}), database: record.target.split(".")[0].toUpperCase(), schema: record.target.split(".")[1].toUpperCase() });
@@ -399,8 +453,9 @@ type StoredSnowflakeAction = StageRecord<SnowflakeWriteAction>;
   async stageAction(action: SnowflakeWriteAction): Promise<number> {
     // The trusted subject is bound inside the owning DO, from its environment and policy — the
     // session passes only the payload. Expiry is bound here, at proposal time.
-    const subject = await this.#trustedSubject(action.operation, action.target, Date.now() + 7 * 24 * 60 * 60 * 1000);
-    return this.#stage.stage(action, subject);
+    const generation = (await this.#credentials().read()).generation;
+    const subject = await this.#trustedSubject(action.operation, action.target, Date.now() + 7 * 24 * 60 * 60 * 1000, generation);
+    return this.#stage.stage({ ...action, credentialGeneration: generation }, subject);
   }
 
   async discardStagedAction(actionId: number): Promise<void> {
@@ -425,9 +480,9 @@ type StoredSnowflakeAction = StageRecord<SnowflakeWriteAction>;
   }
 }
 @validateRpc() class SessionImpl extends RpcTarget implements SnowflakeSession {
-  constructor(private readonly queue: RpcStub<ApprovalQueue>, private readonly env: Env, private readonly gatekeeper: SnowflakeGatekeeper) { super(); }
-  private policy() { return snowflakePolicy(this.env); } private api() { return new SnowflakeApi(this.env); }
-  async getAccount(): Promise<SnowflakeAccountInfo> { return { accountIdentifier: this.env.SNOWFLAKE_ACCOUNT, role: this.env.SNOWFLAKE_ROLE, warehouse: this.env.SNOWFLAKE_WAREHOUSE }; }
+  constructor(private readonly queue: RpcStub<ApprovalQueue>, private readonly env: Env, private readonly gatekeeper: SnowflakeGatekeeper, private readonly credentials: CredentialSource<SnowflakeCredential>) { super(); }
+  private policy() { return snowflakePolicy(this.env); } private api() { return new SnowflakeApi(this.env, this.credentials); }
+  async getAccount(): Promise<SnowflakeAccountInfo> { await this.credentials.read(); return { accountIdentifier: this.env.SNOWFLAKE_ACCOUNT, role: this.env.SNOWFLAKE_ROLE, warehouse: this.env.SNOWFLAKE_WAREHOUSE }; }
   async listDatabases() {
     const p = this.policy();
     const x = await this.api().metadata("SHOW DATABASES");

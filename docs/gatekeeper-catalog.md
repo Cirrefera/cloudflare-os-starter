@@ -6,7 +6,7 @@ The Starter has one deployment boundary: `deployment.jsonc` in the outer `cloudf
 carries the full service graph: stable ID, package directory, Router binding, URL prefix,
 authentication shape, `publicFlow`, the Vendor entrypoint the Workshop binds, and the Worker's
 secret contract. The configuration file contains an explicit enablement and Worker name for every
-entry; all are disabled by default.
+entry. Omitted entries are disabled. The four custom Gatekeepers are enabled in the current operator configuration.
 
 Every entry is wired into the deployment generator. Enabling one in `deployment.jsonc` (with a
 Worker name) emits its Worker config from the package's **own** `wrangler.jsonc` — bindings, DO
@@ -20,16 +20,30 @@ Worker, binding, credential requirement, or public route.
 | `github` | upstream `gatekeeper-github` | OAuth 2.0 (per-user GitHub account) | `CLIENT_ID`, `CLIENT_SECRET` (from the package's `deploy-inputs.json`) | — |
 | `confluence` | upstream `gatekeeper-confluence` | OAuth 2.0 (per-user Confluence site) | `CLIENT_ID`, `CLIENT_SECRET` | — |
 | `cloudflare` | upstream `gatekeeper-cloudflare` | OAuth 2.0 | `CLIENT_ID`, `CLIENT_SECRET` | — |
-| `mcpv2` | upstream `gatekeeper-mcp` (deployed under the mcpv2 identity) | User-supplied MCP endpoint | — | — |
+| `mcpv2` | upstream `gatekeeper-mcp` (configuration key `mcpv2`, binding `GATEKEEPER_MCP`) | User-supplied MCP endpoint | — | — |
 | `mcpPortal` | upstream `gatekeeper-mcp-portal` | Admin-configured portal | `MCP_PORTAL_TOKEN` only when `MCP_PORTAL_AUTH=token` (documented, not in the hard contract) | `MCP_PORTAL_URL` (`gatekeepers.mcpPortal.vars`) |
-| `snowflake` | outer `packages/gatekeeper-snowflake` | Snowflake-scoped credentials | `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_TOKEN`, `SNOWFLAKE_ROLE` (+ `SNOWFLAKE_WRITE_TOKEN` when write authority is enabled) | — |
-| `huggingface` | outer `packages/gatekeeper-huggingface` | Fine-grained Hub token / OAuth | `HF_TOKEN` | — |
+| `snowflake` | outer `packages/gatekeeper-snowflake` | Per-user Snowflake OAuth | `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_ROLE`, `CLIENT_ID`, `CLIENT_SECRET` | `/gatekeeper/snowflake/oauth` |
+| `huggingface` | outer `packages/gatekeeper-huggingface` | Browser OAuth (public CIMD + PKCE) | None | — |
+
+Additional stock entries are `email`, `google`, `homeassistant`, `linear`, `notion`,
+`slack`, `spotify`, `supabase`, and `zoominfo`. They use their unchanged upstream Worker
+configs and credential contracts. Context and Scheduler remain core Workers.
+
+The two restored custom entries are:
+
+| ID | Package | Required secrets | Workshop binding |
+| --- | --- | --- | --- |
+| `cloudflareaccount` | `packages/gatekeeper-cloudflareaccount` | `CLOUDFLARE_API_TOKEN` | `GATEKEEPER_CLOUDFLAREACCOUNT` |
+| `alphaxiv` | `packages/gatekeeper-alphaxiv` | None | `GATEKEEPER_ALPHAXIV` |
+
+Cloudflare Account receives `CLOUDFLARE_ACCOUNT_ID` from the top-level deployment account.
+Both additions are private service bindings (`publicFlow: false`).
 
 ## Service graph rules
 
-- **`publicFlow` decides the Router HTTP flow only.** Every current entry is public (`true`): the
+- **`publicFlow` decides the Router HTTP flow only.** For an entry with `publicFlow: true`, the
   Router exposes `/gatekeeper/<prefix>` (OAuth redirects land there). The Workshop vendor-RPC
-  service binding exists either way. Future control/runtime/factory Workers (P6/P7) carry
+  service binding exists either way. Cloudflare Account, AlphaXiv, and service-only runtime Workers carry
   `publicFlow: false`: bound into the Workshop, never discovered by the Router, no public route.
 - **Workshop bindings and Router HTTP bindings are separate decisions.** A service-only package is
   reachable over vendor RPC, never by a public route.

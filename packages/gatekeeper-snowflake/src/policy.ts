@@ -70,7 +70,7 @@ function positiveInt(raw: string | undefined, fallback: number, cap: number): nu
 }
 
 export function snowflakePolicy(env: Env): SnowflakePolicy {
-  if (!env.SNOWFLAKE_TOKEN || !env.SNOWFLAKE_ACCOUNT || !env.SNOWFLAKE_ROLE) throw new Error("Snowflake credentials are not configured.");
+  if (!env.SNOWFLAKE_ACCOUNT || !env.SNOWFLAKE_ROLE) throw new Error("Snowflake account and role are not configured.");
   return {
     databases: allow(env.SNOWFLAKE_DATABASES),
     schemas: allow(env.SNOWFLAKE_SCHEMAS),

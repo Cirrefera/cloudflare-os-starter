@@ -7,15 +7,17 @@
     "node": ">=24.19.0"
   },
   "scripts": {
-    "build": "vp run -r --cache build",
-    "test": "node --test scripts/**/*.test.ts && vp run --filter=./packages/* --cache test",
+    "build": "pnpm --dir cloudflare-os build && pnpm types:generate:custom && vp run --filter=custom-gatekeeper --filter=error-reporter --filter=gatekeeper-snowflake --filter=gatekeeper-huggingface --filter=gatekeeper-cloudflareaccount --filter=gatekeeper-alphaxiv --cache build",
+    "test": "pnpm --dir cloudflare-os exec vp run --filter=!cloudflare-os --no-cache test",
     "types:scripts": "tsc -p scripts/tsconfig.json",
     "lint:check": "vp lint",
     "lint:fix": "vp lint --fix",
     "lint": "pnpm run lint:check && pnpm run types:scripts && pnpm run build",
     "check:boundary": "node scripts/boundary-check.ts",
     "check": "pnpm check:boundary && node scripts/deploy.ts --check",
-    "deploy": "node scripts/deploy.ts"
+    "deploy": "node scripts/deploy.ts",
+    "check:full": "node scripts/deploy.ts --check --config scripts/deployment.full-check.jsonc",
+    "types:generate:custom": "pnpm --filter=custom-gatekeeper --filter=error-reporter --filter=gatekeeper-snowflake --filter=gatekeeper-huggingface --filter=gatekeeper-cloudflareaccount --filter=gatekeeper-alphaxiv exec wrangler types --include-env false"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:",

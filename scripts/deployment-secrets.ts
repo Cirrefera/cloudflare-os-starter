@@ -67,10 +67,9 @@ function snowflakeWritesEnabled(source: Record<string, string>): boolean {
 export function validateWorkerSource(contract: SecretContract, source: Record<string, string>): string[] {
   const errors: string[] = [];
   const required = [...contract.required];
-  // Write authority broadens the credential surface: a separate write token is required, and the
-  // existing read credential may be reused only after the operator has checked its scope
-  // (documented) by explicitly providing it as the write token.
-  if (snowflakeWritesEnabled(source)) required.push(SNOWFLAKE_WRITE_TOKEN);
+  // Older token-only contracts require a separate write token. OAuth application contracts
+  // use the connected human's grant for writes and require no shared deployment write token.
+  if (snowflakeWritesEnabled(source) && !source.CLIENT_ID) required.push(SNOWFLAKE_WRITE_TOKEN);
   for (const name of required) {
     const value = source[name];
     if (value === undefined || value.trim() === "") errors.push(`${contract.workerName}: required secret ${name} is missing or empty.`);
@@ -142,9 +141,13 @@ export async function installSecrets(root: string, config: DeploymentConfig, opt
       const source = readSecretSource(root, contract.workerName);
       // Only the contracted names are written: the file carries exactly this Worker's credentials.
       const file: Record<string, string> = {};
-      const names = [...contract.required, ...(snowflakeWritesEnabled(source) ? [SNOWFLAKE_WRITE_TOKEN] : []), ...(contract.allowedExtras ?? [])];
+      const names = [...contract.required, ...(snowflakeWritesEnabled(source) && !source.CLIENT_ID ? [SNOWFLAKE_WRITE_TOKEN] : []), ...(contract.allowedExtras ?? [])];
       for (const name of names) {
         if (source[name] !== undefined) file[name] = source[name];
+      }
+      if (Object.keys(file).length === 0) {
+        console.log(`No secrets required for ${contract.workerName}; skipping secret upload.`);
+        continue;
       }
       const path = join(tempDir, `${contract.workerName}.json`);
       await writeFile(path, JSON.stringify(file, null, 2) + "\n", { mode: 0o600 });

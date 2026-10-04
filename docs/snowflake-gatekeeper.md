@@ -4,12 +4,17 @@ This document is the design boundary for the Snowflake Gatekeeper. The connector
 in this starter (`packages/gatekeeper-snowflake`) and listed in the optional-Gatekeeper catalog
 (`scripts/deployment-config.ts`). The deployment generator wires it when enabled: it emits the
 Worker config from the package's own `wrangler.jsonc`, adds both service bindings, and requires
-the `SNOWFLAKE_ACCOUNT` / `SNOWFLAKE_TOKEN` / `SNOWFLAKE_ROLE` secrets before wrangler will
+the `SNOWFLAKE_ACCOUNT` / `SNOWFLAKE_ROLE` / `CLIENT_ID` / `CLIENT_SECRET` application settings before wrangler will
 deploy. Implementation must follow the outer repository's
 [`write-gatekeeper` guidance](customization.md#custom-gatekeepers) and the
 reviewed `@gadgets/gatekeeper-kit` leaves.
 
-The connector targets Snowflake's managed MCP server. Snowflake exposes five
+**Current implementation:** interactive per-user Snowflake OAuth is implemented for the existing
+native SQL/Cortex REST methods. See [connection setup](../packages/gatekeeper-snowflake/README.md).
+The managed-MCP profile below remains a design target, not a claim that this worker uses MCP or
+that the disabled Cortex Agent/custom-tool methods are complete.
+
+The design targets Snowflake's managed MCP server. Snowflake exposes five
 server-side tool types: Cortex Agent, Cortex Analyst, Cortex Search, SQL
 execution, and generic UDF/stored-procedure tools. See the [Snowflake managed
 MCP documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp).
