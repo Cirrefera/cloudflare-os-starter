@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  actions: write
+  actions: read
 
 jobs:
   inspect:
@@ -18,27 +18,16 @@ jobs:
         env:
           CFOS_DEPLOY_CREDENTIALS: ${{ secrets.CFOS_DEPLOY_CREDENTIALS }}
           GH_ACTION_TOKEN: ${{ github.token }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           python - <<'PY'
           import json, os, urllib.request, urllib.error, urllib.parse, re, base64
           from pathlib import Path
           credentials = json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS'])
-          token = credentials['CLOUDFLARE_API_TOKEN']
+          token = os.environ.get('CLOUDFLARE_API_TOKEN') or credentials['CLOUDFLARE_API_TOKEN']
           account = '9ae12807d5b18bf3d1bcbe38b9050e05'
           origin = 'https://hellgate-os-router.mchayes89.workers.dev'
           report = {'configured_origin': origin, 'requests': {}}
-          gh_headers = {'Authorization': 'Bearer ' + os.environ['GH_ACTION_TOKEN'], 'Accept': 'application/vnd.github+json'}
-          old_run = 'https://api.github.com/repos/Cirrefera/cloudflare-os-starter/actions/runs/37229847895'
-          try:
-              with urllib.request.urlopen(urllib.request.Request(old_run + '/jobs', headers=gh_headers), timeout=20) as response:
-                  jobs = json.load(response)['jobs']
-              steps = [step for job in jobs for step in job.get('steps', []) if step.get('name') == 'Deploy the configured OS and four custom gatekeepers']
-              if steps and all(step.get('status') == 'queued' for step in steps):
-                  request = urllib.request.Request(old_run + '/cancel', headers=gh_headers, method='POST')
-                  with urllib.request.urlopen(request, timeout=20) as response:
-                      report['superseded_run_cancelled_before_deployment'] = response.status == 202
-          except Exception:
-              report['superseded_run_cancellation'] = 'not needed or not available'
           def api(path):
               req = urllib.request.Request('https://api.cloudflare.com/client/v4/accounts/' + account + path,
                   headers={'Authorization': 'Bearer ' + token})
@@ -58,42 +47,6 @@ jobs:
           workers = api('/workers/scripts')
           if workers is not None:
               report['os_workers'] = sorted(w['id'] for w in workers if w['id'].startswith('hellgate-os-'))
-          report['bootstrap'] = {}
-          draft_boundary = 'cfosbootstrap20261004'
-          metadata = json.dumps({'main_module': 'bootstrap.js', 'compatibility_date': '2026-10-03', 'bindings': []})
-          draft = ('--' + draft_boundary + '\r\nContent-Disposition: form-data; name="metadata"\r\nContent-Type: application/json\r\n\r\n' + metadata +
-              '\r\n--' + draft_boundary + '\r\nContent-Disposition: form-data; name="bootstrap.js"; filename="bootstrap.js"\r\nContent-Type: application/javascript+module\r\n\r\nexport default {fetch(){return new Response("Deployment in progress",{status:503});}};\r\n--' + draft_boundary + '--\r\n').encode()
-          installed = {worker['id'] for worker in workers or []}
-          selected = None
-          for name in ['hellgate-os-gatekeeper-cloudflareaccount', 'hellgate-os-gatekeeper-snowflake']:
-              if name in installed:
-                  report['bootstrap'][name] = 'already exists; not changed'
-                  continue
-              for key in ([selected] if selected else ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_GATEKEEPER_TOKEN']):
-                  request = urllib.request.Request('https://api.cloudflare.com/client/v4/accounts/' + account + '/workers/scripts/' + name,
-                      data=draft, method='PUT', headers={'Authorization': 'Bearer ' + credentials[key], 'Content-Type': 'multipart/form-data; boundary=' + draft_boundary})
-                  try:
-                      with urllib.request.urlopen(request, timeout=30) as response:
-                          data = json.load(response)
-                          report['bootstrap'][name + ':' + key] = {'http_status': response.status, 'success': data.get('success', False)}
-                      if data.get('success'):
-                          selected = key
-                          report['bootstrap_auth_key'] = key
-                          break
-                  except urllib.error.HTTPError as error:
-                      try:
-                          data = json.load(error)
-                          details = [{'code': item.get('code'), 'message': str(item.get('message', ''))[:180]} for item in data.get('errors', [])]
-                      except Exception:
-                          details = []
-                      report['bootstrap'][name + ':' + key] = {'http_status': error.code, 'errors': details}
-                  except Exception:
-                      report['bootstrap'][name + ':' + key] = {'error': 'bootstrap request failed'}
-              else:
-                  break
-          if selected:
-              token = credentials[selected]
-              report['os_workers'] = sorted(worker['id'] for worker in api('/workers/scripts') or [] if worker['id'].startswith('hellgate-os-'))
           report['services'] = {}
           for name in ['hellgate-os-router', 'hellgate-os-workshop']:
               settings = api('/workers/scripts/' + name + '/settings')
@@ -138,7 +91,7 @@ jobs:
                   if error.code != 302:
                       raise
                   logs = urllib.request.urlopen(error.headers['Location'], timeout=30).read().decode(errors='replace')
-              for value in list(credentials.values()) + [os.environ['GH_ACTION_TOKEN']]:
+              for value in list(credentials.values()) + [token, os.environ['GH_ACTION_TOKEN']]:
                   for form in [value, urllib.parse.quote(value, safe=''), base64.b64encode(value.encode()).decode()]:
                       logs = logs.replace(form, '***')
               logs = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', logs)
