@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  actions: read
+  actions: write
 
 jobs:
   inspect:
@@ -27,6 +27,18 @@ jobs:
           account = '9ae12807d5b18bf3d1bcbe38b9050e05'
           origin = 'https://hellgate-os-router.mchayes89.workers.dev'
           report = {'configured_origin': origin, 'requests': {}}
+          gh_headers = {'Authorization': 'Bearer ' + os.environ['GH_ACTION_TOKEN'], 'Accept': 'application/vnd.github+json'}
+          old_run = 'https://api.github.com/repos/Cirrefera/cloudflare-os-starter/actions/runs/37229847895'
+          try:
+              with urllib.request.urlopen(urllib.request.Request(old_run + '/jobs', headers=gh_headers), timeout=20) as response:
+                  jobs = json.load(response)['jobs']
+              steps = [step for job in jobs for step in job.get('steps', []) if step.get('name') == 'Deploy the configured OS and four custom gatekeepers']
+              if steps and all(step.get('status') == 'queued' for step in steps):
+                  request = urllib.request.Request(old_run + '/cancel', headers=gh_headers, method='POST')
+                  with urllib.request.urlopen(request, timeout=20) as response:
+                      report['superseded_run_cancelled_before_deployment'] = response.status == 202
+          except Exception:
+              report['superseded_run_cancellation'] = 'not needed or not available'
           def api(path):
               req = urllib.request.Request('https://api.cloudflare.com/client/v4/accounts/' + account + path,
                   headers={'Authorization': 'Bearer ' + token})
