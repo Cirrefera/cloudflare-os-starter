@@ -51,12 +51,103 @@ jobs:
           VITEST_MAX_WORKERS: '2'
           WRANGLER_SEND_METRICS: 'false'
         run: |
-          pnpm check:boundary
-          pnpm types:scripts
-          pnpm check:full
+          log="$RUNNER_TEMP/cfos-check.log"
+          trap 'tail -n 200 "$RUNNER_TEMP/cfos-check.log" >> "$GITHUB_STEP_SUMMARY"' EXIT
+          {
+            pnpm check:boundary
+            pnpm types:scripts
+            pnpm check:full
+          } 2>&1 | tee "$log"
 
       - name: Deploy the configured OS and four custom gatekeepers
         if: steps.credentials.outputs.ready == 'true'
         env:
           CFOS_DEPLOY_CREDENTIALS: ${{ secrets.CFOS_DEPLOY_CREDENTIALS }}
-        run: node scripts/github-deploy.ts
+        run: |
+          deployment_summary() {
+            python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          path = Path(os.environ['RUNNER_TEMP']) / 'cfos-deploy.log'
+          output = path.read_text(errors='replace') if path.exists() else 'No deployment output.'
+          for value in json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS']).values():
+              output = output.replace(value, '***')
+          output = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', output)
+          Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('```text\n' + '\n'.join(output.splitlines()[-200:]) + '\n```\n')
+          PY
+          }
+          trap deployment_summary EXIT
+          node scripts/github-deploy.ts 2>&1 | tee "$RUNNER_TEMP/cfos-deploy.log"
+
+      - name: Inspect deployed Workers, bindings, secrets, and public endpoints
+        env:
+          CFOS_DEPLOY_CREDENTIALS: ${{ secrets.CFOS_DEPLOY_CREDENTIALS }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+          from pathlib import Path
+          try:
+              credentials = json.loads(os.environ['CFOS_DEPLOY_CREDENTIALS'])
+              token = credentials['CLOUDFLARE_API_TOKEN']
+          except Exception:
+              raise SystemExit('The private deployment secret is missing or malformed; no values were printed.')
+          for value in credentials.values():
+              print('::add-mask::' + value.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A'))
+          account = '9ae12807d5b18bf3d1bcbe38b9050e05'
+          origin = 'https://hellgate-os-router.mchayes89.workers.dev'
+          results = []
+          def report(message):
+              results.append(message)
+              print(message, flush=True)
+              Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('\n'.join('- ' + item for item in results) + '\n')
+          def api(path):
+              request = urllib.request.Request('https://api.cloudflare.com/client/v4/accounts/' + account + path,
+                  headers={'Authorization': 'Bearer ' + token})
+              try:
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      data = json.load(response)
+              except urllib.error.HTTPError as error:
+                  raise SystemExit('Cloudflare inspection failed with HTTP ' + str(error.code) + '; no response body was printed.')
+              if not data.get('success'):
+                  raise SystemExit('Cloudflare inspection returned an unsuccessful result; no response body was printed.')
+              return data['result']
+          custom = ['snowflake', 'huggingface', 'cloudflareaccount', 'alphaxiv']
+          expected = {'hellgate-os-' + name for name in ['router', 'workshop', 'context', 'scheduler', 'gatekeeper', 'reporter']}
+          expected.update('hellgate-os-gatekeeper-' + name for name in custom)
+          installed = {worker['id'] for worker in api('/workers/scripts')}
+          missing = expected - installed
+          if missing:
+              raise SystemExit('Missing deployed Workers: ' + ', '.join(sorted(missing)))
+          report('All 10 configured Workers are deployed.')
+          for worker, integrations in [('hellgate-os-workshop', custom), ('hellgate-os-router', ['snowflake', 'huggingface'])]:
+              bindings = api('/workers/scripts/' + worker + '/settings')['bindings']
+              services = {binding.get('name'): binding.get('service') for binding in bindings if binding.get('type') == 'service'}
+              for integration in integrations:
+                  if services.get('GATEKEEPER_' + integration.upper()) != 'hellgate-os-gatekeeper-' + integration:
+                      raise SystemExit('Missing or incorrect ' + integration + ' binding on ' + worker)
+              report(worker + ': custom Gatekeeper service bindings verified.')
+          for integration, required in [('snowflake', {'SNOWFLAKE_ACCOUNT', 'SNOWFLAKE_ROLE', 'CLIENT_ID', 'CLIENT_SECRET'}), ('cloudflareaccount', {'CLOUDFLARE_API_TOKEN'})]:
+              names = {secret['name'] for secret in api('/workers/scripts/hellgate-os-gatekeeper-' + integration + '/secrets')}
+              if not required <= names:
+                  raise SystemExit('Required Worker secrets are missing for ' + integration)
+              report(integration + ': required Worker secret names verified; values were not retrieved.')
+          with urllib.request.urlopen(origin + '/gatekeeper/huggingface/.well-known/oauth-cimd', timeout=30) as response:
+              metadata = json.load(response)
+          if metadata.get('client_id') != origin + '/gatekeeper/huggingface/.well-known/oauth-cimd' or metadata.get('redirect_uris') != [origin + '/gatekeeper/huggingface/oauth'] or metadata.get('token_endpoint_auth_method') != 'none':
+              raise SystemExit('Hugging Face public OAuth metadata does not match the deployment.')
+          report('Hugging Face public browser OAuth metadata is reachable and correct.')
+          for integration in ['snowflake', 'huggingface']:
+              try:
+                  urllib.request.urlopen(origin + '/gatekeeper/' + integration + '/oauth', timeout=30)
+              except urllib.error.HTTPError as error:
+                  if error.code != 400:
+                      raise SystemExit(integration + ' OAuth callback returned unexpected HTTP ' + str(error.code))
+              else:
+                  raise SystemExit(integration + ' OAuth callback accepted an incomplete request.')
+              report(integration + ': browser OAuth callback is reachable and rejects an incomplete request.')
+          with urllib.request.urlopen(origin, timeout=30) as response:
+              if response.status != 200:
+                  raise SystemExit('The public frontend did not return HTTP 200.')
+          report('The public OS frontend is reachable.')
+          Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('\n'.join('- ' + item for item in results) + '\n')
+          PY

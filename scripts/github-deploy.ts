@@ -52,6 +52,7 @@ if (validateOnly) {
     await writeFile(join(root, ".secrets", `${contract.workerName}.json`), JSON.stringify(source), { mode: 0o600, flag: "wx" });
   }
   const env: NodeJS.ProcessEnv = { ...process.env, CLOUDFLARE_API_TOKEN: values.CLOUDFLARE_API_TOKEN,
+    CLOUDFLARE_ACCOUNT_ID: config.accountId,
     WRANGLER_SEND_METRICS: "false", VP_RUN_CONCURRENCY_LIMIT: "2" };
   delete env.CFOS_DEPLOY_CREDENTIALS;
   const auth = spawnSync("pnpm", ["exec", "wrangler", "whoami"], { cwd: root, env, stdio: "inherit" });
