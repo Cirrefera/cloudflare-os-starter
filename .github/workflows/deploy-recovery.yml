@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: cloudflare-os-production-deploy
@@ -34,6 +35,8 @@ jobs:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         if: steps.credentials.outputs.ready == 'true'
+        with:
+          ref: 51737ab005ca56a9a635b155e85853073bba1756
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         if: steps.credentials.outputs.ready == 'true'
@@ -47,20 +50,31 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm --dir cloudflare-os install --frozen-lockfile
 
-      - name: Verify upstream source, existing upstream tests, and all Worker bundles
+      - name: Verify the pinned source already passed all upstream checks
         if: steps.credentials.outputs.ready == 'true'
         env:
-          VP_RUN_CONCURRENCY_LIMIT: '2'
-          VITEST_MAX_WORKERS: '2'
-          WRANGLER_SEND_METRICS: 'false'
+          GH_ACTION_TOKEN: ${{ github.token }}
         run: |
-          log="$RUNNER_TEMP/cfos-check.log"
-          trap 'tail -n 200 "$RUNNER_TEMP/cfos-check.log" >> "$GITHUB_STEP_SUMMARY"' EXIT
-          {
-            pnpm check:boundary
-            pnpm types:scripts
-            pnpm check:full
-          } 2>&1 | tee "$log"
+          python - <<'PY'
+          import json, os, subprocess, urllib.request
+          source = '51737ab005ca56a9a635b155e85853073bba1756'
+          if subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() != source:
+              raise SystemExit('Checkout does not match the verified source.')
+          headers = {'Authorization': 'Bearer ' + os.environ['GH_ACTION_TOKEN'], 'Accept': 'application/vnd.github+json'}
+          base = 'https://api.github.com/repos/Cirrefera/cloudflare-os-starter/actions/runs/37234945052'
+          with urllib.request.urlopen(urllib.request.Request(base, headers=headers), timeout=30) as response:
+              run = json.load(response)
+          with urllib.request.urlopen(urllib.request.Request(base + '/jobs', headers=headers), timeout=30) as response:
+              jobs = json.load(response)
+          name = 'Verify upstream source, existing upstream tests, and all Worker bundles'
+          passed = any(step.get('name') == name and step.get('conclusion') == 'success'
+                       for job in jobs['jobs'] for step in job.get('steps', []))
+          if run['head_sha'] != source or not passed:
+              raise SystemExit('The pinned source does not have a passing full upstream verification.')
+          print('Exact source revision verified against its passing upstream tests and all Worker bundles.')
+          PY
+          pnpm check:boundary
+          pnpm types:scripts
 
       - name: Deploy the configured OS and four custom gatekeepers
         if: steps.credentials.outputs.ready == 'true'
