@@ -92,7 +92,7 @@ jobs:
           class NoRedirect(urllib.request.HTTPRedirectHandler):
               def redirect_request(self, request, file, code, message, headers, newurl):
                   return None
-          request = urllib.request.Request('https://api.github.com/repos/Cirrefera/cloudflare-os-starter/actions/jobs/111514481819/logs',
+          request = urllib.request.Request('https://api.github.com/repos/Cirrefera/cloudflare-os-starter/actions/jobs/111517700545/logs',
               headers={'Authorization': 'Bearer ' + os.environ['GH_ACTION_TOKEN'], 'Accept': 'application/vnd.github+json'})
           try:
               try:
