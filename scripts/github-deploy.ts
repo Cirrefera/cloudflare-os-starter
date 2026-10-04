@@ -57,6 +57,6 @@ if (validateOnly) {
   delete env.CFOS_DEPLOY_CREDENTIALS;
   const auth = spawnSync("pnpm", ["exec", "wrangler", "whoami"], { cwd: root, env, stdio: "inherit" });
   if (auth.error || auth.status !== 0) throw new Error("Cloudflare authentication failed; nothing was deployed.");
-  const deploy = spawnSync("pnpm", ["deploy", "--", "--with-secrets"], { cwd: root, env, stdio: "inherit" });
+  const deploy = spawnSync(process.execPath, [join(root, "scripts/deploy.ts"), "--with-secrets"], { cwd: root, env, stdio: "inherit" });
   if (deploy.error || deploy.status !== 0) throw new Error("Cloudflare deployment did not finish; inspect the Worker deployment log.");
 }
