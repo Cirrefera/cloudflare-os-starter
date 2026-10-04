@@ -58,6 +58,42 @@ jobs:
           workers = api('/workers/scripts')
           if workers is not None:
               report['os_workers'] = sorted(w['id'] for w in workers if w['id'].startswith('hellgate-os-'))
+          report['bootstrap'] = {}
+          draft_boundary = 'cfosbootstrap20261004'
+          metadata = json.dumps({'main_module': 'bootstrap.js', 'compatibility_date': '2026-10-03', 'bindings': []})
+          draft = ('--' + draft_boundary + '\r\nContent-Disposition: form-data; name="metadata"\r\nContent-Type: application/json\r\n\r\n' + metadata +
+              '\r\n--' + draft_boundary + '\r\nContent-Disposition: form-data; name="bootstrap.js"; filename="bootstrap.js"\r\nContent-Type: application/javascript+module\r\n\r\nexport default {fetch(){return new Response("Deployment in progress",{status:503});}};\r\n--' + draft_boundary + '--\r\n').encode()
+          installed = {worker['id'] for worker in workers or []}
+          selected = None
+          for name in ['hellgate-os-gatekeeper-cloudflareaccount', 'hellgate-os-gatekeeper-snowflake']:
+              if name in installed:
+                  report['bootstrap'][name] = 'already exists; not changed'
+                  continue
+              for key in ([selected] if selected else ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_GATEKEEPER_TOKEN']):
+                  request = urllib.request.Request('https://api.cloudflare.com/client/v4/accounts/' + account + '/workers/scripts/' + name,
+                      data=draft, method='PUT', headers={'Authorization': 'Bearer ' + credentials[key], 'Content-Type': 'multipart/form-data; boundary=' + draft_boundary})
+                  try:
+                      with urllib.request.urlopen(request, timeout=30) as response:
+                          data = json.load(response)
+                          report['bootstrap'][name + ':' + key] = {'http_status': response.status, 'success': data.get('success', False)}
+                      if data.get('success'):
+                          selected = key
+                          report['bootstrap_auth_key'] = key
+                          break
+                  except urllib.error.HTTPError as error:
+                      try:
+                          data = json.load(error)
+                          details = [{'code': item.get('code'), 'message': str(item.get('message', ''))[:180]} for item in data.get('errors', [])]
+                      except Exception:
+                          details = []
+                      report['bootstrap'][name + ':' + key] = {'http_status': error.code, 'errors': details}
+                  except Exception:
+                      report['bootstrap'][name + ':' + key] = {'error': 'bootstrap request failed'}
+              else:
+                  break
+          if selected:
+              token = credentials[selected]
+              report['os_workers'] = sorted(worker['id'] for worker in api('/workers/scripts') or [] if worker['id'].startswith('hellgate-os-'))
           report['services'] = {}
           for name in ['hellgate-os-router', 'hellgate-os-workshop']:
               settings = api('/workers/scripts/' + name + '/settings')
