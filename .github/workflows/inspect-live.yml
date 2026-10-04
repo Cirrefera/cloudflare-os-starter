@@ -27,7 +27,7 @@ jobs:
           token = os.environ.get('CLOUDFLARE_API_TOKEN') or credentials['CLOUDFLARE_API_TOKEN']
           account = '9ae12807d5b18bf3d1bcbe38b9050e05'
           origin = 'https://hellgate-os-router.mchayes89.workers.dev'
-          report = {'configured_origin': origin, 'requests': {}}
+          report = {'configured_origin': origin, 'operator_token_override_present': bool(os.environ.get('CLOUDFLARE_API_TOKEN')), 'operator_token_differs_from_original': token != credentials['CLOUDFLARE_API_TOKEN'], 'requests': {}}
           def api(path):
               req = urllib.request.Request('https://api.cloudflare.com/client/v4/accounts/' + account + path,
                   headers={'Authorization': 'Bearer ' + token})
@@ -41,6 +41,19 @@ jobs:
               except Exception:
                   report['requests'][path] = {'error': 'request failed'}
               return None
+          for path in ['/user/tokens/verify', '/accounts']:
+              req = urllib.request.Request('https://api.cloudflare.com/client/v4' + path, headers={'Authorization': 'Bearer ' + token})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      data = json.load(response)
+                  if path.endswith('/verify'):
+                      report['operator_token_status'] = data.get('result', {}).get('status')
+                  else:
+                      report['configured_account_in_visible_accounts'] = any(item.get('id') == account for item in data.get('result', []))
+              except urllib.error.HTTPError as error:
+                  report[path] = {'http_status': error.code}
+              except Exception:
+                  report[path] = {'error': 'request failed'}
           subdomain = api('/workers/subdomain')
           if subdomain:
               report['workers_subdomain'] = subdomain.get('subdomain')
